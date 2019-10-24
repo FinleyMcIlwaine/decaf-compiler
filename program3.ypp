@@ -85,16 +85,20 @@ void yyerror(const char *);
  * The Grammar :o
  */
 %%
-program: 		elements {
+input:			program {
 					tree=new Node($1);
-					tree->setVal("<elements>");
+}
+program: 		elements {
+					$$=new ProgramNode($1);
+					$$->setVal("<elements>");
 }
 				| program elements {
-					tree=new Node($1,$2);
-					tree->setVal("<program> <elements>");
+					$$=new ProgramNode($1,$2);
+					$$->setVal("<program> <elements>");
 }
 
 ; /* do not ever even think about forgetting this stupid thing */ 
+
 elements:		vardec {
 					$$=new ElementsNode($1);
 					$$->setVal("<vardec>");

@@ -141,4 +141,12 @@ class ElementsNode : public Node
     ElementsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
+
+/** PROGRAM NODE TYPE **/
+class ProgramNode : public Node
+{
+  public:
+    ProgramNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
 #endif

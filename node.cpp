@@ -84,9 +84,8 @@ Node* Node::getRight()
 void Node::print()
 {
   cout << "\n*** PRINTING TREE ***" << endl << endl;
-  cout << "<program> --> " + sval << endl;
-  if(left) left->print();
-  if(right) left->print();
+  if (left) left->print();
+  if (right) left->print();
 }
 
 
@@ -183,6 +182,7 @@ Node* NewExpNode::getMiddle()
   return middle;
 }
 
+
 /* VARDEC NODE DEFINITIONS */
 
 void VarDecNode::print() {
@@ -191,10 +191,20 @@ void VarDecNode::print() {
   if (right) right->print();
 }
 
+
 /* ELEMENTS NODE DEFINITIONS */
 
 void ElementsNode::print() {
   cout << "<elements> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* PROGRAM NODE DEFINITIONS */
+
+void ProgramNode::print() {
+  cout << "<program> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
