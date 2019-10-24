@@ -39,6 +39,7 @@ void yyerror(const char *);
 %type<pnode> exp
 %type<pnode> type
 %type<pnode> simpletype
+%type<pnode> newexp
 
 %token<pnode> THIS 
 %token<pnode> ID 
@@ -47,6 +48,11 @@ void yyerror(const char *);
 %token<pnode> RBRACK
 %token<pnode> NUMBER
 %token<pnode> INT
+%token<pnode> NEW
+%token<pnode> LPAREN
+%token<pnode> RPAREN
+%token<pnode> READ
+%token<pnode> NULLT
 
 %precedence BRACK
 %precedence LBRACK
@@ -58,6 +64,7 @@ void yyerror(const char *);
 program: 		multibrackets { tree=$1; }
 				| exp { tree=$1; }
 				| type { tree=$1; }
+				| newexp { tree=$1; }
 ; /* do not ever even think about forgetting this stupid thing */ 
 
 exp:			name {
@@ -69,6 +76,14 @@ exp:			name {
 					$1->setVal(scanner.YYText());
 					$$=new ExpNode($1);
 					$$->setVal("NUMBER");
+}
+				| NULLT {
+					$$=new ExpNode();
+					$$->setVal("NULL");
+}
+				| READ LPAREN RPAREN {
+					$$=new ExpNode();
+					$$->setVal("READ LPAREN RPAREN");
 }
 
 newexp:			NEW ID LPAREN RPAREN {

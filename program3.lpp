@@ -78,6 +78,24 @@
 		val=yytext;
 		return INT;
 	}
+"new" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return NEW;
+	}
+"read" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return READ;
+	}
+"null" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return NULLT;
+	}
 
 	/* identifier */
 [_a-zA-Z]+[_0-9a-zA-Z]* {

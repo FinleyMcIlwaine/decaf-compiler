@@ -118,7 +118,7 @@ class SimpleTypeNode : public Node
 class NewExpNode : public Node
 {
   public:
-    SimpleTypeNode(Node *lf=0, Node *mi=0, Node *rt=0) : Node(lf,rt);
+    NewExpNode(Node *lf=0, Node *mi=0, Node *rt=0);
     void print();
     void setMiddle(Node *mi);
     Node* getMiddle();

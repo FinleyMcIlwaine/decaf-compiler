@@ -160,3 +160,25 @@ void TypeNode::print() {
 void SimpleTypeNode::print() {
   cout << "<simpletype> --> " + sval << endl;
 }
+
+
+/* NEWEXP NODE DEFINITIONS */
+
+NewExpNode::NewExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
+  middle=mi;
+}
+void NewExpNode::print() {
+  cout << "<newexp> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void NewExpNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* NewExpNode::getMiddle()
+{
+  return middle;
+}
+

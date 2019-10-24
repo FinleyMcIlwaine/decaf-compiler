@@ -52,7 +52,12 @@ extern int yydebug;
     RBRACK = 262,
     NUMBER = 263,
     INT = 264,
-    BRACK = 265
+    NEW = 265,
+    LPAREN = 266,
+    RPAREN = 267,
+    READ = 268,
+    NULLT = 269,
+    BRACK = 270
   };
 #endif
 
@@ -65,7 +70,7 @@ union YYSTYPE
 
 	Node *pnode;
 
-#line 69 "program3.tab.hpp" /* yacc.c:1909  */
+#line 74 "program3.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
