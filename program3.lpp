@@ -96,7 +96,13 @@
 		val=yytext;
 		return NULLT;
 	}
-
+"+" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return PLUS;
+}
+		
 	/* identifier */
 [_a-zA-Z]+[_0-9a-zA-Z]* {
 		curLine=yylineno;
