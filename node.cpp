@@ -182,3 +182,19 @@ Node* NewExpNode::getMiddle()
   return middle;
 }
 
+/* VARDEC NODE DEFINITIONS */
+
+void VarDecNode::print() {
+  cout << "<vardec> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* ELEMENTS NODE DEFINITIONS */
+
+void ElementsNode::print() {
+  cout << "<vardec> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+

@@ -125,4 +125,20 @@ class NewExpNode : public Node
   private:
     Node *middle;
 };
+
+/** VARDEC NODE TYPE **/
+class VarDecNode : public Node
+{
+  public:
+    VarDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** ELEMENTS NODE TYPE **/
+class ElementsNode : public Node
+{
+  public:
+    ElementsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
 #endif

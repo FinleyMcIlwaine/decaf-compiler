@@ -40,6 +40,9 @@ void yyerror(const char *);
 %type<pnode> type
 %type<pnode> simpletype
 %type<pnode> newexp
+%type<pnode> vardec
+%type<pnode> elements
+%type<pnode> program
 
 %token<pnode> THIS 
 %token<pnode> ID 
@@ -82,10 +85,39 @@ void yyerror(const char *);
  * The Grammar :o
  */
 %%
-program: 		multibrackets { tree=$1; }
-				| exp { tree=$1; }
-				| type { tree=$1; }
+program: 		elements {
+					tree=$1;
+}
+				| program elements {
+					tree=new Node($1,$2);
+}
+
 ; /* do not ever even think about forgetting this stupid thing */ 
+elements:		vardec {
+					$$=new ElementsNode($1);
+					$$->setVal("<vardec>");
+}
+				| exp SEMI {
+					$$=new ElementsNode($1);
+					$$->setVal("<exp> SEMI");
+}
+
+vardec:			type ID SEMI {
+					$$=new VarDecNode($1);
+					$$->setVal("<type> ID SEMI");
+}
+				| ID ID SEMI {
+					$$=new VarDecNode();
+					$$->setVal("ID ID SEMI");
+}
+				| type multibrackets ID SEMI {
+					$$=new VarDecNode($1,$2);
+					$$->setVal("<type> <multibrackets> ID SEMI");
+}
+				| ID multibrackets ID SEMI {
+					$$=new VarDecNode($2);
+					$$->setVal("ID <multibrackets> ID SEMI");
+}
 
 exp:			name {
 					$$=new ExpNode($1);
@@ -254,7 +286,7 @@ name: 			THIS {
 					$$=new NameNode($1); 
 					$$->setVal("THIS");
 }
-				| ID {
+				| ID %prec BRACK {
 					/* Make an ID node that will be the child of the NameNode */
 					$1=new IdNode();
 					$1->setVal(scanner.YYText());
