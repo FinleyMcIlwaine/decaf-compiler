@@ -1,0 +1,102 @@
+%{
+	// program3.lpp
+	// Finley McIlwaine
+	// COSC 4785 Fall 2019
+	// Program 02
+	// October 6, 2019
+	
+	#include<string>
+	#include<iostream>
+	#include "node.hpp"
+	#include "program3.tab.hpp"
+	using std::string;
+	using std::cout;
+	using std::endl;
+	using std::cerr;
+	extern int curLine;
+	extern int curColumn;
+	extern int len;
+	extern string val;
+ 	
+	void yyerror(const char *s)
+	{
+		cerr << s << endl;
+		return;
+	}
+%}
+
+%option outfile="program3_lex.cpp"
+%option yylineno
+%option noyywrap
+
+%%
+"this" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return THIS;
+	}
+"." {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return DOT;
+	}
+"[" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext; 
+		return LBRACK;
+	}
+"]" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return RBRACK;
+	}
+"(" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return LPAREN;
+	}
+")" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return RPAREN;
+	}
+[0-9]+	{
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return NUMBER;
+	}
+"int" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return INT;
+	}
+
+	/* identifier */
+[_a-zA-Z]+[_0-9a-zA-Z]* {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return ID;
+	}
+	/* space */
+[ ]	{
+		curColumn++;
+	}
+	/* tab */
+\t {
+		curColumn+=9-(curColumn%8);
+	}
+	/* newline */
+\n {
+		curColumn=1;
+		curLine++;
+	}
+%%
