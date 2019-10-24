@@ -54,8 +54,26 @@ void yyerror(const char *);
 %token<pnode> READ
 %token<pnode> NULLT
 %token<pnode> PLUS
+%token<pnode> MINUS
+%token<pnode> OR
+%token<pnode> TIMES
+%token<pnode> DIV
+%token<pnode> MOD
+%token<pnode> AND
+%token<pnode> EQ
+%token<pnode> NE
+%token<pnode> GE
+%token<pnode> LE
+%token<pnode> GT
+%token<pnode> LT
+%token<pnode> NOT
+%token<pnode> SEMI
 
-%left PLUS
+%precedence UOP
+
+%left PLUS MINUS OR
+%left TIMES DIV MOD AND
+%left EQ NE GE LE GT LT
 
 %precedence BRACK
 %precedence LBRACK
@@ -103,6 +121,70 @@ exp:			name {
 				| exp PLUS exp {
 					$$=new ExpNode($1,$3);
 					$$->setVal("<exp> PLUS <exp>");
+}
+				| exp MINUS exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> MINUS <exp>");
+}
+				| exp OR exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> OR <exp>");
+}
+				| exp TIMES exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> TIMES <exp>");
+}
+				| exp DIV exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> DIV <exp>");
+}
+				| exp MOD exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> MOD <exp>");
+}
+				| exp AND exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> AND <exp>");
+}
+
+/* RELATION OPERATORS */
+				| exp EQ exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> EQ <exp>");
+}
+				| exp NE exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> NE <exp>");
+}
+				| exp GE exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> GE <exp>");
+}
+				| exp LE exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> LE <exp>");
+}
+				| exp GT exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> GT <exp>");
+}
+				| exp LT exp {
+					$$=new ExpNode($1,$3);
+					$$->setVal("<exp> LT <exp>");
+}
+
+/* UNARY OPERATORS */
+				| MINUS exp %prec UOP {
+					$$=new ExpNode($2);
+					$$->setVal("MINUS <exp>");
+}
+				| PLUS exp %prec UOP {
+					$$=new ExpNode($2);
+					$$->setVal("PLUS <exp>");
+}
+				| NOT exp %prec UOP {
+					$$=new ExpNode($2);
+					$$->setVal("NOT <exp>");
 }
 
 newexp:			NEW ID LPAREN RPAREN {

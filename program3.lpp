@@ -96,13 +96,96 @@
 		val=yytext;
 		return NULLT;
 	}
+"!=" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return NE;
+	}
+"==" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return EQ;
+	}
+"<" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return LT;
+	}
+">" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return GT;
+	}
+"<=" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return LE;
+	}
+">=" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return GE;
+	}
+"&&" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return AND;
+	}
+"||" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return OR;
+	}
+"!" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return NOT;
+	}
 "+" {
 		curLine=yylineno;
 		len=yyleng;
-		val=yytext;
+		val=yytext;	
 		return PLUS;
-}
-		
+	}
+"-" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;	
+		return MINUS;
+	}
+"*" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;		
+		return TIMES;
+	}
+"/" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return DIV;
+	}
+"%" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return MOD;
+	}
+";" {
+		curLine=yylineno;
+		len=yyleng;
+		val=yytext;
+		return SEMI;
+	}
 	/* identifier */
 [_a-zA-Z]+[_0-9a-zA-Z]* {
 		curLine=yylineno;
