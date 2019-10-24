@@ -23,7 +23,6 @@ string val;
 int main(int argc, char **argv)
 {
   yyparse();
-  cout << "\n** PRINTING TREE **" << endl;
   tree->print();
   cout << endl;
   return 0;

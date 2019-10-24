@@ -83,7 +83,8 @@ Node* Node::getRight()
 
 void Node::print()
 {
-  cout << sval << endl;
+  cout << "\n*** PRINTING TREE ***" << endl << endl;
+  cout << "<program> --> " + sval << endl;
   if(left) left->print();
   if(right) left->print();
 }
@@ -193,7 +194,7 @@ void VarDecNode::print() {
 /* ELEMENTS NODE DEFINITIONS */
 
 void ElementsNode::print() {
-  cout << "<vardec> --> " + sval << endl;
+  cout << "<elements> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }

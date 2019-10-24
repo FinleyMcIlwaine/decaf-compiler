@@ -86,10 +86,12 @@ void yyerror(const char *);
  */
 %%
 program: 		elements {
-					tree=$1;
+					tree=new Node($1);
+					tree->setVal("<elements>");
 }
 				| program elements {
 					tree=new Node($1,$2);
+					tree->setVal("<program> <elements>");
 }
 
 ; /* do not ever even think about forgetting this stupid thing */ 
