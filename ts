@@ -1,1 +1,1 @@
-new hehfew[hojo];
+b[c][fewfw][f];

@@ -719,15 +719,12 @@ case 4:
 YY_RULE_SETUP
 #line 44 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
 		return RBRACK;
 	}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 50 "program3.lpp"
+#line 47 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -737,7 +734,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 56 "program3.lpp"
+#line 53 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -747,16 +744,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 62 "program3.lpp"
+#line 59 "program3.lpp"
 {
 		string num(yytext);
-		addVal(num);
+		yylval.pnode=new NumberNode();
+		yylval.pnode->setVal(num);
 		return NUMBER;
 	}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 67 "program3.lpp"
+#line 65 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -766,7 +764,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 73 "program3.lpp"
+#line 71 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -776,7 +774,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 79 "program3.lpp"
+#line 77 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -786,7 +784,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 85 "program3.lpp"
+#line 83 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -796,7 +794,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 91 "program3.lpp"
+#line 89 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -806,7 +804,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 97 "program3.lpp"
+#line 95 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -816,7 +814,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 103 "program3.lpp"
+#line 101 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -826,7 +824,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 109 "program3.lpp"
+#line 107 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -836,7 +834,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 115 "program3.lpp"
+#line 113 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -846,7 +844,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 121 "program3.lpp"
+#line 119 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -856,7 +854,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 127 "program3.lpp"
+#line 125 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -866,7 +864,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 133 "program3.lpp"
+#line 131 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -876,7 +874,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 139 "program3.lpp"
+#line 137 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -886,7 +884,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 145 "program3.lpp"
+#line 143 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -896,7 +894,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 151 "program3.lpp"
+#line 149 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -906,7 +904,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 157 "program3.lpp"
+#line 155 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -916,7 +914,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 163 "program3.lpp"
+#line 161 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -926,7 +924,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 169 "program3.lpp"
+#line 167 "program3.lpp"
 {
 		curLine=yylineno;
 		len=yyleng;
@@ -936,31 +934,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 175 "program3.lpp"
+#line 173 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
 		return SEMI;
 	}
 	YY_BREAK
 /* identifier */
 case 27:
 YY_RULE_SETUP
-#line 182 "program3.lpp"
+#line 177 "program3.lpp"
 {
 		string id(yytext);
-		cout << "\n\nADDING VALUE : " << id << "\n\n";
-		addVal(id);
-		concatToLine(yytext);
-		incColNum(yyleng);
+    cout << "id is : " + id + "\n\n";
+		yylval.pnode=new IdNode();
+		yylval.pnode->setVal(id);
 		return ID;
 	}
 	YY_BREAK
 /* space */
 case 28:
 YY_RULE_SETUP
-#line 191 "program3.lpp"
+#line 185 "program3.lpp"
 {
 		curColumn++;
 	}
@@ -968,7 +962,7 @@ YY_RULE_SETUP
 /* tab */
 case 29:
 YY_RULE_SETUP
-#line 195 "program3.lpp"
+#line 189 "program3.lpp"
 {
 		curColumn+=9-(curColumn%8);
 	}
@@ -977,7 +971,7 @@ YY_RULE_SETUP
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 199 "program3.lpp"
+#line 193 "program3.lpp"
 {
 		curColumn=1;
 		curLine++;
@@ -985,10 +979,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 203 "program3.lpp"
+#line 197 "program3.lpp"
 ECHO;
 	YY_BREAK
-#line 992 "program3_lex.cpp"
+#line 986 "program3_lex.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1895,7 +1889,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 203 "program3.lpp"
+#line 197 "program3.lpp"
 
 
 

@@ -1,203 +1,191 @@
 %{
-	// program3.lpp
-	// Finley McIlwaine
-	// COSC 4785 Fall 2019
-	// Program 02
-	// October 6, 2019
-	
-	#include<string>
-	#include<iostream>
-	#include "MyScanner.hpp"
-	#include "node.hpp"
-	#include "program3.tab.hpp"
-	using std::string;
-	using std::cout;
-	using std::endl;
-	using std::cerr;
-	extern int curLine;
-	extern int curColumn;
-	extern int len;
-	extern string val;
- 	
-	void yyerror(const char *s)
-	{
-		cerr << s << endl;
-		return;
-	}
+  // program3.lpp
+  // Finley McIlwaine
+  // COSC 4785 Fall 2019
+  // Program 02
+  // October 6, 2019
+
+#include<string>
+#include<iostream>
+#include "MyScanner.hpp"
+#include "node.hpp"
+#include "program3.tab.hpp"
+  using std::string;
+  using std::cout;
+  using std::endl;
+  using std::cerr;
+  extern int curLine;
+  extern int curColumn;
+  extern int len;
+  extern string val;
+
+  void yyerror(const char *s)
+  {
+    cerr << s << endl;
+    return;
+  }
 %}
 
-%option outfile="program3_lex.cpp"
-%option yylineno
-%option noyywrap
-%option yyclass="MyScanner"
+  %option outfile="program3_lex.cpp"
+  %option yylineno
+  %option noyywrap
+  %option yyclass="MyScanner"
 
 %%
 "this" {
-		return THIS;
-	}
+    return THIS;
+}
 "." {
-		return DOT;
-	}
+  return DOT;
+}
 "[" {
-		return LBRACK;
-	}
+  return LBRACK;
+}
 "]" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return RBRACK;
-	}
+  return RBRACK;
+}
 "(" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return LPAREN;
-	}
+  return LPAREN;
+}
 ")" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return RPAREN;
-	}
-[0-9]+	{
-		string num(yytext);
-		addVal(num);
-		return NUMBER;
-	}
+  return RPAREN;
+}
+[0-9]+ {
+  string num(yytext);
+  yylval.pnode=new NumberNode();
+  yylval.pnode->setVal(num);
+  return NUMBER;
+}
 "int" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return INT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return INT;
+}
 "new" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return NEW;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return NEW;
+}
 "read" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return READ;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return READ;
+}
 "null" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return NULLT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return NULLT;
+}
 "!=" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return NE;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return NE;
+}
 "==" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return EQ;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return EQ;
+}
 "<" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return LT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return LT;
+}
 ">" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return GT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return GT;
+}
 "<=" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return LE;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return LE;
+}
 ">=" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return GE;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return GE;
+}
 "&&" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return AND;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return AND;
+}
 "||" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return OR;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return OR;
+}
 "!" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return NOT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return NOT;
+}
 "+" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return PLUS;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return PLUS;
+}
 "-" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return MINUS;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return MINUS;
+}
 "*" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;		
-		return TIMES;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;		
+  return TIMES;
+}
 "/" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return DIV;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return DIV;
+}
 "%" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return MOD;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return MOD;
+}
 ";" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return SEMI;
-	}
-	/* identifier */
+  return SEMI;
+}
+/* identifier */
 [_a-zA-Z]+[_0-9a-zA-Z]* {
-		string id(yytext);
-		cout << "\n\nADDING VALUE : " << id << "\n\n";
-		addVal(id);
-		concatToLine(yytext);
-		incColNum(yyleng);
-		return ID;
-	}
-	/* space */
+  string id(yytext);
+  cout << "id is : " + id + "\n\n";
+  yylval.pnode=new IdNode();
+  yylval.pnode->setVal(id);
+  return ID;
+}
+/* space */
 [ ]	{
-		curColumn++;
-	}
-	/* tab */
+  curColumn++;
+}
+/* tab */
 \t {
-		curColumn+=9-(curColumn%8);
-	}
-	/* newline */
+  curColumn+=9-(curColumn%8);
+}
+/* newline */
 \n {
-		curColumn=1;
-		curLine++;
-	}
+  curColumn=1;
+  curLine++;
+}
 %%

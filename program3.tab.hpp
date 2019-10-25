@@ -84,9 +84,10 @@ union YYSTYPE
 {
 #line 28 "program3.ypp" /* yacc.c:1909  */
 
-	Node *pnode;
+    Node *pnode;
+  
 
-#line 90 "program3.tab.hpp" /* yacc.c:1909  */
+#line 91 "program3.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
