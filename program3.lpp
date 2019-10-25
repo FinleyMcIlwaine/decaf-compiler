@@ -181,6 +181,7 @@
 	/* identifier */
 [_a-zA-Z]+[_0-9a-zA-Z]* {
 		string id(yytext);
+		cout << "\n\nADDING VALUE : " << id << "\n\n";
 		addVal(id);
 		concatToLine(yytext);
 		incColNum(yyleng);

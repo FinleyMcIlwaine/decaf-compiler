@@ -14,7 +14,9 @@ void MyScanner::addVal(string val)
 
 string MyScanner::getVal(int i)
 {
-  return values.at(i-1);
+  i--;
+  string str(values[i]);
+  return str;
 }
 
 void MyScanner::concatToLine(char* chars)
