@@ -1,6 +1,5 @@
-#line 2 "program3_lex.cpp"
 
-#line 4 "program3_lex.cpp"
+#line 3 "lex.yy.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -177,20 +176,7 @@ extern yy_size_t yyleng;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
-    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
-     *       access to the local variable yy_act. Since yyless() is a macro, it would break
-     *       existing scanners that call yyless() from OUTSIDE yylex. 
-     *       One obvious solution it to make yy_act a global. I tried that, and saw
-     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
-     *       normally declared as a register variable-- so it is not worth it.
-     */
-    #define  YY_LESS_LINENO(n) \
-            do { \
-                int yyl;\
-                for ( yyl = n; yyl < yyleng; ++yyl )\
-                    if ( yytext[yyl] == '\n' )\
-                        --yylineno;\
-            }while(0)
+    #define YY_LESS_LINENO(n)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -318,7 +304,6 @@ void yyfree (void *  );
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
 /* Begin user sect3 */
-#define YY_SKIP_YYWRAP
 
 typedef unsigned char YY_CHAR;
 
@@ -326,15 +311,6 @@ typedef unsigned char YY_CHAR;
 #define YY_INTERACTIVE
 
 #include <FlexLexer.h>
-
-int yyFlexLexer::yywrap() { return 1; }
-int yyFlexLexer::yylex()
-	{
-	LexerError( "yyFlexLexer::yylex invoked but %option yyclass used" );
-	return 0;
-	}
-
-#define YY_DECL int MyScanner::yylex()
 
 /* Done after the current pattern has been matched and before the
  * corresponding action - sets up yytext.
@@ -459,12 +435,6 @@ static yyconst flex_int16_t yy_chk[115] =
        53,   53,   53,   53
     } ;
 
-/* Table of booleans, true if rule could match eol. */
-static yyconst flex_int32_t yy_rule_can_match_eol[32] =
-    {   0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,     };
-
 /* The intent behind this definition is that it'll catch
  * any uses of REJECT which flex missed.
  */
@@ -474,32 +444,36 @@ static yyconst flex_int32_t yy_rule_can_match_eol[32] =
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "program3.lpp"
 #line 2 "program3.lpp"
-	// program3.lpp
-	// Finley McIlwaine
-	// COSC 4785 Fall 2019
-	// Program 02
-	// October 6, 2019
-	
-	#include<string>
-	#include<iostream>
-	#include "MyScanner.hpp"
-	#include "node.hpp"
-	#include "program3.tab.hpp"
-	using std::string;
-	using std::cout;
-	using std::endl;
-	using std::cerr;
-	extern int curLine;
-	extern int curColumn;
-	extern int len;
-	extern string val;
- 	
-	void yyerror(const char *s)
-	{
-		cerr << s << endl;
-		return;
-	}
-#line 503 "program3_lex.cpp"
+  // program3.lpp
+  // Finley McIlwaine
+  // COSC 4785 Fall 2019
+  // Program 02
+  // October 6, 2019
+
+#include<string>
+#include<iostream>
+#include "MyScanner.hpp"
+#include "node.hpp"
+#include "program3.tab.hpp"
+  using std::string;
+  using std::cout;
+  using std::endl;
+  using std::cerr;
+  extern int curLine;
+  extern int curColumn;
+  extern int len;
+  extern string val;
+
+  void yyerror(const char *s)
+  {
+    cerr << s << endl;
+    return;
+  }
+%option outfile="program3_lex.cpp"
+%option yylineno
+%option noyywrap
+%option yyclass="MyScanner"
+#line 477 "lex.yy.cc"
 
 #define INITIAL 0
 
@@ -601,7 +575,7 @@ YY_DECL
     
 #line 34 "program3.lpp"
 
-#line 605 "program3_lex.cpp"
+#line 579 "lex.yy.cc"
 
 	if ( !(yy_init) )
 		{
@@ -673,16 +647,6 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
-		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
-			{
-			yy_size_t yyl;
-			for ( yyl = 0; yyl < yyleng; ++yyl )
-				if ( yytext[yyl] == '\n' )
-					   
-    yylineno++;
-;
-			}
-
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -698,291 +662,281 @@ case 1:
 YY_RULE_SETUP
 #line 35 "program3.lpp"
 {
-		return THIS;
-	}
+    return THIS;
+}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 38 "program3.lpp"
 {
-		return DOT;
-	}
+  return DOT;
+}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 41 "program3.lpp"
 {
-		return LBRACK;
-	}
+  return LBRACK;
+}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 44 "program3.lpp"
 {
-		return RBRACK;
-	}
+  return RBRACK;
+}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 47 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return LPAREN;
-	}
+  return LPAREN;
+}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 53 "program3.lpp"
+#line 50 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return RPAREN;
-	}
+  return RPAREN;
+}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 59 "program3.lpp"
+#line 53 "program3.lpp"
 {
-		string num(yytext);
-		yylval.pnode=new NumberNode();
-		yylval.pnode->setVal(num);
-		return NUMBER;
-	}
+  string num(yytext);
+  yylval.pnode=new NumberNode();
+  yylval.pnode->setVal(num);
+  return NUMBER;
+}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 65 "program3.lpp"
+#line 59 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return INT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return INT;
+}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 71 "program3.lpp"
+#line 65 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return NEW;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return NEW;
+}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 77 "program3.lpp"
+#line 71 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return READ;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return READ;
+}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 83 "program3.lpp"
+#line 77 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return NULLT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return NULLT;
+}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 89 "program3.lpp"
+#line 83 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return NE;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return NE;
+}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 95 "program3.lpp"
+#line 89 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return EQ;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return EQ;
+}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 101 "program3.lpp"
+#line 95 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return LT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return LT;
+}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 107 "program3.lpp"
+#line 101 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return GT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return GT;
+}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 113 "program3.lpp"
+#line 107 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return LE;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return LE;
+}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 119 "program3.lpp"
+#line 113 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return GE;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return GE;
+}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 125 "program3.lpp"
+#line 119 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return AND;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return AND;
+}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 131 "program3.lpp"
+#line 125 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return OR;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return OR;
+}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 137 "program3.lpp"
+#line 131 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return NOT;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return NOT;
+}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 143 "program3.lpp"
+#line 137 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return PLUS;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return PLUS;
+}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 149 "program3.lpp"
+#line 143 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;	
-		return MINUS;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;	
+  return MINUS;
+}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 155 "program3.lpp"
+#line 149 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;		
-		return TIMES;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;		
+  return TIMES;
+}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 161 "program3.lpp"
+#line 155 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return DIV;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return DIV;
+}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 167 "program3.lpp"
+#line 161 "program3.lpp"
 {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
-		return MOD;
-	}
+  curLine=yylineno;
+  len=yyleng;
+  val=yytext;
+  return MOD;
+}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 173 "program3.lpp"
+#line 167 "program3.lpp"
 {
-		return SEMI;
-	}
+  return SEMI;
+}
 	YY_BREAK
-/* identifier */
 case 27:
+YY_RULE_SETUP
+#line 170 "program3.lpp"
+{
+  string id(yytext);
+  cout << "id is : " + id + "\n\n";
+  yylval.pnode=new IdNode();
+  yylval.pnode->setVal(id);
+  return ID;
+}
+	YY_BREAK
+case 28:
 YY_RULE_SETUP
 #line 177 "program3.lpp"
 {
-		string id(yytext);
-    cout << "id is : " + id + "\n\n";
-		yylval.pnode=new IdNode();
-		yylval.pnode->setVal(id);
-		return ID;
-	}
+  curColumn++;
+}
 	YY_BREAK
-/* space */
-case 28:
-YY_RULE_SETUP
-#line 185 "program3.lpp"
-{
-		curColumn++;
-	}
-	YY_BREAK
-/* tab */
 case 29:
 YY_RULE_SETUP
-#line 189 "program3.lpp"
+#line 180 "program3.lpp"
 {
-		curColumn+=9-(curColumn%8);
-	}
+  curColumn+=9-(curColumn%8);
+}
 	YY_BREAK
-/* newline */
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 193 "program3.lpp"
+#line 183 "program3.lpp"
 {
-		curColumn=1;
-		curLine++;
-	}
+  curColumn=1;
+  curLine++;
+}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 197 "program3.lpp"
+#line 187 "program3.lpp"
 ECHO;
 	YY_BREAK
-#line 986 "program3_lex.cpp"
+#line 940 "lex.yy.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1432,10 +1386,6 @@ int yyFlexLexer::yy_get_next_buffer()
 
 	*--yy_cp = (char) c;
 
-    if ( c == '\n' ){
-        --yylineno;
-    }
-
 	(yytext_ptr) = yy_bp;
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
@@ -1504,11 +1454,6 @@ int yyFlexLexer::yy_get_next_buffer()
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
-
-	if ( c == '\n' )
-		   
-    yylineno++;
-;
 
 	return c;
 }
@@ -1889,7 +1834,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 197 "program3.lpp"
+#line 187 "program3.lpp"
 
 
 

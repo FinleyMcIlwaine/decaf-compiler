@@ -26,10 +26,10 @@
   }
 %}
 
-  %option outfile="program3_lex.cpp"
-  %option yylineno
-  %option noyywrap
-  %option yyclass="MyScanner"
+%option outfile="program3_lex.cpp"
+%option yylineno
+%option noyywrap
+%option yyclass="MyScanner"
 
 %%
 "this" {
@@ -167,7 +167,6 @@
 ";" {
   return SEMI;
 }
-/* identifier */
 [_a-zA-Z]+[_0-9a-zA-Z]* {
   string id(yytext);
   cout << "id is : " + id + "\n\n";
@@ -175,15 +174,12 @@
   yylval.pnode->setVal(id);
   return ID;
 }
-/* space */
 [ ]	{
   curColumn++;
 }
-/* tab */
 \t {
   curColumn+=9-(curColumn%8);
 }
-/* newline */
 \n {
   curColumn=1;
   curLine++;
