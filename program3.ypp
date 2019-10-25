@@ -133,10 +133,8 @@ vardec:			type ID SEMI {
 }
 				| ID multibrackets ID SEMI {
 					$1=new IdNode();
-					cout << "\n\ngetval 1: "<< scanner.getVal(1) << "\n\n";
 					$1->setVal(scanner.getVal(1));
 					$3=new IdNode();
-					cout << "\n\ngetval 2: "<< scanner.getVal(2) << "\n\n";
 					$3->setVal(scanner.getVal(2));
 					$$=new VarDecNode($1,$2,$3);
 					$$->setVal("ID <multibrackets> ID SEMI");
@@ -149,9 +147,10 @@ exp:			name {
 }
 				| NUMBER {
 					$1=new NumberNode();
-					$1->setVal(scanner.YYText());
+					$1->setVal(scanner.getVal(1));
 					$$=new ExpNode($1);
 					$$->setVal("NUMBER");
+					scanner.clearVals();
 }
 				| NULLT {
 					$$=new ExpNode();
@@ -245,9 +244,10 @@ exp:			name {
 
 newexp:			NEW ID LPAREN RPAREN {
 					$2=new IdNode();
-					$2->setVal(scanner.YYText());
+					$2->setVal(scanner.getVal(1));
 					$$=new NewExpNode($2);
 					$$->setVal("NEW ID LPAREN RPAREN");
+					scanner.clearVals();
 }
 				| NEW simpletype {
 					$$=new NewExpNode($2);
@@ -259,9 +259,10 @@ newexp:			NEW ID LPAREN RPAREN {
 }
 				| NEW ID bracketexps {
 					$1=new IdNode();
-					$1->setVal(scanner.YYText());
+					$1->setVal(scanner.getVal(1));
 					$$=new NewExpNode($1,$2);
 					$$->setVal("NEW ID <bracketexps>");
+					scanner.clearVals();
 }
 				| NEW simpletype bracketexps multibrackets {
 					$$=new NewExpNode($2,$3,$4);
@@ -269,9 +270,10 @@ newexp:			NEW ID LPAREN RPAREN {
 }
 				| NEW ID bracketexps multibrackets {
 					$2=new IdNode();
-					$2->setVal(scanner.YYText());
+					$2->setVal(scanner.getVal(1));
 					$$=new NewExpNode($2,$3,$4);
 					$$->setVal("NEW <simpletype> <bracketexps> <multibrackets>");
+					scanner.clearVals();
 }
 					
 
@@ -317,16 +319,18 @@ name: 			THIS {
 				| ID %prec BRACK {
 					/* Make an ID node that will be the child of the NameNode */
 					$1=new IdNode();
-					$1->setVal(scanner.YYText());
+					$1->setVal(scanner.getVal(1));
 					$$=new NameNode($1);
 					$$->setVal("ID");
+					scanner.clearVals();
 }
 				| name DOT ID {
 					/* Make an ID node to be the child of this name node */
 					$3=new IdNode();
-					$3->setVal(scanner.YYText());
+					$3->setVal(scanner.getVal(1));
 					$$=new NameNode($1,$3);
 					$$->setVal("<name> DOT ID");
+					scanner.clearVals();
 }
 				| name bracketexps %prec BRACK {
 					$$=new NameNode($1,$2);

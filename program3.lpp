@@ -60,9 +60,8 @@
 		return RPAREN;
 	}
 [0-9]+	{
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
+		string num(yytext);
+		addVal(num);
 		return NUMBER;
 	}
 "int" {
