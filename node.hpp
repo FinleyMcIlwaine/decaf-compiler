@@ -130,8 +130,12 @@ class NewExpNode : public Node
 class VarDecNode : public Node
 {
   public:
-    VarDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    VarDecNode(Node *lf=0, Node *mi=0, Node *rt=0);
     void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
 };
 
 /** ELEMENTS NODE TYPE **/

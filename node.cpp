@@ -185,10 +185,22 @@ Node* NewExpNode::getMiddle()
 
 /* VARDEC NODE DEFINITIONS */
 
+VarDecNode::VarDecNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
+  middle=mi;
+}
 void VarDecNode::print() {
   cout << "<vardec> --> " + sval << endl;
   if (left) left->print();
+  if (middle) middle->print();
   if (right) right->print();
+}
+void VarDecNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* VarDecNode::getMiddle()
+{
+  return middle;
 }
 
 

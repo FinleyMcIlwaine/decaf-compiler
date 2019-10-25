@@ -7,6 +7,7 @@
 	
 	#include<string>
 	#include<iostream>
+	#include "MyScanner.hpp"
 	#include "node.hpp"
 	#include "program3.tab.hpp"
 	using std::string;
@@ -28,6 +29,7 @@
 %option outfile="program3_lex.cpp"
 %option yylineno
 %option noyywrap
+%option yyclass="MyScanner"
 
 %%
 "this" {

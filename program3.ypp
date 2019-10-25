@@ -109,19 +109,31 @@ elements:		vardec {
 }
 
 vardec:			type ID SEMI {
-					$$=new VarDecNode($1);
+					$2=new IdNode();
+					$2->setVal(scanner.YYText());
+					$$=new VarDecNode($1,$2);
 					$$->setVal("<type> ID SEMI");
 }
 				| ID ID SEMI {
-					$$=new VarDecNode();
+					$1=new IdNode();
+					$1->setVal(scanner.YYText());
+					$2=new IdNode();
+					$2->setVal(scanner.YYText());
+					$$=new VarDecNode($1,$2);
 					$$->setVal("ID ID SEMI");
 }
 				| type multibrackets ID SEMI {
-					$$=new VarDecNode($1,$2);
+					$3=new IdNode();
+					$3->setVal(scanner.YYText());
+					$$=new VarDecNode($1,$2,$3);
 					$$->setVal("<type> <multibrackets> ID SEMI");
 }
 				| ID multibrackets ID SEMI {
-					$$=new VarDecNode($2);
+					$1=new IdNode();
+					$1->setVal(scanner.YYText());
+					$3=new IdNode();
+					$3->setVal(scanner.YYText());
+					$$=new VarDecNode($1,$2,$3);
 					$$->setVal("ID <multibrackets> ID SEMI");
 }
 
@@ -226,7 +238,9 @@ exp:			name {
 }
 
 newexp:			NEW ID LPAREN RPAREN {
-					$$=new NewExpNode();
+					$2=new IdNode();
+					$2->setVal(scanner.YYText());
+					$$=new NewExpNode($2);
 					$$->setVal("NEW ID LPAREN RPAREN");
 }
 				| NEW simpletype {
@@ -248,7 +262,9 @@ newexp:			NEW ID LPAREN RPAREN {
 					$$->setVal("NEW <simpletype> <bracketexps> <multibrackets>");
 }
 				| NEW ID bracketexps multibrackets {
-					$$=new NewExpNode($3,$4);
+					$2=new IdNode();
+					$2->setVal(scanner.YYText());
+					$$=new NewExpNode($2,$3,$4);
 					$$->setVal("NEW <simpletype> <bracketexps> <multibrackets>");
 }
 					
