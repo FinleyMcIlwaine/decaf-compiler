@@ -7,14 +7,14 @@
 #include <iostream>
 #include "node.hpp"
 #include "program3.tab.hpp"
-#include <FlexLexer.h>
+#include "MyScanner.hpp"
 #include <string>
 
 using std::cout;
 using std::endl;
 using std::string;
 
-yyFlexLexer scanner;
+MyScanner scanner;
 Node *tree;
 
 int curLine, curColumn, len;

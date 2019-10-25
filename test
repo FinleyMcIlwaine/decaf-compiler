@@ -1,4 +1,4 @@
 int ident;
-ident iden;
-int[][][] hey;
-hi[][] there;
+int newid;
+hey[][] otherid;
+int [][] hihi;

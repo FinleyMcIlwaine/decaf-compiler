@@ -1,4 +1,8 @@
-
+// node.cpp
+// Finley McIlwaine
+// COSC4785, Prof. Buckner
+// Program 3
+// October 27, 2019
 
 #include "node.hpp"
 

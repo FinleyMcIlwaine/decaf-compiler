@@ -33,21 +33,12 @@
 
 %%
 "this" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
 		return THIS;
 	}
 "." {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
 		return DOT;
 	}
 "[" {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext; 
 		return LBRACK;
 	}
 "]" {
@@ -190,9 +181,10 @@
 	}
 	/* identifier */
 [_a-zA-Z]+[_0-9a-zA-Z]* {
-		curLine=yylineno;
-		len=yyleng;
-		val=yytext;
+		string id(yytext);
+		addVal(id);
+		concatToLine(yytext);
+		incColNum(yyleng);
 		return ID;
 	}
 	/* space */

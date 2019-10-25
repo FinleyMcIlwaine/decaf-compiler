@@ -25,7 +25,7 @@ program3.tab.hpp: program3.ypp node.hpp
 
 prog3:  program3.tab.hpp program3.tab.cpp MyScanner.hpp node.hpp node.cpp program3_lex.cpp program3.cpp
 	@echo -e "\\n"
-	${CXX} ${CXXFLAGS} program3.tab.cpp program3.cpp node.cpp program3_lex.cpp -o program3
+	${CXX} ${CXXFLAGS} program3.tab.cpp program3.cpp node.cpp program3_lex.cpp MyScanner.cpp -o program3
 	@echo -e "\\n"
 
 tidy:
