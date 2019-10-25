@@ -5,6 +5,7 @@
 #include <FlexLexer.h>
 #endif
 
+#include "Error.hpp"
 #include<string>
 #include<vector>
 
@@ -15,24 +16,17 @@ class MyScanner : public yyFlexLexer
 {
   public:
     virtual int yylex();
-    void addVal(string);
-    string getVal(int);
-    void concatToLine(char*);
     string getLine();
-    void resetCol();
-    void setColNum(int);
-    void incColNum(int);
-    void incLineNum();
-    void setLineNum(int);
     int getColNum();
     int getLineNum();
-    void clearVals();
+    void read(char*);
+    void printErrors();
   private:
+    vector<Error> errors;
     string line;
-    vector<string> values;
     vector<string> lines;
-    int columnNo;
-    int lineNo;
+    int columnNumber;
+    int lineNumber;
 };
 
 #endif

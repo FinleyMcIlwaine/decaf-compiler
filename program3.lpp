@@ -1,29 +1,26 @@
 %{
-  // program3.lpp
-  // Finley McIlwaine
-  // COSC 4785 Fall 2019
-  // Program 02
-  // October 6, 2019
+// program3.lpp
+// Finley McIlwaine
+// COSC 4785 Fall 2019
+// Program 02
+// October 6, 2019
 
 #include<string>
 #include<iostream>
 #include "MyScanner.hpp"
 #include "node.hpp"
 #include "program3.tab.hpp"
-  using std::string;
-  using std::cout;
-  using std::endl;
-  using std::cerr;
-  extern int curLine;
-  extern int curColumn;
-  extern int len;
-  extern string val;
 
-  void yyerror(const char *s)
-  {
-    cerr << s << endl;
-    return;
-  }
+using std::string;
+using std::cout;
+using std::endl;
+using std::cerr;
+
+void yyerror(const char *s)
+{
+  cerr << s << endl;
+  return;
+}
 %}
 
 %option outfile="program3_lex.cpp"
@@ -33,155 +30,132 @@
 
 %%
 "this" {
-    return THIS;
+  read(yytext);
+  return THIS;
 }
 "." {
+  read(yytext);
   return DOT;
 }
 "[" {
+  read(yytext);
   return LBRACK;
 }
 "]" {
+  read(yytext);
   return RBRACK;
 }
 "(" {
+  read(yytext);
   return LPAREN;
 }
 ")" {
+  read(yytext);
   return RPAREN;
 }
 [0-9]+ {
+  read(yytext);
   string num(yytext);
   yylval.pnode=new NumberNode();
   yylval.pnode->setVal(num);
   return NUMBER;
 }
 "int" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;
+  read(yytext);
   return INT;
 }
 "new" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;
+  read(yytext);
   return NEW;
 }
 "read" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;
+  read(yytext);
   return READ;
 }
 "null" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;
+  read(yytext);
   return NULLT;
 }
 "!=" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return NE;
 }
 "==" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return EQ;
 }
 "<" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return LT;
 }
 ">" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return GT;
 }
 "<=" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return LE;
 }
 ">=" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return GE;
 }
 "&&" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return AND;
 }
 "||" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return OR;
 }
 "!" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return NOT;
 }
 "+" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return PLUS;
 }
 "-" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;	
+  read(yytext);
   return MINUS;
 }
 "*" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;		
+  read(yytext);
   return TIMES;
 }
 "/" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;
+  read(yytext);
   return DIV;
 }
 "%" {
-  curLine=yylineno;
-  len=yyleng;
-  val=yytext;
+  read(yytext);
   return MOD;
 }
 ";" {
+  read(yytext);
   return SEMI;
 }
 [_a-zA-Z]+[_0-9a-zA-Z]* {
+  read(yytext);
   string id(yytext);
-  cout << "id is : " + id + "\n\n";
   yylval.pnode=new IdNode();
   yylval.pnode->setVal(id);
   return ID;
 }
 [ ]	{
-  curColumn++;
+  line+=" ";
+  columnNumber++;
 }
 \t {
-  curColumn+=9-(curColumn%8);
+  line+="\t";
+  columnNumber+=9-(columnNumber%8);
 }
 \n {
-  curColumn=1;
-  curLine++;
+  cout << line << endl;
+  lines.push_back(line);
+  line="";
+  columnNumber=1;
+  lineNumber++;
 }
 %%

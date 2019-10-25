@@ -6,61 +6,26 @@
 
 #include "MyScanner.hpp"
 #include<iostream>
-using std::cout;
-void MyScanner::addVal(string val)
-{
-  values.push_back(val);
-}
-
-string MyScanner::getVal(int i)
-{
-  i--;
-  string str(values[i]);
-  return str;
-}
-
-void MyScanner::concatToLine(char* chars)
-{
-  string str(chars);
-  line+=str;
-}
 
 string MyScanner::getLine()
 {
   return line;
 }
 
-void MyScanner::setColNum(int col)
-{
-  columnNo=col;
-}
-
-void MyScanner::incColNum(int inc=1)
-{
-  columnNo+=inc;
-}
-
-void MyScanner::incLineNum()
-{
-  lineNo++;
-}
-
-void MyScanner::setLineNum(int ln)
-{
-  lineNo=ln;
-}
-
 int MyScanner::getColNum()
 {
-  return columnNo;
+  return columnNumber;
 }
 
 int MyScanner::getLineNum()
 {
-  return lineNo;
+  return lineNumber;
 }
 
-void MyScanner::clearVals()
+void MyScanner::read(char* txt)
 {
-  values.clear();
+  // Make a copy!!
+  string str(txt);
+  line+=str;
+  columnNumber+=yyleng;
 }

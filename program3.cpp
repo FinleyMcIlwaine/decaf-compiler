@@ -17,12 +17,10 @@ using std::string;
 MyScanner scanner;
 Node *tree;
 
-int curLine, curColumn, len;
-string val;
-
 int main(int argc, char **argv)
 {
   yyparse();
+  scanner.printErrors();
   tree->print();
   cout << endl;
   return 0;
