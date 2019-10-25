@@ -5,7 +5,6 @@
 // October 27, 2019
 
 #include "MyScanner.hpp"
-#include<iostream>
 
 string MyScanner::getLine()
 {
@@ -28,4 +27,18 @@ void MyScanner::read(char* txt)
   string str(txt);
   line+=str;
   columnNumber+=yyleng;
+}
+
+void MyScanner::printErrors()
+{
+  for(Error &err : errors)
+  {
+    err.print();
+  }
+  errors.clear();
+}
+
+void MyScanner::addError(Error err)
+{
+  errors.push_back(err);
 }

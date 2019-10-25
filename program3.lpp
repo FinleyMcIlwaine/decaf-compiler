@@ -1,9 +1,9 @@
 %{
-// program3.lpp
-// Finley McIlwaine
-// COSC 4785 Fall 2019
-// Program 02
-// October 6, 2019
+  // program3.lpp
+  // Finley McIlwaine
+  // COSC 4785 Fall 2019
+  // Program 02
+  // October 6, 2019
 
 #include<string>
 #include<iostream>
@@ -11,10 +11,10 @@
 #include "node.hpp"
 #include "program3.tab.hpp"
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::cerr;
+  using std::string;
+  using std::cout;
+  using std::endl;
+  using std::cerr;
 
 void yyerror(const char *s)
 {
@@ -28,7 +28,54 @@ void yyerror(const char *s)
 %option noyywrap
 %option yyclass="MyScanner"
 
+%x C_COMMENT
+%x CPP_COMMENT
+%x ERROR
+
 %%
+  /* C-style comment stuff */
+\/\* {
+  read(yytext);
+  BEGIN(C_COMMENT);
+}
+<C_COMMENT>\n {
+  cout << line << endl;
+  lines.push_back(line);
+  line="";
+  columnNumber=1;
+  lineNumber++;
+}
+<C_COMMENT>\t {
+  line+="\t";
+  columnNumber+=9-(columnNumber%8);
+}
+<C_COMMENT>. {
+  read(yytext);
+}
+<C_COMMENT>\*\/ {
+  read(yytext);
+  BEGIN(0);
+}
+  /* CPP-style comment stuff */
+\/\/ {
+  read(yytext);
+  BEGIN(CPP_COMMENT);
+}
+<CPP_COMMENT>\t {
+  line+="\t";
+  columnNumber+=9-(columnNumber%8);
+}
+<CPP_COMMENT>[^\n] {
+  read(yytext);
+}
+<CPP_COMMENT>\n {
+  cout << line << endl;
+  lines.push_back(line);
+  line="";
+  columnNumber=1;
+  lineNumber++;
+  BEGIN(0);
+}
 "this" {
   read(yytext);
   return THIS;
@@ -133,6 +180,7 @@ void yyerror(const char *s)
   return MOD;
 }
 ";" {
+  cout << "\n\nSEMI at column " << columnNumber << " and line number " << lineNumber << "\n\n";
   read(yytext);
   return SEMI;
 }
@@ -157,5 +205,47 @@ void yyerror(const char *s)
   line="";
   columnNumber=1;
   lineNumber++;
+}
+	/* unrecognized character and error states */
+. {
+  errColumn=columnNumber;
+  BEGIN(ERROR);
+  yymore();
+}
+<ERROR>[0-9a-zA-Z]+ {
+  yymore();
+}
+<ERROR>[ \t\n\[\]\{\}=<>!*+/%;,().-] {
+  BEGIN(0);
+  yyless(yyleng-1);
+  read(yytext);
+  if (yyleng>1)
+  {
+    // word error
+
+  }
+  else 
+  {
+    // invalid character
+
+  }
+}
+<ERROR>"//"|"||"|"&&" {
+  BEGIN(0);
+  yyless(yyleng-2);
+  read(yytext);
+  if (yyleng>1)
+  {
+    // word error
+
+  }
+  else
+  {
+    // invalid character
+
+  }
+}
+<ERROR>. {
+  yymore();
 }
 %%

@@ -21,6 +21,8 @@ class MyScanner : public yyFlexLexer
     int getLineNum();
     void read(char*);
     void printErrors();
+    void printError();
+    void addError(Error);
   private:
     vector<Error> errors;
     string line;
