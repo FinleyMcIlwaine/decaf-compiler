@@ -7,17 +7,22 @@
 using std::string;
 using std::endl;
 using std::cout;
+using std::to_string;
 
 class Error 
 {
   public:
-    Error(int,int,string);
+    Error* withColNumber(int);
+    Error* withLineNumber(int);
+    Error* withErrLine(string);
+    Error* withDesc(string);
     void print();
   private:
+    int numSpaces();
     int line;
     int column;
-    string lineStr;
-    string printStr;
+    string errLine;
+    string description;
 };
 
 #endif

@@ -11,10 +11,12 @@
 #include "node.hpp"
 #include "program3.tab.hpp"
 
-  using std::string;
-  using std::cout;
-  using std::endl;
-  using std::cerr;
+using std::string;
+using std::cout;
+using std::endl;
+using std::cerr;
+
+Error* error=new Error();
 
 void yyerror(const char *s)
 {
@@ -31,15 +33,15 @@ void yyerror(const char *s)
 %x C_COMMENT
 %x CPP_COMMENT
 %x ERROR
+%x READ_LN
 
 %%
   /* C-style comment stuff */
 \/\* {
-  read(yytext);
   BEGIN(C_COMMENT);
+  read(yytext);
 }
 <C_COMMENT>\n {
-  cout << line << endl;
   lines.push_back(line);
   line="";
   columnNumber=1;
@@ -52,12 +54,12 @@ void yyerror(const char *s)
 <C_COMMENT>. {
   read(yytext);
 }
-<C_COMMENT>\*\/ {
+<C_COMMENT>"*/" {
   read(yytext);
   BEGIN(0);
 }
   /* CPP-style comment stuff */
-\/\/ {
+"//" {
   read(yytext);
   BEGIN(CPP_COMMENT);
 }
@@ -69,7 +71,6 @@ void yyerror(const char *s)
   read(yytext);
 }
 <CPP_COMMENT>\n {
-  cout << line << endl;
   lines.push_back(line);
   line="";
   columnNumber=1;
@@ -180,7 +181,6 @@ void yyerror(const char *s)
   return MOD;
 }
 ";" {
-  cout << "\n\nSEMI at column " << columnNumber << " and line number " << lineNumber << "\n\n";
   read(yytext);
   return SEMI;
 }
@@ -200,7 +200,6 @@ void yyerror(const char *s)
   columnNumber+=9-(columnNumber%8);
 }
 \n {
-  cout << line << endl;
   lines.push_back(line);
   line="";
   columnNumber=1;
@@ -208,7 +207,7 @@ void yyerror(const char *s)
 }
 	/* unrecognized character and error states */
 . {
-  errColumn=columnNumber;
+  error->withColNumber(columnNumber)->withLineNumber(lineNumber);
   BEGIN(ERROR);
   yymore();
 }
@@ -216,36 +215,47 @@ void yyerror(const char *s)
   yymore();
 }
 <ERROR>[ \t\n\[\]\{\}=<>!*+/%;,().-] {
-  BEGIN(0);
+  BEGIN(READ_LN);
   yyless(yyleng-1);
   read(yytext);
   if (yyleng>1)
   {
     // word error
-
+    error->withDesc("Word error");
   }
   else 
   {
     // invalid character
-
+    error->withDesc("Character error");
   }
 }
 <ERROR>"//"|"||"|"&&" {
-  BEGIN(0);
+  BEGIN(READ_LN);
   yyless(yyleng-2);
   read(yytext);
   if (yyleng>1)
   {
     // word error
-
+    error->withDesc("Word error");
   }
   else
   {
     // invalid character
-
+    error->withDesc("Character error");
   }
 }
 <ERROR>. {
   yymore();
+}
+
+<READ_LN>[^\n]* {
+  yymore();
+  read(yytext);
+}
+<READ_LN>\n {
+  BEGIN(0);
+  yyless(yyleng-2);
+  error->withErrLine(line);
+  error->print();
 }
 %%

@@ -6,6 +6,12 @@
 
 #include "MyScanner.hpp"
 
+MyScanner::MyScanner()
+{
+  lineNumber=1;
+  columnNumber=1;
+}
+
 string MyScanner::getLine()
 {
   return line;

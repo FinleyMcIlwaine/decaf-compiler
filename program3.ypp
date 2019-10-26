@@ -25,9 +25,9 @@
   /*
    * El Union
    */
-  %union {
-    Node *pnode;
-  }
+%union {
+  Node *pnode;
+}
 
 /*
  * token stuff
@@ -79,6 +79,7 @@
 %left EQ NE GE LE GT LT
 
 %precedence BRACK
+%precedence NAME_BRACK
 %precedence LBRACK
 
 /*
@@ -110,7 +111,10 @@ elements: vardec {
   $$=new ElementsNode($1);
   $$->setVal("<exp> SEMI");
 }
-
+| SEMI {
+  $$=new ElementsNode();
+  $$->setVal("SEMI");
+}
 ;
 
 vardec: type ID SEMI {
@@ -303,7 +307,7 @@ multibrackets: LBRACK RBRACK {
 ;
 
 name: THIS {
-  $$=new NameNode($1); 
+  $$=new NameNode(); 
   $$->setVal("THIS");
 }
 | ID %prec BRACK {
@@ -314,13 +318,13 @@ name: THIS {
   $$=new NameNode($1,$3);
   $$->setVal("<name> DOT ID");
 }
-| name bracketexps %prec BRACK { 
+| name bracketexps %prec NAME_BRACK { 
   $$=new NameNode($1,$2);
   $$->setVal("<name> <bracketexps>");
 }
 | ID bracketexps %prec BRACK {
   $$=new NameNode($1,$2);
-  $$->setVal("<name> <bracketexps>");
+  $$->setVal("ID <bracketexps>");
 }
 ;
 

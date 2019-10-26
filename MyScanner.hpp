@@ -16,6 +16,7 @@ class MyScanner : public yyFlexLexer
 {
   public:
     virtual int yylex();
+    MyScanner();
     string getLine();
     int getColNum();
     int getLineNum();
