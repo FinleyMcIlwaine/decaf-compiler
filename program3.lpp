@@ -223,8 +223,6 @@ void yyerror(const char *s)
 }
 <ERROR>[ \t\n\[\]\{\}=<>!*+/%;,().-] {
   BEGIN(0);
-  cout << "yyleng = " << yyleng << endl;
-  cout << "yytext = " << yytext << endl;
   yyless(yyleng-1);
   read(yytext);
   if (yyleng>1)
@@ -260,12 +258,13 @@ void yyerror(const char *s)
 }
 
 <READ_LN>[^\n]* {
-  if (errLine=="") { errLine=line+yytext; }
-  read(yytext);
+  yymore();
 }
 <READ_LN>\n {
   BEGIN(ERROR);
-  yyless(errCol);
+  yyless(yyleng-1);
+  errLine=line+yytext;
+  yyless(0);
   error->withErrLine(errLine);
 }
 %%
