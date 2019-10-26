@@ -17,6 +17,7 @@ using std::endl;
 using std::cerr;
 
 Error* error=new Error();
+string errLine;
 
 void yyerror(const char *s)
 {
@@ -43,6 +44,7 @@ void yyerror(const char *s)
 }
 <C_COMMENT>\n {
   lines.push_back(line);
+  errLine="";
   line="";
   columnNumber=1;
   lineNumber++;
@@ -75,6 +77,7 @@ void yyerror(const char *s)
   line="";
   columnNumber=1;
   lineNumber++;
+  errLine="";
   BEGIN(0);
 }
 "this" {
@@ -204,11 +207,13 @@ void yyerror(const char *s)
   line="";
   columnNumber=1;
   lineNumber++;
+  errLine="";
 }
 	/* unrecognized character and error states */
 . {
   error->withColNumber(columnNumber)->withLineNumber(lineNumber);
-  BEGIN(ERROR);
+  BEGIN(READ_LN);
+  yyless(0);
   yymore();
 }
 <ERROR>[0-9a-zA-Z]+ {
@@ -249,13 +254,13 @@ void yyerror(const char *s)
 }
 
 <READ_LN>[^\n]* {
-  yymore();
+  if (errLine=="") { errLine=yytext; }
   read(yytext);
 }
 <READ_LN>\n {
   BEGIN(0);
-  yyless(yyleng-2);
-  error->withErrLine(line);
+  yyless(0);
+  error->withErrLine(errLine);
   error->print();
 }
 %%
