@@ -522,6 +522,7 @@ using std::cerr;
 
 Error* error=new Error();
 string errLine;
+int errCol;
 
 void yyerror(const char *s)
 {
@@ -532,7 +533,7 @@ void yyerror(const char *s)
 
 
 
-#line 536 "program3_lex.cpp"
+#line 537 "program3_lex.cpp"
 
 #define INITIAL 0
 #define C_COMMENT 1
@@ -636,10 +637,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 39 "program3.lpp"
+#line 40 "program3.lpp"
 
   /* C-style comment stuff */
-#line 643 "program3_lex.cpp"
+#line 644 "program3_lex.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -740,7 +741,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 41 "program3.lpp"
+#line 42 "program3.lpp"
 {
   BEGIN(C_COMMENT);
   read(yytext);
@@ -749,7 +750,7 @@ YY_RULE_SETUP
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 45 "program3.lpp"
+#line 46 "program3.lpp"
 {
   lines.push_back(line);
   errLine="";
@@ -760,7 +761,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 52 "program3.lpp"
+#line 53 "program3.lpp"
 {
   line+="\t";
   columnNumber+=9-(columnNumber%8);
@@ -768,14 +769,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 56 "program3.lpp"
+#line 57 "program3.lpp"
 {
   read(yytext);
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 59 "program3.lpp"
+#line 60 "program3.lpp"
 {
   read(yytext);
   BEGIN(0);
@@ -784,7 +785,7 @@ YY_RULE_SETUP
 /* CPP-style comment stuff */
 case 6:
 YY_RULE_SETUP
-#line 64 "program3.lpp"
+#line 65 "program3.lpp"
 {
   read(yytext);
   BEGIN(CPP_COMMENT);
@@ -792,7 +793,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 68 "program3.lpp"
+#line 69 "program3.lpp"
 {
   line+="\t";
   columnNumber+=9-(columnNumber%8);
@@ -800,7 +801,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 72 "program3.lpp"
+#line 73 "program3.lpp"
 {
   read(yytext);
 }
@@ -808,7 +809,7 @@ YY_RULE_SETUP
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 75 "program3.lpp"
+#line 76 "program3.lpp"
 {
   lines.push_back(line);
   line="";
@@ -820,7 +821,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 83 "program3.lpp"
+#line 84 "program3.lpp"
 {
   read(yytext);
   return THIS;
@@ -828,7 +829,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 87 "program3.lpp"
+#line 88 "program3.lpp"
 {
   read(yytext);
   return DOT;
@@ -836,7 +837,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 91 "program3.lpp"
+#line 92 "program3.lpp"
 {
   read(yytext);
   return LBRACK;
@@ -844,7 +845,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 95 "program3.lpp"
+#line 96 "program3.lpp"
 {
   read(yytext);
   return RBRACK;
@@ -852,7 +853,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 99 "program3.lpp"
+#line 100 "program3.lpp"
 {
   read(yytext);
   return LPAREN;
@@ -860,7 +861,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 103 "program3.lpp"
+#line 104 "program3.lpp"
 {
   read(yytext);
   return RPAREN;
@@ -868,7 +869,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 107 "program3.lpp"
+#line 108 "program3.lpp"
 {
   read(yytext);
   string num(yytext);
@@ -879,7 +880,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 114 "program3.lpp"
+#line 115 "program3.lpp"
 {
   read(yytext);
   return INT;
@@ -887,7 +888,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 118 "program3.lpp"
+#line 119 "program3.lpp"
 {
   read(yytext);
   return NEW;
@@ -895,7 +896,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 122 "program3.lpp"
+#line 123 "program3.lpp"
 {
   read(yytext);
   return READ;
@@ -903,7 +904,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 126 "program3.lpp"
+#line 127 "program3.lpp"
 {
   read(yytext);
   return NULLT;
@@ -911,7 +912,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 130 "program3.lpp"
+#line 131 "program3.lpp"
 {
   read(yytext);
   return NE;
@@ -919,7 +920,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 134 "program3.lpp"
+#line 135 "program3.lpp"
 {
   read(yytext);
   return EQ;
@@ -927,7 +928,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 138 "program3.lpp"
+#line 139 "program3.lpp"
 {
   read(yytext);
   return LT;
@@ -935,7 +936,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 142 "program3.lpp"
+#line 143 "program3.lpp"
 {
   read(yytext);
   return GT;
@@ -943,7 +944,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 146 "program3.lpp"
+#line 147 "program3.lpp"
 {
   read(yytext);
   return LE;
@@ -951,7 +952,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 150 "program3.lpp"
+#line 151 "program3.lpp"
 {
   read(yytext);
   return GE;
@@ -959,7 +960,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 154 "program3.lpp"
+#line 155 "program3.lpp"
 {
   read(yytext);
   return AND;
@@ -967,7 +968,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 158 "program3.lpp"
+#line 159 "program3.lpp"
 {
   read(yytext);
   return OR;
@@ -975,7 +976,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 162 "program3.lpp"
+#line 163 "program3.lpp"
 {
   read(yytext);
   return NOT;
@@ -983,7 +984,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 166 "program3.lpp"
+#line 167 "program3.lpp"
 {
   read(yytext);
   return PLUS;
@@ -991,7 +992,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 170 "program3.lpp"
+#line 171 "program3.lpp"
 {
   read(yytext);
   return MINUS;
@@ -999,7 +1000,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 174 "program3.lpp"
+#line 175 "program3.lpp"
 {
   read(yytext);
   return TIMES;
@@ -1007,7 +1008,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 178 "program3.lpp"
+#line 179 "program3.lpp"
 {
   read(yytext);
   return DIV;
@@ -1015,7 +1016,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 182 "program3.lpp"
+#line 183 "program3.lpp"
 {
   read(yytext);
   return MOD;
@@ -1023,7 +1024,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 186 "program3.lpp"
+#line 187 "program3.lpp"
 {
   read(yytext);
   return SEMI;
@@ -1031,7 +1032,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 190 "program3.lpp"
+#line 191 "program3.lpp"
 {
   read(yytext);
   string id(yytext);
@@ -1042,7 +1043,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 197 "program3.lpp"
+#line 198 "program3.lpp"
 {
   line+=" ";
   columnNumber++;
@@ -1050,7 +1051,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 201 "program3.lpp"
+#line 202 "program3.lpp"
 {
   line+="\t";
   columnNumber+=9-(columnNumber%8);
@@ -1059,7 +1060,7 @@ YY_RULE_SETUP
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 205 "program3.lpp"
+#line 206 "program3.lpp"
 {
   lines.push_back(line);
   line="";
@@ -1071,16 +1072,18 @@ YY_RULE_SETUP
 /* unrecognized character and error states */
 case 40:
 YY_RULE_SETUP
-#line 213 "program3.lpp"
+#line 214 "program3.lpp"
 {
   error->withColNumber(columnNumber)->withLineNumber(lineNumber);
-  BEGIN(ERROR);
+  BEGIN(READ_LN);
+  errCol=columnNumber;
+  //yyless(0);
   yymore();
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 218 "program3.lpp"
+#line 221 "program3.lpp"
 {
   yymore();
 }
@@ -1088,9 +1091,11 @@ YY_RULE_SETUP
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 221 "program3.lpp"
+#line 224 "program3.lpp"
 {
-  BEGIN(READ_LN);
+  BEGIN(0);
+  cout << "yyleng = " << yyleng << endl;
+  cout << "yytext = " << yytext << endl;
   yyless(yyleng-1);
   read(yytext);
   if (yyleng>1)
@@ -1103,13 +1108,14 @@ YY_RULE_SETUP
     // invalid character
     error->withDesc("Character error");
   }
+  error->print();
 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 236 "program3.lpp"
+#line 242 "program3.lpp"
 {
-  BEGIN(READ_LN);
+  BEGIN(0);
   yyless(yyleng-2);
   read(yytext);
   if (yyleng>1)
@@ -1122,40 +1128,40 @@ YY_RULE_SETUP
     // invalid character
     error->withDesc("Character error");
   }
+  error->print();
 }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 251 "program3.lpp"
+#line 258 "program3.lpp"
 {
   yymore();
 }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 255 "program3.lpp"
+#line 262 "program3.lpp"
 {
-  if (errLine=="") { errLine=yytext; }
+  if (errLine=="") { errLine=line+yytext; }
   read(yytext);
 }
 	YY_BREAK
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
-#line 259 "program3.lpp"
+#line 266 "program3.lpp"
 {
-  BEGIN(0);
-  yyless(0);
+  BEGIN(ERROR);
+  yyless(errCol);
   error->withErrLine(errLine);
-  error->print();
 }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 265 "program3.lpp"
+#line 271 "program3.lpp"
 ECHO;
 	YY_BREAK
-#line 1159 "program3_lex.cpp"
+#line 1165 "program3_lex.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 case YY_STATE_EOF(CPP_COMMENT):
@@ -2066,7 +2072,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 265 "program3.lpp"
+#line 271 "program3.lpp"
 
 
 

@@ -18,6 +18,7 @@ using std::cerr;
 
 Error* error=new Error();
 string errLine;
+int errCol;
 
 void yyerror(const char *s)
 {
@@ -213,14 +214,17 @@ void yyerror(const char *s)
 . {
   error->withColNumber(columnNumber)->withLineNumber(lineNumber);
   BEGIN(READ_LN);
-  yyless(0);
+  errCol=columnNumber;
+  //yyless(0);
   yymore();
 }
 <ERROR>[0-9a-zA-Z]+ {
   yymore();
 }
 <ERROR>[ \t\n\[\]\{\}=<>!*+/%;,().-] {
-  BEGIN(READ_LN);
+  BEGIN(0);
+  cout << "yyleng = " << yyleng << endl;
+  cout << "yytext = " << yytext << endl;
   yyless(yyleng-1);
   read(yytext);
   if (yyleng>1)
@@ -233,9 +237,10 @@ void yyerror(const char *s)
     // invalid character
     error->withDesc("Character error");
   }
+  error->print();
 }
 <ERROR>"//"|"||"|"&&" {
-  BEGIN(READ_LN);
+  BEGIN(0);
   yyless(yyleng-2);
   read(yytext);
   if (yyleng>1)
@@ -248,19 +253,19 @@ void yyerror(const char *s)
     // invalid character
     error->withDesc("Character error");
   }
+  error->print();
 }
 <ERROR>. {
   yymore();
 }
 
 <READ_LN>[^\n]* {
-  if (errLine=="") { errLine=yytext; }
+  if (errLine=="") { errLine=line+yytext; }
   read(yytext);
 }
 <READ_LN>\n {
-  BEGIN(0);
-  yyless(0);
+  BEGIN(ERROR);
+  yyless(errCol);
   error->withErrLine(errLine);
-  error->print();
 }
 %%
