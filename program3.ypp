@@ -5,21 +5,22 @@
 // October 27, 2019
 
 %{
+#include <iostream>
+#include "Error.hpp"
+#include "MyScanner.hpp"
+#include "node.hpp"
 
-  #include <iostream>
-  #include "MyScanner.hpp"
-  #include "node.hpp"
+using std::cout;
+using std::endl;
+using std::cerr;
 
-  using std::cout;
-  using std::endl;
-  using std::cerr;
+extern Node *tree;
+extern MyScanner scanner;
+Error* err=new Error();
 
-  extern Node *tree;
-  extern MyScanner scanner;
-
-  #define yylex() scanner.yylex()
-
-  void yyerror(const char *);
+#define yylex() scanner.yylex()
+#define YYERROR_VERBOSE 1
+void yyerror(const char *);
 %}
 
   /*
@@ -114,6 +115,11 @@ elements: vardec {
 | SEMI {
   $$=new ElementsNode();
   $$->setVal("SEMI");
+}
+| error {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  yyerrok;
 }
 ;
 
@@ -329,3 +335,8 @@ name: THIS {
 ;
 
 %%
+void yyerror(char const *s) 
+{
+  // Shut up Bison let me do the talking
+  err->withDesc(s);
+} 

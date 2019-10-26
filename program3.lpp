@@ -19,12 +19,6 @@ using std::cerr;
 Error* error=new Error();
 string errLine;
 int errCol;
-
-void yyerror(const char *s)
-{
-  cerr << s << endl;
-  return;
-}
 %}
 
 %option outfile="program3_lex.cpp"

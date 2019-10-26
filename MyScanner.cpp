@@ -39,6 +39,10 @@ void MyScanner::printErrors()
 {
   for(Error &err : errors)
   {
+    if (err.getErrLine()=="")
+    {
+      err.withErrLine(lines[err.getLine()-1]);
+    }
     err.print();
   }
   errors.clear();

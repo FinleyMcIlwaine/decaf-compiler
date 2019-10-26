@@ -40,3 +40,12 @@ int Error::numSpaces()
     to_string(column).length()+
     column;
 }
+
+string Error::getErrLine()
+{
+  return errLine;
+}
+int Error::getLine()
+{
+  return line;
+}

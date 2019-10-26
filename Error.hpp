@@ -17,6 +17,8 @@ class Error
     Error* withErrLine(string);
     Error* withDesc(string);
     void print();
+    string getErrLine();
+    int getLine();
   private:
     int numSpaces();
     int line;
