@@ -112,15 +112,16 @@ elements: vardec {
   $$=new ElementsNode($1);
   $$->setVal("<exp> SEMI");
 }
+
 | SEMI {
   $$=new ElementsNode();
   $$->setVal("SEMI");
 }
-| error {
-  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
-  scanner.addError(*err);
-  yyerrok;
-}
+//| error {
+//  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+//  scanner.addError(*err);
+//  yyerrok;
+//}
 ;
 
 vardec: type ID SEMI {
@@ -157,6 +158,12 @@ exp: name {
 | READ LPAREN RPAREN {
   $$=new ExpNode();
   $$->setVal("READ LPAREN RPAREN");
+}
+| READ LPAREN error {
+  cout<<"first column " << @3.first_column << endl;
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  yyerrok;
 }
 | newexp {
   $$=new ExpNode($1);

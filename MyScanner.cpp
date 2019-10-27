@@ -31,8 +31,10 @@ void MyScanner::read(char* txt)
 {
   // Make a copy!!
   string str(txt);
+  yylloc.first_column=columnNumber;
   line+=str;
   columnNumber+=yyleng;
+  yylloc.last_column=columnNumber;
 }
 
 void MyScanner::printErrors()

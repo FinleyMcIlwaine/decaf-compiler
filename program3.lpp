@@ -202,6 +202,7 @@ int errCol;
   line="";
   columnNumber=1;
   lineNumber++;
+  yylloc.first_line=lineNumber;
   errLine="";
 }
 	/* unrecognized character and error states */

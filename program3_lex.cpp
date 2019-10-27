@@ -1060,13 +1060,14 @@ YY_RULE_SETUP
   line="";
   columnNumber=1;
   lineNumber++;
+  yylloc.first_line=lineNumber;
   errLine="";
 }
 	YY_BREAK
 /* unrecognized character and error states */
 case 40:
 YY_RULE_SETUP
-#line 208 "program3.lpp"
+#line 209 "program3.lpp"
 {
   error->withColNumber(columnNumber)->withLineNumber(lineNumber);
   BEGIN(READ_LN);
@@ -1077,7 +1078,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 215 "program3.lpp"
+#line 216 "program3.lpp"
 {
   yymore();
 }
@@ -1085,7 +1086,7 @@ YY_RULE_SETUP
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 218 "program3.lpp"
+#line 219 "program3.lpp"
 {
   BEGIN(0);
   yyless(yyleng-1);
@@ -1105,7 +1106,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 234 "program3.lpp"
+#line 235 "program3.lpp"
 {
   BEGIN(0);
   yyless(yyleng-2);
@@ -1125,14 +1126,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 250 "program3.lpp"
+#line 251 "program3.lpp"
 {
   yymore();
 }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 254 "program3.lpp"
+#line 255 "program3.lpp"
 {
   yymore();
 }
@@ -1140,7 +1141,7 @@ YY_RULE_SETUP
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
-#line 257 "program3.lpp"
+#line 258 "program3.lpp"
 {
   BEGIN(ERROR);
   yyless(yyleng-1);
@@ -1151,10 +1152,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 264 "program3.lpp"
+#line 265 "program3.lpp"
 ECHO;
 	YY_BREAK
-#line 1158 "program3_lex.cpp"
+#line 1159 "program3_lex.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 case YY_STATE_EOF(CPP_COMMENT):
@@ -2065,7 +2066,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 264 "program3.lpp"
+#line 265 "program3.lpp"
 
 
 
