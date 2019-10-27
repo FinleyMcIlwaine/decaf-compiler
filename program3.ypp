@@ -327,6 +327,24 @@ newexp: NEW ID LPAREN RPAREN {
   $$=new NewExpNode($2);
   $$->setVal("NEW ID LPAREN RPAREN");
 }
+| NEW error LPAREN RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode();
+  $$->setVal("NEW <error> LPAREN RPAREN");
+}
+| NEW ID error RPAREN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($2);
+  $$->setVal("NEW ID <error> RPAREN");
+}
+| NEW ID LPAREN error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($2);
+  $$->setVal("NEW ID LPAREN <error>");
+}
 | NEW simpletype {
   $$=new NewExpNode($2);
   $$->setVal("NEW <simpletype>");
@@ -339,6 +357,12 @@ newexp: NEW ID LPAREN RPAREN {
   $$=new NewExpNode($2,$3);
   $$->setVal("NEW ID <bracketexps>");
 }
+| NEW error bracketexps {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($3);
+  $$->setVal("NEW <error> <bracketexps>");
+}
 | NEW simpletype bracketexps multibrackets {
   $$=new NewExpNode($2,$3,$4);
   $$->setVal("NEW <simpletype> <bracketexps> <multibrackets>");
@@ -346,6 +370,12 @@ newexp: NEW ID LPAREN RPAREN {
 | NEW ID bracketexps multibrackets {
   $$=new NewExpNode($2,$3,$4);
   $$->setVal("NEW <simpletype> <bracketexps> <multibrackets>");
+}
+| NEW error bracketexps multibrackets {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($3,$4);
+  $$->setVal("NEW <error> <bracketexps> <multibrackets>");
 }
 
 ;
