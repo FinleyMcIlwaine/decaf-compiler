@@ -4,7 +4,6 @@
 #if !defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
 #endif
-
 #include "Error.hpp"
 #include<string>
 #include<vector>

@@ -4,6 +4,8 @@
 // Program 3
 // October 27, 2019
 
+#include "node.hpp"
+#include "program3.tab.hpp"
 #include "MyScanner.hpp"
 
 MyScanner::MyScanner()

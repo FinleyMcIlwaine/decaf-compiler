@@ -7,8 +7,8 @@
 %{
 #include <iostream>
 #include "Error.hpp"
-#include "MyScanner.hpp"
 #include "node.hpp"
+#include "MyScanner.hpp"
 
 using std::cout;
 using std::endl;
@@ -20,9 +20,12 @@ Error* err=new Error();
 
 #define yylex() scanner.yylex()
 #define YYERROR_VERBOSE 1
+
 void yyerror(const char *);
 %}
 
+%locations
+%debug
   /*
    * El Union
    */
@@ -73,15 +76,14 @@ void yyerror(const char *);
 %token<pnode> NOT
 %token<pnode> SEMI
 
-%precedence UOP
-
 %left PLUS MINUS OR
 %left TIMES DIV MOD AND
 %left EQ NE GE LE GT LT
-
+%precedence MIN
+%precedence UOP
 %precedence BRACK
 %precedence NAME_BRACK
-%precedence LBRACK
+%precedence LBRACK LPAREN
 
 /*
  * The Grammar :o
@@ -117,11 +119,10 @@ elements: vardec {
   $$=new ElementsNode();
   $$->setVal("SEMI");
 }
-//| error {
-//  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
-//  scanner.addError(*err);
-//  yyerrok;
-//}
+| error %prec MIN {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+}
 ;
 
 vardec: type ID SEMI {
@@ -160,10 +161,22 @@ exp: name {
   $$->setVal("READ LPAREN RPAREN");
 }
 | READ LPAREN error {
-  cout<<"first column " << @3.first_column << endl;
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
-  yyerrok;
+  $$=new ExpNode();
+  $$->setVal("READ LPAREN <error>");
+}
+| READ error RPAREN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("READ LPAREN <error>");
+}
+| error LPAREN RPAREN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("<error> LPAREN RPAREN");
 }
 | newexp {
   $$=new ExpNode($1);

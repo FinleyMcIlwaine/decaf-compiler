@@ -34,7 +34,7 @@
 # define YY_YY_PROGRAM3_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -72,9 +72,10 @@ extern int yydebug;
     LT = 282,
     NOT = 283,
     SEMI = 284,
-    UOP = 285,
-    BRACK = 286,
-    NAME_BRACK = 287
+    MIN = 285,
+    UOP = 286,
+    BRACK = 287,
+    NAME_BRACK = 288
   };
 #endif
 
@@ -83,11 +84,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 29 "program3.ypp" /* yacc.c:1909  */
+#line 32 "program3.ypp" /* yacc.c:1909  */
 
   Node *pnode;
 
-#line 91 "program3.tab.hpp" /* yacc.c:1909  */
+#line 92 "program3.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
