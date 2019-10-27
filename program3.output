@@ -1,6 +1,3 @@
-State 23 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: input $end
@@ -78,17 +75,17 @@ Grammar
    60     | ID
    61     | name DOT ID
    62     | name DOT error
-   63     | name error ID
-   64     | name bracketexps
+   63     | name bracketexps
+   64     | error bracketexps
    65     | ID bracketexps
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-error (256) 7 9 10 15 19 20 21 24 26 54 55 58 62 63
+error (256) 7 9 10 15 19 20 21 24 26 54 55 58 62 64
 THIS (258) 59
-ID (259) 8 10 11 12 13 43 46 48 60 61 63 65
+ID (259) 8 10 11 12 13 43 46 48 60 61 65
 DOT (260) 61 62
 LBRACK (261) 15 53 54 55 56 57 58
 RBRACK (262) 15 53 54 56 57
@@ -143,13 +140,13 @@ type (41)
 simpletype (42)
     on left: 50, on right: 44 45 47 49
 bracketexps (43)
-    on left: 51 52, on right: 45 46 47 48 52 64 65
+    on left: 51 52, on right: 45 46 47 48 52 63 64 65
 bracketexp (44)
     on left: 53 54 55, on right: 51 52
 multibrackets (45)
     on left: 56 57 58, on right: 12 13 47 48 57
 name (46)
-    on left: 59 60 61 62 63 64 65, on right: 14 25 26 61 62 63 64
+    on left: 59 60 61 62 63 64 65, on right: 14 25 26 61 62 63
 
 
 State 0
@@ -186,10 +183,15 @@ State 1
 
     7 elements: error .
    21 exp: error . LPAREN RPAREN
+   64 name: error . bracketexps
 
-    LPAREN  shift, and go to state 24
+    LBRACK  shift, and go to state 24
+    LPAREN  shift, and go to state 25
 
     $default  reduce using rule 7 (elements)
+
+    bracketexps  go to state 26
+    bracketexp   go to state 27
 
 
 State 2
@@ -206,21 +208,21 @@ State 3
    60 name: ID .
    65     | ID . bracketexps
 
-    ID      shift, and go to state 25
-    LBRACK  shift, and go to state 26
+    ID      shift, and go to state 28
+    LBRACK  shift, and go to state 29
 
     $default  reduce using rule 60 (name)
 
-    bracketexps    go to state 27
-    bracketexp     go to state 28
-    multibrackets  go to state 29
+    bracketexps    go to state 30
+    bracketexp     go to state 27
+    multibrackets  go to state 31
 
 
 State 4
 
    15 exp: LBRACK . error RBRACK
 
-    error  shift, and go to state 30
+    error  shift, and go to state 32
 
 
 State 5
@@ -246,10 +248,10 @@ State 7
    47       | NEW . simpletype bracketexps multibrackets
    48       | NEW . ID bracketexps multibrackets
 
-    ID   shift, and go to state 31
+    ID   shift, and go to state 33
     INT  shift, and go to state 6
 
-    simpletype  go to state 32
+    simpletype  go to state 34
 
 
 State 8
@@ -257,9 +259,9 @@ State 8
    23 exp: LPAREN . exp RPAREN
    24    | LPAREN . error RPAREN
 
-    error   shift, and go to state 33
+    error   shift, and go to state 35
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -270,7 +272,7 @@ State 8
     MINUS   shift, and go to state 12
     NOT     shift, and go to state 13
 
-    exp     go to state 35
+    exp     go to state 37
     newexp  go to state 20
     name    go to state 23
 
@@ -281,8 +283,8 @@ State 9
    19    | READ . LPAREN error
    20    | READ . error RPAREN
 
-    error   shift, and go to state 36
-    LPAREN  shift, and go to state 37
+    error   shift, and go to state 38
+    LPAREN  shift, and go to state 39
 
 
 State 10
@@ -296,53 +298,9 @@ State 11
 
    41 exp: PLUS . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
-    LBRACK  shift, and go to state 4
-    NUMBER  shift, and go to state 5
-    NEW     shift, and go to state 7
-    LPAREN  shift, and go to state 8
-    READ    shift, and go to state 9
-    NULLT   shift, and go to state 10
-    PLUS    shift, and go to state 11
-    MINUS   shift, and go to state 12
-    NOT     shift, and go to state 13
-
-    exp     go to state 39
-    newexp  go to state 20
-    name    go to state 23
-
-
-State 12
-
-   40 exp: MINUS . exp
-
-    error   shift, and go to state 38
-    THIS    shift, and go to state 2
-    ID      shift, and go to state 34
-    LBRACK  shift, and go to state 4
-    NUMBER  shift, and go to state 5
-    NEW     shift, and go to state 7
-    LPAREN  shift, and go to state 8
-    READ    shift, and go to state 9
-    NULLT   shift, and go to state 10
-    PLUS    shift, and go to state 11
-    MINUS   shift, and go to state 12
-    NOT     shift, and go to state 13
-
-    exp     go to state 40
-    newexp  go to state 20
-    name    go to state 23
-
-
-State 13
-
-   42 exp: NOT . exp
-
-    error   shift, and go to state 38
-    THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -358,6 +316,50 @@ State 13
     name    go to state 23
 
 
+State 12
+
+   40 exp: MINUS . exp
+
+    error   shift, and go to state 40
+    THIS    shift, and go to state 2
+    ID      shift, and go to state 36
+    LBRACK  shift, and go to state 4
+    NUMBER  shift, and go to state 5
+    NEW     shift, and go to state 7
+    LPAREN  shift, and go to state 8
+    READ    shift, and go to state 9
+    NULLT   shift, and go to state 10
+    PLUS    shift, and go to state 11
+    MINUS   shift, and go to state 12
+    NOT     shift, and go to state 13
+
+    exp     go to state 42
+    newexp  go to state 20
+    name    go to state 23
+
+
+State 13
+
+   42 exp: NOT . exp
+
+    error   shift, and go to state 40
+    THIS    shift, and go to state 2
+    ID      shift, and go to state 36
+    LBRACK  shift, and go to state 4
+    NUMBER  shift, and go to state 5
+    NEW     shift, and go to state 7
+    LPAREN  shift, and go to state 8
+    READ    shift, and go to state 9
+    NULLT   shift, and go to state 10
+    PLUS    shift, and go to state 11
+    MINUS   shift, and go to state 12
+    NOT     shift, and go to state 13
+
+    exp     go to state 43
+    newexp  go to state 20
+    name    go to state 23
+
+
 State 14
 
     6 elements: SEMI .
@@ -369,7 +371,7 @@ State 15
 
     0 $accept: input . $end
 
-    $end  shift, and go to state 42
+    $end  shift, and go to state 44
 
 
 State 16
@@ -394,7 +396,7 @@ State 16
 
     $end  reduce using rule 1 (input)
 
-    elements    go to state 43
+    elements    go to state 45
     vardec      go to state 18
     exp         go to state 19
     newexp      go to state 20
@@ -434,20 +436,20 @@ State 19
    38    | exp . GT exp
    39    | exp . LT exp
 
-    PLUS   shift, and go to state 44
-    MINUS  shift, and go to state 45
-    OR     shift, and go to state 46
-    TIMES  shift, and go to state 47
-    DIV    shift, and go to state 48
-    MOD    shift, and go to state 49
-    AND    shift, and go to state 50
-    EQ     shift, and go to state 51
-    NE     shift, and go to state 52
-    GE     shift, and go to state 53
-    LE     shift, and go to state 54
-    GT     shift, and go to state 55
-    LT     shift, and go to state 56
-    SEMI   shift, and go to state 57
+    PLUS   shift, and go to state 46
+    MINUS  shift, and go to state 47
+    OR     shift, and go to state 48
+    TIMES  shift, and go to state 49
+    DIV    shift, and go to state 50
+    MOD    shift, and go to state 51
+    AND    shift, and go to state 52
+    EQ     shift, and go to state 53
+    NE     shift, and go to state 54
+    GE     shift, and go to state 55
+    LE     shift, and go to state 56
+    GT     shift, and go to state 57
+    LT     shift, and go to state 58
+    SEMI   shift, and go to state 59
 
 
 State 20
@@ -464,11 +466,11 @@ State 21
    10       | type . ID error
    12       | type . multibrackets ID SEMI
 
-    error   shift, and go to state 58
-    ID      shift, and go to state 59
-    LBRACK  shift, and go to state 60
+    error   shift, and go to state 60
+    ID      shift, and go to state 61
+    LBRACK  shift, and go to state 62
 
-    multibrackets  go to state 61
+    multibrackets  go to state 63
 
 
 State 22
@@ -485,63 +487,28 @@ State 23
    26    | name . LPAREN error
    61 name: name . DOT ID
    62     | name . DOT error
-   63     | name . error ID
-   64     | name . bracketexps
+   63     | name . bracketexps
 
-    error   shift, and go to state 62
-    DOT     shift, and go to state 63
-    LBRACK  shift, and go to state 64
+    DOT     shift, and go to state 64
+    LBRACK  shift, and go to state 24
     LPAREN  shift, and go to state 65
 
-    error   [reduce using rule 14 (exp)]
-    RBRACK  reduce using rule 14 (exp)
-    RPAREN  reduce using rule 14 (exp)
-    PLUS    reduce using rule 14 (exp)
-    MINUS   reduce using rule 14 (exp)
-    OR      reduce using rule 14 (exp)
-    TIMES   reduce using rule 14 (exp)
-    DIV     reduce using rule 14 (exp)
-    MOD     reduce using rule 14 (exp)
-    AND     reduce using rule 14 (exp)
-    EQ      reduce using rule 14 (exp)
-    NE      reduce using rule 14 (exp)
-    GE      reduce using rule 14 (exp)
-    LE      reduce using rule 14 (exp)
-    GT      reduce using rule 14 (exp)
-    LT      reduce using rule 14 (exp)
-    SEMI    reduce using rule 14 (exp)
+    $default  reduce using rule 14 (exp)
 
     bracketexps  go to state 66
-    bracketexp   go to state 28
+    bracketexp   go to state 27
 
 
 State 24
 
-   21 exp: error LPAREN . RPAREN
-
-    RPAREN  shift, and go to state 67
-
-
-State 25
-
-   11 vardec: ID ID . SEMI
-
-    SEMI  shift, and go to state 68
-
-
-State 26
-
    53 bracketexp: LBRACK . exp RBRACK
    54           | LBRACK . error RBRACK
    55           | LBRACK . exp error
-   56 multibrackets: LBRACK . RBRACK
-   58              | LBRACK . error
 
-    error   shift, and go to state 69
+    error   shift, and go to state 67
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
-    RBRACK  shift, and go to state 70
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
     LPAREN  shift, and go to state 8
@@ -551,96 +518,154 @@ State 26
     MINUS   shift, and go to state 12
     NOT     shift, and go to state 13
 
-    exp     go to state 71
+    exp     go to state 68
     newexp  go to state 20
     name    go to state 23
 
 
-State 27
+State 25
+
+   21 exp: error LPAREN . RPAREN
+
+    RPAREN  shift, and go to state 69
+
+
+State 26
 
    52 bracketexps: bracketexps . bracketexp
-   65 name: ID bracketexps .
+   64 name: error bracketexps .
 
-    LBRACK  shift, and go to state 64
+    LBRACK  shift, and go to state 24
 
-    $default  reduce using rule 65 (name)
+    $default  reduce using rule 64 (name)
 
-    bracketexp  go to state 72
+    bracketexp  go to state 70
 
 
-State 28
+State 27
 
    51 bracketexps: bracketexp .
 
     $default  reduce using rule 51 (bracketexps)
 
 
+State 28
+
+   11 vardec: ID ID . SEMI
+
+    SEMI  shift, and go to state 71
+
+
 State 29
 
-   13 vardec: ID multibrackets . ID SEMI
-   57 multibrackets: multibrackets . LBRACK RBRACK
+   53 bracketexp: LBRACK . exp RBRACK
+   54           | LBRACK . error RBRACK
+   55           | LBRACK . exp error
+   56 multibrackets: LBRACK . RBRACK
+   58              | LBRACK . error
 
-    ID      shift, and go to state 73
-    LBRACK  shift, and go to state 74
+    error   shift, and go to state 72
+    THIS    shift, and go to state 2
+    ID      shift, and go to state 36
+    LBRACK  shift, and go to state 4
+    RBRACK  shift, and go to state 73
+    NUMBER  shift, and go to state 5
+    NEW     shift, and go to state 7
+    LPAREN  shift, and go to state 8
+    READ    shift, and go to state 9
+    NULLT   shift, and go to state 10
+    PLUS    shift, and go to state 11
+    MINUS   shift, and go to state 12
+    NOT     shift, and go to state 13
+
+    exp     go to state 68
+    newexp  go to state 20
+    name    go to state 23
 
 
 State 30
 
-   15 exp: LBRACK error . RBRACK
+   52 bracketexps: bracketexps . bracketexp
+   65 name: ID bracketexps .
 
-    RBRACK  shift, and go to state 75
+    LBRACK  shift, and go to state 24
+
+    $default  reduce using rule 65 (name)
+
+    bracketexp  go to state 70
 
 
 State 31
+
+   13 vardec: ID multibrackets . ID SEMI
+   57 multibrackets: multibrackets . LBRACK RBRACK
+
+    ID      shift, and go to state 74
+    LBRACK  shift, and go to state 75
+
+
+State 32
+
+   15 exp: LBRACK error . RBRACK
+
+    RBRACK  shift, and go to state 76
+
+
+State 33
 
    43 newexp: NEW ID . LPAREN RPAREN
    46       | NEW ID . bracketexps
    48       | NEW ID . bracketexps multibrackets
 
-    LBRACK  shift, and go to state 64
-    LPAREN  shift, and go to state 76
+    LBRACK  shift, and go to state 24
+    LPAREN  shift, and go to state 77
 
-    bracketexps  go to state 77
-    bracketexp   go to state 28
+    bracketexps  go to state 78
+    bracketexp   go to state 27
 
 
-State 32
+State 34
 
    44 newexp: NEW simpletype .
    45       | NEW simpletype . bracketexps
    47       | NEW simpletype . bracketexps multibrackets
 
-    LBRACK  shift, and go to state 64
+    LBRACK  shift, and go to state 24
 
     $default  reduce using rule 44 (newexp)
 
-    bracketexps  go to state 78
-    bracketexp   go to state 28
+    bracketexps  go to state 79
+    bracketexp   go to state 27
 
 
-State 33
+State 35
 
    21 exp: error . LPAREN RPAREN
    24    | LPAREN error . RPAREN
+   64 name: error . bracketexps
 
-    LPAREN  shift, and go to state 24
-    RPAREN  shift, and go to state 79
+    LBRACK  shift, and go to state 24
+    LPAREN  shift, and go to state 25
+    RPAREN  shift, and go to state 80
+
+    bracketexps  go to state 26
+    bracketexp   go to state 27
 
 
-State 34
+State 36
 
    60 name: ID .
    65     | ID . bracketexps
 
-    LBRACK  shift, and go to state 64
+    LBRACK  shift, and go to state 24
 
     $default  reduce using rule 60 (name)
 
-    bracketexps  go to state 27
-    bracketexp   go to state 28
+    bracketexps  go to state 30
+    bracketexp   go to state 27
 
 
-State 35
+State 37
 
    23 exp: LPAREN exp . RPAREN
    27    | exp . PLUS exp
@@ -657,46 +682,51 @@ State 35
    38    | exp . GT exp
    39    | exp . LT exp
 
-    RPAREN  shift, and go to state 80
-    PLUS    shift, and go to state 44
-    MINUS   shift, and go to state 45
-    OR      shift, and go to state 46
-    TIMES   shift, and go to state 47
-    DIV     shift, and go to state 48
-    MOD     shift, and go to state 49
-    AND     shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    GE      shift, and go to state 53
-    LE      shift, and go to state 54
-    GT      shift, and go to state 55
-    LT      shift, and go to state 56
-
-
-State 36
-
-   20 exp: READ error . RPAREN
-
     RPAREN  shift, and go to state 81
-
-
-State 37
-
-   18 exp: READ LPAREN . RPAREN
-   19    | READ LPAREN . error
-
-    error   shift, and go to state 82
-    RPAREN  shift, and go to state 83
+    PLUS    shift, and go to state 46
+    MINUS   shift, and go to state 47
+    OR      shift, and go to state 48
+    TIMES   shift, and go to state 49
+    DIV     shift, and go to state 50
+    MOD     shift, and go to state 51
+    AND     shift, and go to state 52
+    EQ      shift, and go to state 53
+    NE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LE      shift, and go to state 56
+    GT      shift, and go to state 57
+    LT      shift, and go to state 58
 
 
 State 38
 
-   21 exp: error . LPAREN RPAREN
+   20 exp: READ error . RPAREN
 
-    LPAREN  shift, and go to state 24
+    RPAREN  shift, and go to state 82
 
 
 State 39
+
+   18 exp: READ LPAREN . RPAREN
+   19    | READ LPAREN . error
+
+    error   shift, and go to state 83
+    RPAREN  shift, and go to state 84
+
+
+State 40
+
+   21 exp: error . LPAREN RPAREN
+   64 name: error . bracketexps
+
+    LBRACK  shift, and go to state 24
+    LPAREN  shift, and go to state 25
+
+    bracketexps  go to state 26
+    bracketexp   go to state 27
+
+
+State 41
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -716,7 +746,7 @@ State 39
     $default  reduce using rule 41 (exp)
 
 
-State 40
+State 42
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -736,7 +766,7 @@ State 40
     $default  reduce using rule 40 (exp)
 
 
-State 41
+State 43
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -756,49 +786,27 @@ State 41
     $default  reduce using rule 42 (exp)
 
 
-State 42
+State 44
 
     0 $accept: input $end .
 
     $default  accept
 
 
-State 43
+State 45
 
     3 program: program elements .
 
     $default  reduce using rule 3 (program)
 
 
-State 44
+State 46
 
    27 exp: exp PLUS . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
-    LBRACK  shift, and go to state 4
-    NUMBER  shift, and go to state 5
-    NEW     shift, and go to state 7
-    LPAREN  shift, and go to state 8
-    READ    shift, and go to state 9
-    NULLT   shift, and go to state 10
-    PLUS    shift, and go to state 11
-    MINUS   shift, and go to state 12
-    NOT     shift, and go to state 13
-
-    exp     go to state 84
-    newexp  go to state 20
-    name    go to state 23
-
-
-State 45
-
-   28 exp: exp MINUS . exp
-
-    error   shift, and go to state 38
-    THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -814,13 +822,13 @@ State 45
     name    go to state 23
 
 
-State 46
+State 47
 
-   29 exp: exp OR . exp
+   28 exp: exp MINUS . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -836,13 +844,13 @@ State 46
     name    go to state 23
 
 
-State 47
+State 48
 
-   30 exp: exp TIMES . exp
+   29 exp: exp OR . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -858,13 +866,13 @@ State 47
     name    go to state 23
 
 
-State 48
+State 49
 
-   31 exp: exp DIV . exp
+   30 exp: exp TIMES . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -880,13 +888,13 @@ State 48
     name    go to state 23
 
 
-State 49
+State 50
 
-   32 exp: exp MOD . exp
+   31 exp: exp DIV . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -902,13 +910,13 @@ State 49
     name    go to state 23
 
 
-State 50
+State 51
 
-   33 exp: exp AND . exp
+   32 exp: exp MOD . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -924,13 +932,13 @@ State 50
     name    go to state 23
 
 
-State 51
+State 52
 
-   34 exp: exp EQ . exp
+   33 exp: exp AND . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -946,13 +954,13 @@ State 51
     name    go to state 23
 
 
-State 52
+State 53
 
-   35 exp: exp NE . exp
+   34 exp: exp EQ . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -968,13 +976,13 @@ State 52
     name    go to state 23
 
 
-State 53
+State 54
 
-   36 exp: exp GE . exp
+   35 exp: exp NE . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -990,13 +998,13 @@ State 53
     name    go to state 23
 
 
-State 54
+State 55
 
-   37 exp: exp LE . exp
+   36 exp: exp GE . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -1012,13 +1020,13 @@ State 54
     name    go to state 23
 
 
-State 55
+State 56
 
-   38 exp: exp GT . exp
+   37 exp: exp LE . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -1034,13 +1042,13 @@ State 55
     name    go to state 23
 
 
-State 56
+State 57
 
-   39 exp: exp LT . exp
+   38 exp: exp GT . exp
 
-    error   shift, and go to state 38
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -1056,72 +1064,13 @@ State 56
     name    go to state 23
 
 
-State 57
-
-    5 elements: exp SEMI .
-
-    $default  reduce using rule 5 (elements)
-
-
 State 58
 
-    9 vardec: type error . SEMI
+   39 exp: exp LT . exp
 
-    SEMI  shift, and go to state 97
-
-
-State 59
-
-    8 vardec: type ID . SEMI
-   10       | type ID . error
-
-    error  shift, and go to state 98
-    SEMI   shift, and go to state 99
-
-
-State 60
-
-   56 multibrackets: LBRACK . RBRACK
-   58              | LBRACK . error
-
-    error   shift, and go to state 100
-    RBRACK  shift, and go to state 70
-
-
-State 61
-
-   12 vardec: type multibrackets . ID SEMI
-   57 multibrackets: multibrackets . LBRACK RBRACK
-
-    ID      shift, and go to state 101
-    LBRACK  shift, and go to state 74
-
-
-State 62
-
-   63 name: name error . ID
-
-    ID  shift, and go to state 102
-
-
-State 63
-
-   61 name: name DOT . ID
-   62     | name DOT . error
-
-    error  shift, and go to state 103
-    ID     shift, and go to state 104
-
-
-State 64
-
-   53 bracketexp: LBRACK . exp RBRACK
-   54           | LBRACK . error RBRACK
-   55           | LBRACK . exp error
-
-    error   shift, and go to state 105
+    error   shift, and go to state 40
     THIS    shift, and go to state 2
-    ID      shift, and go to state 34
+    ID      shift, and go to state 36
     LBRACK  shift, and go to state 4
     NUMBER  shift, and go to state 5
     NEW     shift, and go to state 7
@@ -1132,9 +1081,59 @@ State 64
     MINUS   shift, and go to state 12
     NOT     shift, and go to state 13
 
-    exp     go to state 71
+    exp     go to state 97
     newexp  go to state 20
     name    go to state 23
+
+
+State 59
+
+    5 elements: exp SEMI .
+
+    $default  reduce using rule 5 (elements)
+
+
+State 60
+
+    9 vardec: type error . SEMI
+
+    SEMI  shift, and go to state 98
+
+
+State 61
+
+    8 vardec: type ID . SEMI
+   10       | type ID . error
+
+    error  shift, and go to state 99
+    SEMI   shift, and go to state 100
+
+
+State 62
+
+   56 multibrackets: LBRACK . RBRACK
+   58              | LBRACK . error
+
+    error   shift, and go to state 101
+    RBRACK  shift, and go to state 73
+
+
+State 63
+
+   12 vardec: type multibrackets . ID SEMI
+   57 multibrackets: multibrackets . LBRACK RBRACK
+
+    ID      shift, and go to state 102
+    LBRACK  shift, and go to state 75
+
+
+State 64
+
+   61 name: name DOT . ID
+   62     | name DOT . error
+
+    error  shift, and go to state 103
+    ID     shift, and go to state 104
 
 
 State 65
@@ -1142,56 +1141,37 @@ State 65
    25 exp: name LPAREN . RPAREN
    26    | name LPAREN . error
 
-    error   shift, and go to state 106
-    RPAREN  shift, and go to state 107
+    error   shift, and go to state 105
+    RPAREN  shift, and go to state 106
 
 
 State 66
 
    52 bracketexps: bracketexps . bracketexp
-   64 name: name bracketexps .
+   63 name: name bracketexps .
 
-    LBRACK  shift, and go to state 64
+    LBRACK  shift, and go to state 24
 
-    $default  reduce using rule 64 (name)
+    $default  reduce using rule 63 (name)
 
-    bracketexp  go to state 72
+    bracketexp  go to state 70
 
 
 State 67
 
-   21 exp: error LPAREN RPAREN .
+   21 exp: error . LPAREN RPAREN
+   54 bracketexp: LBRACK error . RBRACK
+   64 name: error . bracketexps
 
-    $default  reduce using rule 21 (exp)
+    LBRACK  shift, and go to state 24
+    RBRACK  shift, and go to state 107
+    LPAREN  shift, and go to state 25
+
+    bracketexps  go to state 26
+    bracketexp   go to state 27
 
 
 State 68
-
-   11 vardec: ID ID SEMI .
-
-    $default  reduce using rule 11 (vardec)
-
-
-State 69
-
-   21 exp: error . LPAREN RPAREN
-   54 bracketexp: LBRACK error . RBRACK
-   58 multibrackets: LBRACK error .
-
-    RBRACK  shift, and go to state 108
-    LPAREN  shift, and go to state 24
-
-    $default  reduce using rule 58 (multibrackets)
-
-
-State 70
-
-   56 multibrackets: LBRACK RBRACK .
-
-    $default  reduce using rule 56 (multibrackets)
-
-
-State 71
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1209,122 +1189,160 @@ State 71
    53 bracketexp: LBRACK exp . RBRACK
    55           | LBRACK exp . error
 
-    error   shift, and go to state 109
-    RBRACK  shift, and go to state 110
-    PLUS    shift, and go to state 44
-    MINUS   shift, and go to state 45
-    OR      shift, and go to state 46
-    TIMES   shift, and go to state 47
-    DIV     shift, and go to state 48
-    MOD     shift, and go to state 49
-    AND     shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    GE      shift, and go to state 53
-    LE      shift, and go to state 54
-    GT      shift, and go to state 55
-    LT      shift, and go to state 56
+    error   shift, and go to state 108
+    RBRACK  shift, and go to state 109
+    PLUS    shift, and go to state 46
+    MINUS   shift, and go to state 47
+    OR      shift, and go to state 48
+    TIMES   shift, and go to state 49
+    DIV     shift, and go to state 50
+    MOD     shift, and go to state 51
+    AND     shift, and go to state 52
+    EQ      shift, and go to state 53
+    NE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LE      shift, and go to state 56
+    GT      shift, and go to state 57
+    LT      shift, and go to state 58
 
 
-State 72
+State 69
+
+   21 exp: error LPAREN RPAREN .
+
+    $default  reduce using rule 21 (exp)
+
+
+State 70
 
    52 bracketexps: bracketexps bracketexp .
 
     $default  reduce using rule 52 (bracketexps)
 
 
+State 71
+
+   11 vardec: ID ID SEMI .
+
+    $default  reduce using rule 11 (vardec)
+
+
+State 72
+
+   21 exp: error . LPAREN RPAREN
+   54 bracketexp: LBRACK error . RBRACK
+   58 multibrackets: LBRACK error .
+   64 name: error . bracketexps
+
+    LBRACK  shift, and go to state 24
+    RBRACK  shift, and go to state 107
+    LPAREN  shift, and go to state 25
+
+    $default  reduce using rule 58 (multibrackets)
+
+    bracketexps  go to state 26
+    bracketexp   go to state 27
+
+
 State 73
 
-   13 vardec: ID multibrackets ID . SEMI
+   56 multibrackets: LBRACK RBRACK .
 
-    SEMI  shift, and go to state 111
+    $default  reduce using rule 56 (multibrackets)
 
 
 State 74
 
-   57 multibrackets: multibrackets LBRACK . RBRACK
+   13 vardec: ID multibrackets ID . SEMI
 
-    RBRACK  shift, and go to state 112
+    SEMI  shift, and go to state 110
 
 
 State 75
+
+   57 multibrackets: multibrackets LBRACK . RBRACK
+
+    RBRACK  shift, and go to state 111
+
+
+State 76
 
    15 exp: LBRACK error RBRACK .
 
     $default  reduce using rule 15 (exp)
 
 
-State 76
+State 77
 
    43 newexp: NEW ID LPAREN . RPAREN
 
-    RPAREN  shift, and go to state 113
+    RPAREN  shift, and go to state 112
 
 
-State 77
+State 78
 
    46 newexp: NEW ID bracketexps .
    48       | NEW ID bracketexps . multibrackets
    52 bracketexps: bracketexps . bracketexp
 
-    LBRACK  shift, and go to state 26
+    LBRACK  shift, and go to state 29
 
     $default  reduce using rule 46 (newexp)
 
-    bracketexp     go to state 72
-    multibrackets  go to state 114
+    bracketexp     go to state 70
+    multibrackets  go to state 113
 
 
-State 78
+State 79
 
    45 newexp: NEW simpletype bracketexps .
    47       | NEW simpletype bracketexps . multibrackets
    52 bracketexps: bracketexps . bracketexp
 
-    LBRACK  shift, and go to state 26
+    LBRACK  shift, and go to state 29
 
     $default  reduce using rule 45 (newexp)
 
-    bracketexp     go to state 72
-    multibrackets  go to state 115
+    bracketexp     go to state 70
+    multibrackets  go to state 114
 
 
-State 79
+State 80
 
    24 exp: LPAREN error RPAREN .
 
     $default  reduce using rule 24 (exp)
 
 
-State 80
+State 81
 
    23 exp: LPAREN exp RPAREN .
 
     $default  reduce using rule 23 (exp)
 
 
-State 81
+State 82
 
    20 exp: READ error RPAREN .
 
     $default  reduce using rule 20 (exp)
 
 
-State 82
+State 83
 
    19 exp: READ LPAREN error .
 
     $default  reduce using rule 19 (exp)
 
 
-State 83
+State 84
 
    18 exp: READ LPAREN RPAREN .
 
     $default  reduce using rule 18 (exp)
 
 
-State 84
+State 85
 
    27 exp: exp . PLUS exp
    27    | exp PLUS exp .
@@ -1341,21 +1359,21 @@ State 84
    38    | exp . GT exp
    39    | exp . LT exp
 
-    TIMES  shift, and go to state 47
-    DIV    shift, and go to state 48
-    MOD    shift, and go to state 49
-    AND    shift, and go to state 50
-    EQ     shift, and go to state 51
-    NE     shift, and go to state 52
-    GE     shift, and go to state 53
-    LE     shift, and go to state 54
-    GT     shift, and go to state 55
-    LT     shift, and go to state 56
+    TIMES  shift, and go to state 49
+    DIV    shift, and go to state 50
+    MOD    shift, and go to state 51
+    AND    shift, and go to state 52
+    EQ     shift, and go to state 53
+    NE     shift, and go to state 54
+    GE     shift, and go to state 55
+    LE     shift, and go to state 56
+    GT     shift, and go to state 57
+    LT     shift, and go to state 58
 
     $default  reduce using rule 27 (exp)
 
 
-State 85
+State 86
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1372,21 +1390,21 @@ State 85
    38    | exp . GT exp
    39    | exp . LT exp
 
-    TIMES  shift, and go to state 47
-    DIV    shift, and go to state 48
-    MOD    shift, and go to state 49
-    AND    shift, and go to state 50
-    EQ     shift, and go to state 51
-    NE     shift, and go to state 52
-    GE     shift, and go to state 53
-    LE     shift, and go to state 54
-    GT     shift, and go to state 55
-    LT     shift, and go to state 56
+    TIMES  shift, and go to state 49
+    DIV    shift, and go to state 50
+    MOD    shift, and go to state 51
+    AND    shift, and go to state 52
+    EQ     shift, and go to state 53
+    NE     shift, and go to state 54
+    GE     shift, and go to state 55
+    LE     shift, and go to state 56
+    GT     shift, and go to state 57
+    LT     shift, and go to state 58
 
     $default  reduce using rule 28 (exp)
 
 
-State 86
+State 87
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1403,21 +1421,21 @@ State 86
    38    | exp . GT exp
    39    | exp . LT exp
 
-    TIMES  shift, and go to state 47
-    DIV    shift, and go to state 48
-    MOD    shift, and go to state 49
-    AND    shift, and go to state 50
-    EQ     shift, and go to state 51
-    NE     shift, and go to state 52
-    GE     shift, and go to state 53
-    LE     shift, and go to state 54
-    GT     shift, and go to state 55
-    LT     shift, and go to state 56
+    TIMES  shift, and go to state 49
+    DIV    shift, and go to state 50
+    MOD    shift, and go to state 51
+    AND    shift, and go to state 52
+    EQ     shift, and go to state 53
+    NE     shift, and go to state 54
+    GE     shift, and go to state 55
+    LE     shift, and go to state 56
+    GT     shift, and go to state 57
+    LT     shift, and go to state 58
 
     $default  reduce using rule 29 (exp)
 
 
-State 87
+State 88
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1434,17 +1452,17 @@ State 87
    38    | exp . GT exp
    39    | exp . LT exp
 
-    EQ  shift, and go to state 51
-    NE  shift, and go to state 52
-    GE  shift, and go to state 53
-    LE  shift, and go to state 54
-    GT  shift, and go to state 55
-    LT  shift, and go to state 56
+    EQ  shift, and go to state 53
+    NE  shift, and go to state 54
+    GE  shift, and go to state 55
+    LE  shift, and go to state 56
+    GT  shift, and go to state 57
+    LT  shift, and go to state 58
 
     $default  reduce using rule 30 (exp)
 
 
-State 88
+State 89
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1461,17 +1479,17 @@ State 88
    38    | exp . GT exp
    39    | exp . LT exp
 
-    EQ  shift, and go to state 51
-    NE  shift, and go to state 52
-    GE  shift, and go to state 53
-    LE  shift, and go to state 54
-    GT  shift, and go to state 55
-    LT  shift, and go to state 56
+    EQ  shift, and go to state 53
+    NE  shift, and go to state 54
+    GE  shift, and go to state 55
+    LE  shift, and go to state 56
+    GT  shift, and go to state 57
+    LT  shift, and go to state 58
 
     $default  reduce using rule 31 (exp)
 
 
-State 89
+State 90
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1488,17 +1506,17 @@ State 89
    38    | exp . GT exp
    39    | exp . LT exp
 
-    EQ  shift, and go to state 51
-    NE  shift, and go to state 52
-    GE  shift, and go to state 53
-    LE  shift, and go to state 54
-    GT  shift, and go to state 55
-    LT  shift, and go to state 56
+    EQ  shift, and go to state 53
+    NE  shift, and go to state 54
+    GE  shift, and go to state 55
+    LE  shift, and go to state 56
+    GT  shift, and go to state 57
+    LT  shift, and go to state 58
 
     $default  reduce using rule 32 (exp)
 
 
-State 90
+State 91
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1515,17 +1533,17 @@ State 90
    38    | exp . GT exp
    39    | exp . LT exp
 
-    EQ  shift, and go to state 51
-    NE  shift, and go to state 52
-    GE  shift, and go to state 53
-    LE  shift, and go to state 54
-    GT  shift, and go to state 55
-    LT  shift, and go to state 56
+    EQ  shift, and go to state 53
+    NE  shift, and go to state 54
+    GE  shift, and go to state 55
+    LE  shift, and go to state 56
+    GT  shift, and go to state 57
+    LT  shift, and go to state 58
 
     $default  reduce using rule 33 (exp)
 
 
-State 91
+State 92
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1545,7 +1563,7 @@ State 91
     $default  reduce using rule 34 (exp)
 
 
-State 92
+State 93
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1565,7 +1583,7 @@ State 92
     $default  reduce using rule 35 (exp)
 
 
-State 93
+State 94
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1585,7 +1603,7 @@ State 93
     $default  reduce using rule 36 (exp)
 
 
-State 94
+State 95
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1605,7 +1623,7 @@ State 94
     $default  reduce using rule 37 (exp)
 
 
-State 95
+State 96
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1625,7 +1643,7 @@ State 95
     $default  reduce using rule 38 (exp)
 
 
-State 96
+State 97
 
    27 exp: exp . PLUS exp
    28    | exp . MINUS exp
@@ -1645,46 +1663,39 @@ State 96
     $default  reduce using rule 39 (exp)
 
 
-State 97
+State 98
 
     9 vardec: type error SEMI .
 
     $default  reduce using rule 9 (vardec)
 
 
-State 98
+State 99
 
    10 vardec: type ID error .
 
     $default  reduce using rule 10 (vardec)
 
 
-State 99
+State 100
 
     8 vardec: type ID SEMI .
 
     $default  reduce using rule 8 (vardec)
 
 
-State 100
+State 101
 
    58 multibrackets: LBRACK error .
 
     $default  reduce using rule 58 (multibrackets)
 
 
-State 101
+State 102
 
    12 vardec: type multibrackets ID . SEMI
 
-    SEMI  shift, and go to state 116
-
-
-State 102
-
-   63 name: name error ID .
-
-    $default  reduce using rule 63 (name)
+    SEMI  shift, and go to state 115
 
 
 State 103
@@ -1703,90 +1714,81 @@ State 104
 
 State 105
 
-   21 exp: error . LPAREN RPAREN
-   54 bracketexp: LBRACK error . RBRACK
-
-    RBRACK  shift, and go to state 108
-    LPAREN  shift, and go to state 24
-
-
-State 106
-
    26 exp: name LPAREN error .
 
     $default  reduce using rule 26 (exp)
 
 
-State 107
+State 106
 
    25 exp: name LPAREN RPAREN .
 
     $default  reduce using rule 25 (exp)
 
 
-State 108
+State 107
 
    54 bracketexp: LBRACK error RBRACK .
 
     $default  reduce using rule 54 (bracketexp)
 
 
-State 109
+State 108
 
    55 bracketexp: LBRACK exp error .
 
     $default  reduce using rule 55 (bracketexp)
 
 
-State 110
+State 109
 
    53 bracketexp: LBRACK exp RBRACK .
 
     $default  reduce using rule 53 (bracketexp)
 
 
-State 111
+State 110
 
    13 vardec: ID multibrackets ID SEMI .
 
     $default  reduce using rule 13 (vardec)
 
 
-State 112
+State 111
 
    57 multibrackets: multibrackets LBRACK RBRACK .
 
     $default  reduce using rule 57 (multibrackets)
 
 
-State 113
+State 112
 
    43 newexp: NEW ID LPAREN RPAREN .
 
     $default  reduce using rule 43 (newexp)
 
 
-State 114
+State 113
 
    48 newexp: NEW ID bracketexps multibrackets .
    57 multibrackets: multibrackets . LBRACK RBRACK
 
-    LBRACK  shift, and go to state 74
+    LBRACK  shift, and go to state 75
 
     $default  reduce using rule 48 (newexp)
 
 
-State 115
+State 114
 
    47 newexp: NEW simpletype bracketexps multibrackets .
    57 multibrackets: multibrackets . LBRACK RBRACK
 
-    LBRACK  shift, and go to state 74
+    LBRACK  shift, and go to state 75
 
     $default  reduce using rule 47 (newexp)
 
 
-State 116
+State 115
 
    12 vardec: type multibrackets ID SEMI .
 
