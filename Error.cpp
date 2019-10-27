@@ -49,3 +49,7 @@ int Error::getLine()
 {
   return line;
 }
+int Error::getColumn()
+{
+  return column;
+}

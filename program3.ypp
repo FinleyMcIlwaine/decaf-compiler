@@ -83,7 +83,7 @@ void yyerror(const char *);
 %precedence UOP
 %precedence BRACK
 %precedence NAME_BRACK
-%precedence LBRACK RBRACK LPAREN
+%precedence LBRACK RBRACK LPAREN SEMI
 /*
  * The Grammar :o
  */
@@ -113,6 +113,12 @@ elements: vardec {
   $$=new ElementsNode($1);
   $$->setVal("<exp> SEMI");
 }
+| exp error {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ElementsNode($1);
+  $$->setVal("<exp> <error>");
+}
 | SEMI {
   $$=new ElementsNode();
   $$->setVal("SEMI");
@@ -120,7 +126,10 @@ elements: vardec {
 | error %prec MIN {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
   scanner.addError(*err);
+  $$=new ElementsNode();
+  $$->setVal("<error>");
 }
+
 ;
 
 vardec: type ID SEMI {
@@ -132,26 +141,48 @@ vardec: type ID SEMI {
   scanner.addError(*err);
   $$=new VarDecNode($1);
   $$->setVal("<type> <error> SEMI");
-  yyerrok;
+}
+| type error %prec MIN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1);
+  $$->setVal("<type> <error>");
 }
 | type ID error {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
   $$=new VarDecNode($1,$2);
   $$->setVal("<type> ID <error>");
-  yyerrok;
 }
 | ID ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("ID ID SEMI");
 }
+| ID ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2);
+  $$->setVal("ID ID <error>");
+}
 | type multibrackets ID SEMI {
   $$=new VarDecNode($1,$2,$3);
   $$->setVal("<type> <multibrackets> ID SEMI");
 }
+| type multibrackets error SEMI {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2);
+  $$->setVal("<type> <multibrackets> <error> SEMI");
+}
 | ID multibrackets ID SEMI {
   $$=new VarDecNode($1,$2,$3);
   $$->setVal("ID <multibrackets> ID SEMI");
+}
+| ID multibrackets error SEMI {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2);
+  $$->setVal("ID <multibrackets> <error> SEMI");
 }
 
 ;

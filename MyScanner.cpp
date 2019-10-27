@@ -45,7 +45,7 @@ void MyScanner::printErrors()
   {
     if (err.getErrLine()=="")
     {
-      err.withErrLine(lines[err.getLine()-1]);
+      err.withErrLine(lines.at(err.getLine()-1));
     }
     err.print();
   }
@@ -54,5 +54,12 @@ void MyScanner::printErrors()
 
 void MyScanner::addError(Error err)
 {
+  // Do not double-warn for same error spot
+  bool dup = false;
+  for(Error &e : errors)
+  {
+    dup = (err.getLine()==e.getLine() && err.getColumn()==e.getColumn());
+    if (dup) return;
+  }
   errors.push_back(err);
 }

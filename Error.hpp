@@ -19,6 +19,7 @@ class Error
     void print();
     string getErrLine();
     int getLine();
+    int getColumn();
   private:
     int numSpaces();
     int line;

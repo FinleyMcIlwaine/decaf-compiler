@@ -9,7 +9,7 @@ CXXFLAGS=-ggdb -Wall -Wno-sign-compare -std=c++11
 LEXXX=flex++
 LFLAGS=--warn
 YACC=bison
-YFLAGS=--report=state -W -d -v
+YFLAGS=--report=state -W -d -v -t
 
 all: prog3
 
