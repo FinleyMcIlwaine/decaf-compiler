@@ -83,8 +83,7 @@ void yyerror(const char *);
 %precedence UOP
 %precedence BRACK
 %precedence NAME_BRACK
-%precedence LBRACK LPAREN
-
+%precedence LBRACK RBRACK LPAREN
 /*
  * The Grammar :o
  */
@@ -114,7 +113,6 @@ elements: vardec {
   $$=new ElementsNode($1);
   $$->setVal("<exp> SEMI");
 }
-
 | SEMI {
   $$=new ElementsNode();
   $$->setVal("SEMI");
@@ -128,6 +126,20 @@ elements: vardec {
 vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<type> ID SEMI");
+}
+| type error SEMI {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1);
+  $$->setVal("<type> <error> SEMI");
+  yyerrok;
+}
+| type ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2);
+  $$->setVal("<type> ID <error>");
+  yyerrok;
 }
 | ID ID SEMI {
   $$=new VarDecNode($1,$2);
@@ -148,6 +160,12 @@ exp: name {
   $$=new ExpNode($1);
   $$->setVal("<name>");
 }
+| LBRACK error RBRACK {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new BracketExpNode();
+  $$->setVal("LBRACK <error> RBRACK");
+}
 | NUMBER {
   $$=new ExpNode($1);
   $$->setVal("NUMBER");
@@ -167,13 +185,13 @@ exp: name {
   $$->setVal("READ LPAREN <error>");
 }
 | READ error RPAREN {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   $$=new ExpNode();
-  $$->setVal("READ LPAREN <error>");
+  $$->setVal("READ <error> RPAREN");
 }
-| error LPAREN RPAREN {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+| error LPAREN RPAREN %prec MIN {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
   scanner.addError(*err);
   $$=new ExpNode();
   $$->setVal("<error> LPAREN RPAREN");
@@ -186,9 +204,21 @@ exp: name {
   $$=new ExpNode($2);
   $$->setVal("LPAREN <exp> RPAREN");
 }
+| LPAREN error RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("LPAREN <error> RPAREN");
+}
 | name LPAREN RPAREN {
   $$=new ExpNode($1);
   $$->setVal("<name> LPAREN RPAREN");
+}
+| name LPAREN error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<name> LPAREN <error>");
 }
 /* SUM OPERATORS */
 | exp PLUS exp {
@@ -318,6 +348,18 @@ bracketexp: LBRACK exp RBRACK {
   $$=new BracketExpNode($2);
   $$->setVal("LBRACK <exp> RBRACK");
 }
+| LBRACK error RBRACK {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new BracketExpNode();
+  $$->setVal("LBRACK <error> RBRACK");
+}
+| LBRACK exp error %prec MIN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new BracketExpNode($2);
+  $$->setVal("LBRACK <exp> <error>");
+}
 
 ;
 
@@ -328,6 +370,12 @@ multibrackets: LBRACK RBRACK {
 | multibrackets LBRACK RBRACK {
   $$=new MultibracketNode($1);
   $$->setVal("<multibrackets> LBRACK RBRACK");
+}
+| LBRACK error %prec MIN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new MultibracketNode();
+  $$->setVal("LBRACK <error>");
 }
 
 ;
@@ -343,6 +391,18 @@ name: THIS {
 | name DOT ID {
   $$=new NameNode($1,$3);
   $$->setVal("<name> DOT ID");
+}
+| name DOT error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new NameNode($1);
+  $$->setVal("<name> DOT <error>");
+}
+| name error ID {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new NameNode($1,$3);
+  $$->setVal("<name> <error> ID");
 }
 | name bracketexps %prec NAME_BRACK { 
   $$=new NameNode($1,$2);
