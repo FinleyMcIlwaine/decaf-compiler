@@ -117,7 +117,7 @@ elements: vardec {
   $$->setVal("<exp> SEMI");
 }
 | exp error {
-  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   $$=new ElementsNode($1);
   $$->setVal("<exp> <error>");
@@ -127,6 +127,7 @@ elements: vardec {
   $$->setVal("SEMI");
 }
 | error %prec MIN {
+  cout << "MATCH";
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
   scanner.addError(*err);
   $$=new ElementsNode();
@@ -197,7 +198,7 @@ exp: name {
 | LBRACK error RBRACK {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
-  $$=new BracketExpNode();
+  $$=new ExpNode();
   $$->setVal("LBRACK <error> RBRACK");
 }
 | NUMBER {
@@ -259,29 +260,71 @@ exp: name {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> PLUS <exp>");
 }
+| exp PLUS error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> PLUS <error>");
+}
 | exp MINUS exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> MINUS <exp>");
+}
+| exp MINUS error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> MINUS <error>");
 }
 | exp OR exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> OR <exp>");
 }
+| exp OR error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> OR <error>");
+}
 | exp TIMES exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> TIMES <exp>");
+}
+| exp TIMES error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> TIMES <error>");
 }
 | exp DIV exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> DIV <exp>");
 }
+| exp DIV error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> DIV <error>");
+}
 | exp MOD exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> MOD <exp>");
 }
+| exp MOD error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> MOD <error>");
+}
 | exp AND exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> AND <exp>");
+}
+| exp AND error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> AND <error>");
 }
 
 /* RELATION OPERATORS */
@@ -289,25 +332,61 @@ exp: name {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> EQ <exp>");
 }
+| exp EQ error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> EQ <error>");
+}
 | exp NE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> NE <exp>");
+}
+| exp NE error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> NE <error>");
 }
 | exp GE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> GE <exp>");
 }
+| exp GE error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> GE <error>");
+}
 | exp LE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> LE <exp>");
+}
+| exp LE error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> LE <error>");
 }
 | exp GT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> GT <exp>");
 }
+| exp GT error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> GT <error>");
+}
 | exp LT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<exp> LT <exp>");
+}
+| exp LT error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<exp> LT <error>");
 }
 
 /* UNARY OPERATORS */
@@ -315,13 +394,31 @@ exp: name {
   $$=new ExpNode($2);
   $$->setVal("MINUS <exp>");
 }
+| MINUS error %prec UOP {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("MINUS <error>");
+}
 | PLUS exp %prec UOP {
   $$=new ExpNode($2);
   $$->setVal("PLUS <exp>");
 }
+| PLUS error %prec UOP {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("PLUS <error>");
+}
 | NOT exp %prec UOP {
   $$=new ExpNode($2);
   $$->setVal("NOT <exp>");
+}
+| NOT error %prec UOP {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("NOT <error>");
 }
 
 ;
@@ -482,6 +579,6 @@ name: THIS {
 %%
 void yyerror(char const *s) 
 {
-  // Shut up Bison let me do the talking
+  // Shut up Bison let me do the talking (please and thank you)
   err->withDesc(s);
 } 

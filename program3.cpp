@@ -28,7 +28,8 @@ int main(int argc, char **argv)
   scanner.printErrors();
 
   // Print syntax tree
-  tree->print();
+  if(tree) tree->print();
+  else cout << "Parse error at end of input." << endl;
   cout << endl;
 
   return 0;

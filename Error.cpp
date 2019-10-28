@@ -37,7 +37,6 @@ Error* Error::withDesc(string desc)
 // line:col : <line contents>
 //                     ^
 // <error description>
-//
 void Error::print()
 {
   cout << endl << line << ":" << column << " : " << errLine << endl;

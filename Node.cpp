@@ -89,7 +89,7 @@ Node* Node::getRight()
 
 void Node::print()
 {
-  cout << "\n*** PRINTING TREE ***" << endl << endl;
+  cout << endl;
   if (left) left->print();
   if (right) left->print();
 }
