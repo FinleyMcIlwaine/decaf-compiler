@@ -1,10 +1,12 @@
-// node.cpp
-// Finley McIlwaine
-// COSC4785, Prof. Buckner
-// Program 3
-// October 27, 2019
-
-#include "node.hpp"
+/*
+ * Node.cpp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Definition of all node class member functions
+*/
+#include "Node.hpp"
 
 /* BASE NODE DEFINITIONS */
 Node::Node(Node *lf, Node *rt) 

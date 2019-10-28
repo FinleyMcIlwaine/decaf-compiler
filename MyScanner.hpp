@@ -1,6 +1,13 @@
+/*
+ * MyScanner.hpp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Declaration of MyScanner class
+*/
 #ifndef MSCANNER_H
 #define MSCANNER_H
-
 #if !defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
 #endif
@@ -30,5 +37,4 @@ class MyScanner : public yyFlexLexer
     int columnNumber;
     int lineNumber;
 };
-
 #endif

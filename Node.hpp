@@ -1,12 +1,13 @@
-// node.hpp
-// Finley McIlwaine
-// COSC 4785
-// program3
-// Professor Buckner
-
+/*
+ * Node.hpp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Declaration of all node classes
+*/
 #ifndef NODE_HPP
 #define NODE_HPP
-
 #include<iostream>
 #include<string>
 

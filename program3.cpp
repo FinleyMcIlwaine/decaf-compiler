@@ -1,14 +1,16 @@
-// program3.cpp
-// Finley McIlwaine
-// COSC 4785
-// Professor Buckner
-// program3
-
-#include <iostream>
-#include "node.hpp"
+/*
+ * program3.cpp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Main file
+*/
+#include "Node.hpp"
 #include "program3.tab.hpp"
 #include "MyScanner.hpp"
 #include <string>
+#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -19,9 +21,15 @@ Node *tree;
 
 int main(int argc, char **argv)
 {
+  // Parse
   yyparse();
+
+  // Print syntax errors
   scanner.printErrors();
+
+  // Print syntax tree
   tree->print();
   cout << endl;
+
   return 0;
 }

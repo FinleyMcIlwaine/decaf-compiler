@@ -1,13 +1,15 @@
-// program3.ypp
-// Finley McIlwaine
-// COSC 4785
-// Dr. Buckner
-// October 27, 2019
-
+/*
+ * program3.ypp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Bison grammar input file
+*/
 %{
 #include <iostream>
 #include "Error.hpp"
-#include "node.hpp"
+#include "Node.hpp"
 #include "MyScanner.hpp"
 
 using std::cout;
@@ -25,7 +27,7 @@ void yyerror(const char *);
 %}
 
 %locations
-%debug
+
   /*
    * El Union
    */
@@ -84,6 +86,7 @@ void yyerror(const char *);
 %precedence BRACK
 %precedence NAME_BRACK
 %precedence LBRACK RBRACK LPAREN SEMI
+
 /*
  * The Grammar :o
  */

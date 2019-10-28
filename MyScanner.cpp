@@ -1,10 +1,12 @@
-// MyScanner.cpp
-// Finley McIlwaine
-// COSC4785, Prof. Buckner
-// Program 3
-// October 27, 2019
-
-#include "node.hpp"
+/*
+ * MyScanner.cpp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Definition of MyScanner class member functions
+*/
+#include "Node.hpp"
 #include "program3.tab.hpp"
 #include "MyScanner.hpp"
 
@@ -29,6 +31,10 @@ int MyScanner::getLineNum()
   return lineNumber;
 }
 
+// Reads characters, incrementing line and column number
+// variables apporpriately and saving the characters in the
+// current line buffer. Also increments location tracking
+// values for bison.
 void MyScanner::read(char* txt)
 {
   // Make a copy!!
@@ -39,6 +45,7 @@ void MyScanner::read(char* txt)
   yylloc.last_column=columnNumber;
 }
 
+// Prints all errors stored in the errors array.
 void MyScanner::printErrors()
 {
   for(Error &err : errors)
@@ -52,6 +59,9 @@ void MyScanner::printErrors()
   errors.clear();
 }
 
+// Adds an error to the errors array, but only if an error
+// has not already been added for that specific column and
+// line combination.
 void MyScanner::addError(Error err)
 {
   // Do not double-warn for same error spot

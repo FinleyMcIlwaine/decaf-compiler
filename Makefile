@@ -1,40 +1,40 @@
 # Makefile
 # Finley McIlwaine
-# COSC 4785 Fall 2019
-# Program 03
-# October 6, 2019
+# Oct. 27, 2019
+# COSC 4785 Program 3
 
 CXX=g++
 CXXFLAGS=-ggdb -Wall -Wno-sign-compare -std=c++11
 LEXXX=flex++
 LFLAGS=--warn
 YACC=bison
-YFLAGS=--report=state -W -d -v -t
+YFLAGS=--report=state -W -d -v
 
-all: prog3
+all: program3
 
 .PHONY: clean tarball
 
-program3_lex.cpp: program3.lpp node.hpp MyScanner.hpp Error.hpp
+lexer: Node.hpp MyScanner.hpp Error.hpp
 	${LEXXX} ${LFLAGS} program3.lpp
 
-program3.tab.hpp: program3.ypp node.hpp Error.hpp
+parser: Node.hpp Error.hpp
 	${YACC} ${YFLAGS} program3.ypp
 
-prog3:  program3.tab.hpp program3.tab.cpp MyScanner.hpp node.hpp \
-	node.cpp program3_lex.cpp program3.cpp
-	${CXX} ${CXXFLAGS} program3.tab.cpp program3.cpp node.cpp \
-		program3_lex.cpp MyScanner.cpp Error.cpp -o program3
+program3: parser lexer program3.tab.hpp MyScanner.hpp Node.hpp
+	${CXX} ${CXXFLAGS} program3.tab.cpp program3_lex.cpp program3.cpp \
+		Node.cpp MyScanner.cpp Error.cpp -o program3
 
 tidy:
-	/bin/rm -f a.out core.* program3.tab.* program3.output program3_lex.cpp
+	/bin/rm -rf a.out core.* program3.tab.* program3.output \
+		program3_lex.cpp tarball
 
 clean: tidy
-	        /bin/rm -f program3 
+	/bin/rm -rf program3 tarball
 
 tarball:
-	        tar cf program.tar Makefile node.hpp node.cpp \
-			myscanner.hpp myscanner.cpp \
-			error.hpp error.cpp \
-			program3.lpp program3.ypp program3.cpp
+	rm -rf tarball
+	mkdir tarball
+	tar cf ./tarball/program3.tar Makefile Node.hpp Node.cpp MyScanner.hpp\
+			MyScanner.cpp Error.hpp Error.cpp program3.lpp
+			program3.ypp program3.cpp
 

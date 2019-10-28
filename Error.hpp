@@ -1,6 +1,14 @@
+/*
+ * Error.hpp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Declaration of the Error class
+*/
+
 #ifndef ERROR_HPP
 #define ERROR_HPP
-
 #include<iostream>
 #include<string>
 
@@ -27,5 +35,4 @@ class Error
     string errLine;
     string description;
 };
-
 #endif

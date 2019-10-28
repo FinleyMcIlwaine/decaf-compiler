@@ -1,14 +1,16 @@
 %{
-  // program3.lpp
-  // Finley McIlwaine
-  // COSC 4785 Fall 2019
-  // Program 02
-  // October 6, 2019
-
+/*
+ * program3.lpp
+ * Finley McIlwaine
+ * Oct. 27, 2019
+ * COSC4785, Program 3
+ *
+ * Flex input file
+*/
 #include<string>
 #include<iostream>
 #include "MyScanner.hpp"
-#include "node.hpp"
+#include "Node.hpp"
 #include "program3.tab.hpp"
 
 using std::string;
@@ -76,6 +78,7 @@ int errCol;
   errLine="";
   BEGIN(0);
 }
+  /* basic terminals */
 "this" {
   read(yytext);
   return THIS;
@@ -103,6 +106,7 @@ int errCol;
 [0-9]+ {
   read(yytext);
   string num(yytext);
+  // Make a new node so we can print it
   yylval.pnode=new NumberNode();
   yylval.pnode->setVal(num);
   return NUMBER;
@@ -186,6 +190,7 @@ int errCol;
 [_a-zA-Z]+[_0-9a-zA-Z]* {
   read(yytext);
   string id(yytext);
+  // Make a new node so we can print it
   yylval.pnode=new IdNode();
   yylval.pnode->setVal(id);
   return ID;
