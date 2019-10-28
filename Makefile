@@ -29,12 +29,12 @@ tidy:
 		program3_lex.cpp tarball
 
 clean: tidy
-	/bin/rm -rf program3 tarball
+	/bin/rm -rf program3
 
 tarball:
 	rm -rf tarball
 	mkdir tarball
 	tar cf ./tarball/program3.tar Makefile Node.hpp Node.cpp MyScanner.hpp\
-			MyScanner.cpp Error.hpp Error.cpp program3.lpp
+			MyScanner.cpp Error.hpp Error.cpp program3.lpp\
 			program3.ypp program3.cpp
 
