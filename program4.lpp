@@ -79,54 +79,6 @@ int errCol;
   BEGIN(0);
 }
   /* basic terminals */
-"this" {
-  read(yytext);
-  return THIS;
-}
-"." {
-  read(yytext);
-  return DOT;
-}
-"[" {
-  read(yytext);
-  return LBRACK;
-}
-"]" {
-  read(yytext);
-  return RBRACK;
-}
-"(" {
-  read(yytext);
-  return LPAREN;
-}
-")" {
-  read(yytext);
-  return RPAREN;
-}
-[0-9]+ {
-  read(yytext);
-  string num(yytext);
-  // Make a new node so we can print it
-  yylval.pnode=new NumberNode();
-  yylval.pnode->setVal(num);
-  return NUMBER;
-}
-"int" {
-  read(yytext);
-  return INT;
-}
-"new" {
-  read(yytext);
-  return NEW;
-}
-"read" {
-  read(yytext);
-  return READ;
-}
-"null" {
-  read(yytext);
-  return NULLT;
-}
 "!=" {
   read(yytext);
   return NE;
@@ -182,18 +134,6 @@ int errCol;
 "%" {
   read(yytext);
   return MOD;
-}
-";" {
-  read(yytext);
-  return SEMI;
-}
-[_a-zA-Z]+[_0-9a-zA-Z]* {
-  read(yytext);
-  string id(yytext);
-  // Make a new node so we can print it
-  yylval.pnode=new IdNode();
-  yylval.pnode->setVal(id);
-  return ID;
 }
 [ ]	{
   line+=" ";

@@ -44,6 +44,32 @@ class Node {
     Node *left, *right;
 };
 
+/** OPERATION NODE TYPES **/
+class UnaryOpNode : public Node
+{
+  public:
+    UnaryOpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+class RelationOpNode : public Node
+{
+  public:
+    RelationOpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+class SumOpNode : public Node
+{
+  public:
+    SumOpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+class ProductOpNode : public Node
+{
+  public:
+    ProductOpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
 /** NAME NODE TYPE **/
 class NameNode : public Node
 {

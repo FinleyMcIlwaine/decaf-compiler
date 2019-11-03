@@ -95,6 +95,34 @@ void Node::print()
 }
 
 
+/* OPERATION NODE DEFINITIONS */
+
+void UnaryOpNode::print()
+{
+  cout << "<UnaryOp> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+void RelationOpNode::print()
+{
+  cout << "<RelationOp> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+void SumOpNode::print()
+{
+  cout << "<SumOp> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+void ProductOpNode::print()
+{
+  cout << "<ProductOp> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
 /* NAME NODE DEFINITIONS */
 
 void NameNode::print()
@@ -222,7 +250,7 @@ void ElementsNode::print() {
 /* PROGRAM NODE DEFINITIONS */
 
 void ProgramNode::print() {
-  cout << "<program> --> " + sval << endl;
+  cout << "<Program> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
