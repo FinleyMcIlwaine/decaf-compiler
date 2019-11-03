@@ -95,6 +95,60 @@ void Node::print()
 }
 
 
+/* TYPE NODE DEFINITIONS */
+
+void TypeNode::print() {
+  cout << "<Type> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+void SimpleTypeNode::print() {
+  cout << "<SimpleType> --> " + sval << endl;
+}
+
+
+/* EXP NODE DEFINITIONS */
+
+ExpNode::ExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
+  middle=mi;
+}
+void ExpNode::print() {
+  cout << "<Exp> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void ExpNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* ExpNode::getMiddle()
+{
+  return middle;
+}
+
+
+/* NEWEXP NODE DEFINITIONS */
+
+NewExpNode::NewExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
+  middle=mi;
+}
+void NewExpNode::print() {
+  cout << "<NewExp> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void NewExpNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* NewExpNode::getMiddle()
+{
+  return middle;
+}
+
+
 /* OPERATION NODE DEFINITIONS */
 
 void UnaryOpNode::print()
@@ -168,13 +222,6 @@ void BracketExpsNode::print()
 }
 
 
-/* EXP NODE DEFINITIONS */
-
-void ExpNode::print() {
-  cout << "<exp> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
 
 
 /* NUMBER NODE DEFINITIONS */
@@ -184,37 +231,8 @@ void NumberNode::print() {
 }
 
 
-/* TYPE NODE DEFINITIONS */
-
-void TypeNode::print() {
-  cout << "<type> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-void SimpleTypeNode::print() {
-  cout << "<simpletype> --> " + sval << endl;
-}
 
 
-/* NEWEXP NODE DEFINITIONS */
-
-NewExpNode::NewExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
-  middle=mi;
-}
-void NewExpNode::print() {
-  cout << "<newexp> --> " + sval << endl;
-  if (left) left->print();
-  if (middle) middle->print();
-  if (right) right->print();
-}
-void NewExpNode::setMiddle(Node *mi)
-{ 
-  middle = mi;
-}
-Node* NewExpNode::getMiddle()
-{
-  return middle;
-}
 
 
 /* VARDEC NODE DEFINITIONS */

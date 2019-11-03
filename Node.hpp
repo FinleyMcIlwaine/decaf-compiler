@@ -44,6 +44,46 @@ class Node {
     Node *left, *right;
 };
 
+/** ID NODE TYPE **/
+class IdNode : public Node
+{
+  public:
+    IdNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+}; 
+
+/** SIMPLETYPE NODE TYPE **/
+class SimpleTypeNode : public Node
+{
+  public:
+    SimpleTypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** EXP NODE TYPE **/
+class ExpNode : public Node
+{
+  public:
+    ExpNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
+};
+
+/** NEWEXP NODE TYPE **/
+class NewExpNode : public Node
+{
+  public:
+    NewExpNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
+};
+
 /** OPERATION NODE TYPES **/
 class UnaryOpNode : public Node
 {
@@ -78,13 +118,6 @@ class NameNode : public Node
     void print();
 };
 
-/** ID NODE TYPE **/
-class IdNode : public Node
-{
-  public:
-    IdNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-}; 
 
 /** MULTIBRACKET NODE TYPE **/
 class MultibracketNode : public Node
@@ -109,13 +142,6 @@ class BracketExpsNode : public Node
     void print();
 };
 
-/** EXP NODE TYPE **/
-class ExpNode : public Node
-{
-  public:
-    ExpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
 
 /** NUMBER NODE TYPE **/
 class NumberNode : public Node
@@ -131,26 +157,6 @@ class TypeNode : public Node
   public:
     TypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
-};
-
-/** SIMPLETYPE NODE TYPE **/
-class SimpleTypeNode : public Node
-{
-  public:
-    SimpleTypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-/** NEWEXP NODE TYPE **/
-class NewExpNode : public Node
-{
-  public:
-    NewExpNode(Node *lf=0, Node *mi=0, Node *rt=0);
-    void print();
-    void setMiddle(Node *mi);
-    Node* getMiddle();
-  private:
-    Node *middle;
 };
 
 /** VARDEC NODE TYPE **/

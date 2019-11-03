@@ -85,9 +85,13 @@ program: productop sumop relationop unaryop {
 
 ; /* do not ever even think about forgetting this stupid thing */ 
 
-/*------------------------------------------------------------------*
- |                      BEGIN PROGRAM 4 RULES                       |
- *------------------------------------------------------------------*/
+newexp: NEW ID LPAREN RPAREN {
+  $$=new NewExpNode($2,$4);
+  $$->setVal("new identifier lparen <ArgList> rparen";
+}
+
+;
+
 unaryop: PLUS {
   $$=new UnaryOpNode();
   $$->setVal("plus");
