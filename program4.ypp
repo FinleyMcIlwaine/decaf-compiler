@@ -1,8 +1,8 @@
 /*
- * program3.ypp
+ * program4.ypp
  * Finley McIlwaine
- * Oct. 27, 2019
- * COSC4785, Program 3
+ * Nov. 10, 2019
+ * COSC4785, Program 4
  *
  * Bison grammar input file
 */
@@ -178,6 +178,12 @@ vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<type> <multibrackets> <error> SEMI");
 }
+| type multibrackets ID error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2,$3);
+  $$->setVal("<type> <multibrackets> ID <error>");
+}
 | ID multibrackets ID SEMI {
   $$=new VarDecNode($1,$2,$3);
   $$->setVal("ID <multibrackets> ID SEMI");
@@ -188,18 +194,18 @@ vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("ID <multibrackets> <error> SEMI");
 }
+| ID multibrackets ID error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2,$3);
+  $$->setVal("ID <multibrackets> ID error");
+}
 
 ;
 
 exp: name {
   $$=new ExpNode($1);
   $$->setVal("<name>");
-}
-| LBRACK error RBRACK {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  $$=new ExpNode();
-  $$->setVal("LBRACK <error> RBRACK");
 }
 | NUMBER {
   $$=new ExpNode($1);
