@@ -39,11 +39,17 @@ void yyerror(const char *);
  * token stuff
  */
 %type<pnode> program
+%type<pnode> newexp
 %type<pnode> unaryop
 %type<pnode> relationop
 %type<pnode> sumop
 %type<pnode> productop
 
+%token<pnode> NEW
+%token<pnode> NUMBER
+%token<pnode> ID
+%token<pnode> LPAREN
+%token<pnode> RPAREN
 %token<pnode> PLUS
 %token<pnode> MINUS
 %token<pnode> OR
@@ -82,12 +88,16 @@ program: productop sumop relationop unaryop {
   $$=new ProgramNode($1);
   $$->setVal("<productop>");
 }
+| newexp {
+  $$=new ProgramNode($1);
+  $$->setVal("<NewExp>");
+}
 
 ; /* do not ever even think about forgetting this stupid thing */ 
 
 newexp: NEW ID LPAREN RPAREN {
-  $$=new NewExpNode($2,$4);
-  $$->setVal("new identifier lparen <ArgList> rparen";
+  $$=new NewExpNode($2);
+  $$->setVal("new identifier lparen <ArgList> rparen");
 }
 
 ;

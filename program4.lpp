@@ -79,6 +79,18 @@ int errCol;
   BEGIN(0);
 }
   /* basic terminals */
+"new" {
+  read(yytext);
+  return NEW;
+}
+"(" {
+  read(yytext);
+  return LPAREN;
+}
+")" {
+  read(yytext);
+  return RPAREN;
+}
 "!=" {
   read(yytext);
   return NE;
@@ -134,6 +146,22 @@ int errCol;
 "%" {
   read(yytext);
   return MOD;
+}
+[0-9]+ {
+  read(yytext);
+  string num(yytext);
+  // Make a new node so we can print it
+  yylval.pnode=new NumberNode();
+  yylval.pnode->setVal(num);
+  return NUMBER;
+}
+[_a-zA-Z]+[_0-9a-zA-Z]* {
+  read(yytext);
+  string id(yytext);
+  // Make a new node so we can print it
+  yylval.pnode=new IdNode();
+  yylval.pnode->setVal(id);
+  return ID;
 }
 [ ]	{
   line+=" ";
