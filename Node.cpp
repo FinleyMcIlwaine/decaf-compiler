@@ -107,6 +107,15 @@ void SimpleTypeNode::print() {
 }
 
 
+/* ARG LIST NODE DEFINITIONS */
+
+void ArgListNode::print() {
+  cout << "<ArgList> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
 /* EXP NODE DEFINITIONS */
 
 ExpNode::ExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {

@@ -39,6 +39,8 @@ void yyerror(const char *);
  * token stuff
  */
 %type<pnode> program
+%type<pnode> arglist
+%type<pnode> exp
 %type<pnode> newexp
 %type<pnode> unaryop
 %type<pnode> relationop
@@ -94,6 +96,28 @@ program: productop sumop relationop unaryop {
 }
 
 ; /* do not ever even think about forgetting this stupid thing */ 
+
+arglist: exp {
+  $$=new ArgListNode($1);
+  $$->setVal("<Exp>");
+}
+| arglist exp {
+  $$=new ArgListNode($1,$2);
+  $$->setVal("<ArgList> <Exp>");
+}
+| %empty {
+  $$=new ArgListNode();
+  $$->setVal("empty"); /* HOW TO SHOW THIS??? */
+}
+
+;
+
+exp: NUMBER {
+  $$=new ExpNode($1);
+  $$->setVal("<Exp>");
+}
+
+;
 
 newexp: NEW ID LPAREN RPAREN {
   $$=new NewExpNode($2);

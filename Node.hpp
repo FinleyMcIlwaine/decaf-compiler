@@ -60,6 +60,14 @@ class SimpleTypeNode : public Node
     void print();
 };
 
+/** ARGLIST NODE TYPE **/
+class ArgListNode : public Node
+{
+  public:
+    ArgListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
 /** EXP NODE TYPE **/
 class ExpNode : public Node
 {
