@@ -48,10 +48,6 @@ void yyerror(const char *);
 %type<pnode> multibrackets
 %type<pnode> bracketexp
 %type<pnode> bracketexps
-%type<pnode> unaryop
-%type<pnode> relationop
-%type<pnode> sumop
-%type<pnode> productop
 
 %token<pnode> READ
 %token<pnode> NULLT
@@ -85,10 +81,10 @@ void yyerror(const char *);
 %left TIMES DIV MOD AND
 %left EQ NE GE LE GT LT
 
-%precedence UNARYOP
-%precedence PRODUCTOP
-%precedence SUMOP
 %precedence RELATIONOP
+%precedence SUMOP
+%precedence PRODUCTOP
+%precedence UNARYOP
 
 /*
  * The Grammar :o
@@ -187,21 +183,69 @@ exp: name {
   $$=new ExpNode($1);
   $$->setVal("<NewExp>");
 }
-| unaryop exp %prec UNARYOP {
-  $$=new ExpNode($1,$2);
-  $$->setVal("<UnaryOp> <Exp>");
+| PLUS exp %prec UNARYOP {
+  $$=new ExpNode($2);
+  $$->setVal("plus <Exp>");
 }
-| exp relationop exp %prec RELATIONOP {
-  $$=new ExpNode($1,$2,$3);
-  $$->setVal("<Exp> <RelationOp> <Exp>");
+| MINUS exp %prec UNARYOP {
+  $$=new ExpNode($2);
+  $$->setVal("minus <Exp>");
 }
-| exp sumop exp %prec SUMOP {
-  $$=new ExpNode($1,$2,$3);
-  $$->setVal("<Exp> <SumOp> <Exp>");
+| NOT exp %prec UNARYOP {
+  $$=new ExpNode($2);
+  $$->setVal("not <Exp>");
 }
-| exp productop exp %prec PRODUCTOP {
-  $$=new ExpNode($1,$2,$3);
-  $$->setVal("<Exp> <ProductOp> <Exp>");
+| exp EQ exp %prec RELATIONOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> eq <Exp>");
+}
+| exp NE exp %prec RELATIONOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> ne <Exp>");
+}
+| exp LE exp %prec RELATIONOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> le <Exp>");
+}
+| exp GE exp %prec RELATIONOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> ge <Exp>");
+}
+| exp LT exp %prec RELATIONOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> lt <Exp>");
+}
+| exp GT exp %prec RELATIONOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> gt <Exp>");
+}
+| exp PLUS exp %prec SUMOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> plus <Exp>");
+}
+| exp MINUS exp %prec SUMOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> minus <Exp>");
+}
+| exp OR exp %prec SUMOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> or <Exp>");
+}
+| exp TIMES exp %prec PRODUCTOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> times <Exp>");
+}
+| exp DIV exp %prec PRODUCTOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> div <Exp>");
+}
+| exp MOD exp %prec PRODUCTOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> mod <Exp>");
+}
+| exp AND exp %prec PRODUCTOP {
+  $$=new ExpNode($1,$3);
+  $$->setVal("<Exp> and <Exp>");
 }
 | LPAREN exp RPAREN {
   $$=new ExpNode($2);
@@ -258,80 +302,6 @@ multibrackets: LBRACK RBRACK {
 
 ;
 
-unaryop: PLUS {
-  $$=new UnaryOpNode();
-  $$->setVal("plus");
-}
-| MINUS {
-  $$=new UnaryOpNode();
-  $$->setVal("minus");
-}
-| NOT {
-  $$=new UnaryOpNode();
-  $$->setVal("not");
-}
-
-
-relationop: EQ {
-  $$=new RelationOpNode();
-  $$->setVal("eq");
-}
-| NE {
-  $$=new RelationOpNode();
-  $$->setVal("ne");
-}
-| LE {
-  $$=new RelationOpNode();
-  $$->setVal("le");
-}
-| GE {
-  $$=new RelationOpNode();
-  $$->setVal("ge");
-}
-| LT {
-  $$=new RelationOpNode();
-  $$->setVal("lt");
-}
-| GT {
-  $$=new RelationOpNode();
-  $$->setVal("gt");
-}
-
-;
-
-sumop: PLUS {
-  $$=new SumOpNode();
-  $$->setVal("plus");
-}
-| MINUS {
-  $$=new SumOpNode();
-  $$->setVal("minus");
-}
-| OR {
-  $$=new SumOpNode();
-  $$->setVal("or");
-}
-
-;
-
-productop: TIMES {
-  $$=new ProductOpNode();
-  $$->setVal("times");
-}
-| DIV {
-  $$=new ProductOpNode();
-  $$->setVal("div");
-}
-| MOD {
-  $$=new ProductOpNode();
-  $$->setVal("mod");
-}
-| AND {
-  $$=new ProductOpNode();
-  $$->setVal("and");
-}
-
-;
 
 %%
 void yyerror(char const *s) 
