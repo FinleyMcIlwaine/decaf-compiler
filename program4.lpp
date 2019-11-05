@@ -79,6 +79,18 @@ int errCol;
   BEGIN(0);
 }
   /* basic terminals */
+"null" {
+  read(yytext);
+  return NULLT;
+}
+"." {
+  read(yytext);
+  return DOT;
+}
+"this" {
+  read(yytext);
+  return THIS;
+}
 "int" {
   read(yytext);
   return INT;
