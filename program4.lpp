@@ -79,9 +79,25 @@ int errCol;
   BEGIN(0);
 }
   /* basic terminals */
+"int" {
+  read(yytext);
+  return INT;
+}
 "new" {
   read(yytext);
   return NEW;
+}
+"," {
+  read(yytext);
+  return COMMA;
+}
+"[" {
+  read(yytext);
+  return LBRACK;
+}
+"]" {
+  read(yytext);
+  return RBRACK;
 }
 "(" {
   read(yytext);

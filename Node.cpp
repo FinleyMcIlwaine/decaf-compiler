@@ -104,6 +104,7 @@ void TypeNode::print() {
 }
 void SimpleTypeNode::print() {
   cout << "<SimpleType> --> " + sval << endl;
+  if (left) left->print();
 }
 
 
@@ -225,23 +226,17 @@ void BracketExpNode::print()
 
 void BracketExpsNode::print()
 {
-  cout << "<bracketexps> --> " + sval << endl;
+  cout << "<BracketExps> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
 
 
-
-
 /* NUMBER NODE DEFINITIONS */
 
 void NumberNode::print() {
-  cout << "NUMBER --> " + sval << endl;
+  cout << "number --> " + sval << endl;
 }
-
-
-
-
 
 
 /* VARDEC NODE DEFINITIONS */

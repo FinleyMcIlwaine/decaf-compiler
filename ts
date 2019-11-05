@@ -1,1 +1,1 @@
-new ident()
+new ident(54)

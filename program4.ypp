@@ -39,17 +39,26 @@ void yyerror(const char *);
  * token stuff
  */
 %type<pnode> program
+%type<pnode> simpletype
+%type<pnode> type
 %type<pnode> arglist
-%type<pnode> exp
 %type<pnode> newexp
+%type<pnode> exp
+%type<pnode> multibrackets
+%type<pnode> bracketexp
+%type<pnode> bracketexps
 %type<pnode> unaryop
 %type<pnode> relationop
 %type<pnode> sumop
 %type<pnode> productop
 
+%token<pnode> INT
 %token<pnode> NEW
+%token<pnode> COMMA
 %token<pnode> NUMBER
 %token<pnode> ID
+%token<pnode> LBRACK
+%token<pnode> RBRACK
 %token<pnode> LPAREN
 %token<pnode> RPAREN
 %token<pnode> PLUS
@@ -66,7 +75,7 @@ void yyerror(const char *);
 %token<pnode> GT
 %token<pnode> LT
 %token<pnode> NOT
-
+/*
 %left PLUS MINUS OR
 %left TIMES DIV MOD AND
 %left EQ NE GE LE GT LT
@@ -75,7 +84,7 @@ void yyerror(const char *);
 %precedence PRODUCTOP
 %precedence SUMOP
 %precedence RELATIONOP
-
+*/
 /*
  * The Grammar :o
  */
@@ -88,7 +97,7 @@ input: program {
 
 program: productop sumop relationop unaryop {
   $$=new ProgramNode($1);
-  $$->setVal("<productop>");
+  $$->setVal("<ProductOp>");
 }
 | newexp {
   $$=new ProgramNode($1);
@@ -97,12 +106,34 @@ program: productop sumop relationop unaryop {
 
 ; /* do not ever even think about forgetting this stupid thing */ 
 
+type: simpletype {
+  $$=new TypeNode($1);
+  $$->setVal("<SimpleType>");
+}
+| type LBRACK RBRACK {
+  $$=new TypeNode($1);
+  $$->setVal("<Type> lbrack rbrack");
+}
+
+;
+
+simpletype: INT {
+  $$=new SimpleTypeNode();
+  $$->setVal("int");
+}
+| ID {
+  $$=new SimpleTypeNode($1);
+  $$->setVal("identifier");
+}
+
+;
+
 arglist: exp {
   $$=new ArgListNode($1);
   $$->setVal("<Exp>");
 }
-| arglist exp {
-  $$=new ArgListNode($1,$2);
+| arglist COMMA exp {
+  $$=new ArgListNode($1,$3);
   $$->setVal("<ArgList> <Exp>");
 }
 | %empty {
@@ -114,14 +145,55 @@ arglist: exp {
 
 exp: NUMBER {
   $$=new ExpNode($1);
-  $$->setVal("<Exp>");
+  $$->setVal("number");
 }
 
 ;
 
-newexp: NEW ID LPAREN RPAREN {
-  $$=new NewExpNode($2);
+newexp: NEW ID LPAREN arglist RPAREN {
+  $$=new NewExpNode($2,$4);
   $$->setVal("new identifier lparen <ArgList> rparen");
+}
+| NEW simpletype bracketexps multibrackets {
+  $$=new NewExpNode($2,$3,$4);
+  $$->setVal("new <SimpleType> <BracketExps> <MultiBrackets>");
+}
+| NEW simpletype bracketexps {
+  $$=new NewExpNode($2,$3);
+  $$->setVal("new <SimpleType> <BracketExps>");
+}
+| NEW simpletype {
+  $$=new NewExpNode($2);
+  $$->setVal("new <SimpleType>");
+}
+
+;
+
+bracketexps: bracketexp {
+  $$=new BracketExpsNode($1);
+  $$->setVal("<BracketExp>");
+}
+| bracketexps bracketexp {
+  $$=new BracketExpsNode($1,$2);
+  $$->setVal("<BracketExps> <BracketExp>");
+}
+
+;
+
+bracketexp: LBRACK exp RBRACK {
+  $$=new BracketExpNode($2);
+  $$->setVal("lbrack <Exp> rbrack");
+}
+
+;
+
+multibrackets: LBRACK RBRACK {
+  $$=new MultibracketNode();
+  $$->setVal("lbrack rbrack");
+}
+| multibrackets LBRACK RBRACK {
+  $$=new MultibracketNode($1);
+  $$->setVal("<Multibrackets> lbrack rbrack");
 }
 
 ;

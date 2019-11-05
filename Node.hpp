@@ -52,6 +52,14 @@ class IdNode : public Node
     void print();
 }; 
 
+/** TYPE NODE TYPE **/
+class TypeNode : public Node
+{
+  public:
+    TypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
 /** SIMPLETYPE NODE TYPE **/
 class SimpleTypeNode : public Node
 {
@@ -156,14 +164,6 @@ class NumberNode : public Node
 {
   public:
     NumberNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-/** TYPE NODE TYPE **/
-class TypeNode : public Node
-{
-  public:
-    TypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 
