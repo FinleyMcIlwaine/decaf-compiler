@@ -80,7 +80,7 @@ void yyerror(const char *);
 %token<pnode> GT
 %token<pnode> LT
 %token<pnode> NOT
-/*
+
 %left PLUS MINUS OR
 %left TIMES DIV MOD AND
 %left EQ NE GE LE GT LT
@@ -89,7 +89,7 @@ void yyerror(const char *);
 %precedence PRODUCTOP
 %precedence SUMOP
 %precedence RELATIONOP
-*/
+
 /*
  * The Grammar :o
  */
@@ -187,9 +187,25 @@ exp: name {
   $$=new ExpNode($1);
   $$->setVal("<NewExp>");
 }
-| unaryop exp {
+| unaryop exp %prec UNARYOP {
   $$=new ExpNode($1,$2);
   $$->setVal("<UnaryOp> <Exp>");
+}
+| exp relationop exp %prec RELATIONOP {
+  $$=new ExpNode($1,$2,$3);
+  $$->setVal("<Exp> <RelationOp> <Exp>");
+}
+| exp sumop exp %prec SUMOP {
+  $$=new ExpNode($1,$2,$3);
+  $$->setVal("<Exp> <SumOp> <Exp>");
+}
+| exp productop exp %prec PRODUCTOP {
+  $$=new ExpNode($1,$2,$3);
+  $$->setVal("<Exp> <ProductOp> <Exp>");
+}
+| LPAREN exp RPAREN {
+  $$=new ExpNode($2);
+  $$->setVal("lparen <Exp> rparen");
 }
 
 ;
