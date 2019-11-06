@@ -38,6 +38,9 @@ void yyerror(const char *);
 /*
  * token stuff
  */
+%type<pnode> methoddecs
+%type<pnode> constructordecs
+%type<pnode> vardecs
 %type<pnode> vardec
 %type<pnode> constructordec
 %type<pnode> methoddec
@@ -107,6 +110,20 @@ program: block {
 
 ; /* do not ever even think about forgetting this stupid thing */ 
 
+classbody: LBRACE vardecs {}
+
+;
+
+vardecs: vardecs vardec {
+  $$=new VarDecsNode($1,$2);
+  $$->setVal("<VarDecs> <VarDec>");
+}
+| vardec {
+  $$=new VarDecsNode($1);
+  $$->setVal("<VarDec>");
+}
+;
+
 vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
@@ -136,9 +153,30 @@ simpletype: INT {
 
 ;
 
+constructordecs: constructordecs constructordec {
+  $$=new ConstructorDecsNode($1,$2);
+  $$->setVal("<ConstructorDecs> <ConstructorDec>");
+}
+| constructordec {
+  $$=new ConstructorDecsNode($1);
+  $$->setVal("<ConstructorDec>");
+}
+;
+
 constructordec: ID LPAREN parameterlist RPAREN block {
   $$=new ConstructorDecNode($1,$3,$5);
   $$->setVal("identifier lparen <ParameterList> rparen <Block>");
+}
+
+;
+
+methoddecs: methoddecs methoddec {
+  $$=new MethodDecsNode($1,$2);
+  $$->setVal("<MethodDecs> <MethodDec>");
+}
+| methoddec {
+  $$=new MethodDecsNode($1);
+  $$->setVal("<MethodDec>");
 }
 
 ;

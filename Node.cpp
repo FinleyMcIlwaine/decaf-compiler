@@ -386,6 +386,33 @@ void NumberNode::print() {
 }
 
 
+/* CONSTRUCTORDECS NODE DEFINITIONS */
+
+void ConstructorDecsNode::print() {
+  cout << "<ConstructorDecs> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* METHODDECS NODE DEFINITIONS */
+
+void MethodDecsNode::print() {
+  cout << "<MethodDecs> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* VARDECS NODE DEFINITIONS */
+
+void VarDecsNode::print() {
+  cout << "<VarDecs> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
 /* VARDEC NODE DEFINITIONS */
 
 VarDecNode::VarDecNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {

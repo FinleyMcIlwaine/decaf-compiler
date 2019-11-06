@@ -277,6 +277,30 @@ class NumberNode : public Node
     void print();
 };
 
+/** METHOD DECS NODE TYPE **/
+class MethodDecsNode : public Node
+{
+  public:
+    MethodDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** CONSTRUCTOR DECS NODE TYPE **/
+class ConstructorDecsNode : public Node
+{
+  public:
+    ConstructorDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** VARDECS NODE TYPE **/
+class VarDecsNode : public Node
+{
+  public:
+    VarDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
 /** VARDEC NODE TYPE **/
 class VarDecNode : public Node
 {
