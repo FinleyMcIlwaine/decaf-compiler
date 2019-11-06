@@ -68,6 +68,37 @@ class StmtNode : public Node
     void print();
 };
 
+/** LOCAL VAR DEC NODE TYPE **/
+class LocalVarDecNode : public Node
+{
+  public:
+    LocalVarDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** BLOCK NODE TYPE **/
+class BlockNode : public Node
+{
+  public:
+    BlockNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+/** STMTS NODE TYPE **/
+class StmtsNode : public Node
+{
+  public:
+    StmtsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** LOCAL VAR DECS NODE TYPE **/
+class LocalVarDecsNode : public Node
+{
+  public:
+    LocalVarDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
 /** TYPE NODE TYPE **/
 class TypeNode : public Node
 {

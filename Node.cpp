@@ -104,6 +104,42 @@ void OptionalExpNode::print() {
 }
 
 
+/* BLOCK NODE */
+
+void BlockNode::print() {
+  cout << "<Block> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* STMTS NODE */
+
+void StmtsNode::print() {
+  cout << "<Stmts> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* LOCAL VAR DECS NODE */
+
+void LocalVarDecsNode::print() {
+  cout << "<LocalVarDecs> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* LOCAL VAR DEC NODE */
+
+void LocalVarDecNode::print() {
+  cout << "<LocalVarDec> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
 /* STMT NODE */
 
 void StmtNode::print() {

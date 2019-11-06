@@ -38,6 +38,10 @@ void yyerror(const char *);
 /*
  * token stuff
  */
+%type<pnode> block
+%type<pnode> localvardecs
+%type<pnode> stmts
+%type<pnode> localvardec
 %type<pnode> stmt
 %type<pnode> conditionalstmt
 %type<pnode> optionalexp
@@ -68,32 +72,12 @@ void yyerror(const char *);
 %token<pnode> COMMA
 %token<pnode> NUMBER
 %token<pnode> ID
-%token<pnode> LBRACK
-%token<pnode> RBRACK
-%token<pnode> LPAREN
-%token<pnode> RPAREN
-%token<pnode> PLUS
-%token<pnode> MINUS
-%token<pnode> OR
-%token<pnode> TIMES
-%token<pnode> DIV
-%token<pnode> MOD
-%token<pnode> AND
-%token<pnode> EQ
-%token<pnode> NE
-%token<pnode> GE
-%token<pnode> LE
-%token<pnode> GT
-%token<pnode> LT
+%token<pnode> LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE
+%left<pnode> EQ NE LE GE LT GT
+%left<pnode> PLUS MINUS OR
+%left<pnode> TIMES DIV MOD AND
 %token<pnode> NOT
 
-%left PLUS MINUS OR
-%left TIMES DIV MOD AND
-%left EQ NE GE LE GT LT
-
-%precedence RELATIONOP
-%precedence SUMOP
-%precedence PRODUCTOP
 %precedence UNARYOP
 %precedence IF
 %precedence ELSE
@@ -108,13 +92,9 @@ input: program {
 
 ;
 
-program: exp {
+program: block {
   $$=new ProgramNode($1);
   $$->setVal("<Exp>");
-}
-| stmt {
-  $$=new ProgramNode($1);
-  $$->setVal("<Stmt>");
 }
 
 ; /* do not ever even think about forgetting this stupid thing */ 
@@ -137,6 +117,42 @@ simpletype: INT {
 | ID {
   $$=new SimpleTypeNode($1);
   $$->setVal("identifier");
+}
+
+;
+
+block: LBRACE localvardecs stmts RBRACE {
+  $$=new BlockNode($2,$3);
+  $$->setVal("lbrace <LocalVarDecs> <Stmts> rbrace");
+}
+
+;
+
+localvardecs: localvardecs localvardec {
+  $$=new LocalVarDecsNode($1,$2);
+  $$->setVal("<LocalVarDecs> <LocalVarDec>");
+}
+| %empty {
+  $$=new LocalVarDecsNode();
+  $$->setVal("empty");
+}
+
+;
+
+localvardec: type ID SEMI {
+  $$=new LocalVarDecNode($1,$2);
+  $$->setVal("<Type> identifier semi");
+}
+
+;
+
+stmts: stmts stmt {
+  $$=new StmtsNode($1,$2);
+  $$->setVal("<Stmts> <Stmt>");
+}
+| %empty {
+  $$=new StmtsNode();
+  $$->setVal("empty");
 }
 
 ;
@@ -264,55 +280,55 @@ exp: name {
   $$=new ExpNode($2);
   $$->setVal("not <Exp>");
 }
-| exp EQ exp %prec RELATIONOP {
+| exp EQ exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> eq <Exp>");
 }
-| exp NE exp %prec RELATIONOP {
+| exp NE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> ne <Exp>");
 }
-| exp LE exp %prec RELATIONOP {
+| exp LE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> le <Exp>");
 }
-| exp GE exp %prec RELATIONOP {
+| exp GE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> ge <Exp>");
 }
-| exp LT exp %prec RELATIONOP {
+| exp LT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> lt <Exp>");
 }
-| exp GT exp %prec RELATIONOP {
+| exp GT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> gt <Exp>");
 }
-| exp PLUS exp %prec SUMOP {
+| exp PLUS exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> plus <Exp>");
 }
-| exp MINUS exp %prec SUMOP {
+| exp MINUS exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> minus <Exp>");
 }
-| exp OR exp %prec SUMOP {
+| exp OR exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> or <Exp>");
 }
-| exp TIMES exp %prec PRODUCTOP {
+| exp TIMES exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> times <Exp>");
 }
-| exp DIV exp %prec PRODUCTOP {
+| exp DIV exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> div <Exp>");
 }
-| exp MOD exp %prec PRODUCTOP {
+| exp MOD exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> mod <Exp>");
 }
-| exp AND exp %prec PRODUCTOP {
+| exp AND exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> and <Exp>");
 }

@@ -143,6 +143,14 @@ int errCol;
   read(yytext);
   return RBRACK;
 }
+"{" {
+  read(yytext);
+  return LBRACE;
+}
+"}" {
+  read(yytext);
+  return RBRACE;
+}
 "(" {
   read(yytext);
   return LPAREN;
