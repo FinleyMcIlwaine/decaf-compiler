@@ -79,6 +79,14 @@ int errCol;
   BEGIN(0);
 }
   /* basic terminals */
+"class" {
+  read(yytext);
+  return CLASS;
+}
+"void" {
+  read(yytext);
+  return VOID;
+}
 "return" {
   read(yytext);
   return RETURN;

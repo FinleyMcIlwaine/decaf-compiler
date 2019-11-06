@@ -91,11 +91,35 @@ class StmtsNode : public Node
     void print();
 };
 
+/** RESULT TYPE NODE TYPE **/
+class ResultTypeNode : public Node
+{
+  public:
+    ResultTypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
 /** LOCAL VAR DECS NODE TYPE **/
 class LocalVarDecsNode : public Node
 {
   public:
     LocalVarDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** PARAMETER NODE TYPE **/
+class ParameterListNode : public Node
+{
+  public:
+    ParameterListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** PARAMETER NODE TYPE **/
+class ParameterNode : public Node
+{
+  public:
+    ParameterNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 
@@ -123,7 +147,34 @@ class ArgListNode : public Node
     void print();
 };
 
-/** EXP NODE TYPE **/
+/** METHOD DECLARATION NODE TYPE **/
+class MethodDecNode : public Node
+{
+  public:
+    MethodDecNode(Node *lf=0, Node *sec=0, Node* trd=0,  Node *rt=0);
+    void print();
+    void setSecond(Node* sec);
+    void setThird(Node* trd);
+    Node* getSecond();
+    Node* getThird();
+  private:
+    Node* second;
+    Node* third;
+};
+
+/** CONSTRUCTOR DEC NODE TYPE **/
+class ConstructorDecNode : public Node
+{
+  public:
+    ConstructorDecNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
+};
+
+/** CONDITIONAL STMT NODE TYPE **/
 class ConditionalStmtNode : public Node
 {
   public:
@@ -236,14 +287,6 @@ class VarDecNode : public Node
     Node* getMiddle();
   private:
     Node *middle;
-};
-
-/** ELEMENTS NODE TYPE **/
-class ElementsNode : public Node
-{
-  public:
-    ElementsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
 };
 
 /** PROGRAM NODE TYPE **/

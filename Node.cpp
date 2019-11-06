@@ -104,6 +104,24 @@ void OptionalExpNode::print() {
 }
 
 
+/* PARAMETER LIST NODE */
+
+void ParameterListNode::print() {
+  cout << "<ParameterList> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* PARAMETER NODE */
+
+void ParameterNode::print() {
+  cout << "<Parameter> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
 /* BLOCK NODE */
 
 void BlockNode::print() {
@@ -167,6 +185,60 @@ void ArgListNode::print() {
   cout << "<ArgList> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
+}
+
+
+/* METHOD DEC NODE DEFINITIONS */
+
+MethodDecNode::MethodDecNode(Node *lf, Node *sec, Node* trd, Node *rt) 
+  : Node(lf,rt) {
+  second=sec;
+  third=trd;
+}
+void MethodDecNode::print() {
+  cout << "<MethodDec> --> " + sval << endl;
+  if (left) left->print();
+  if (second) second->print();
+  if (third) third->print();
+  if (right) right->print();
+}
+void MethodDecNode::setSecond(Node* sec)
+{ 
+  second = sec;
+}
+Node* MethodDecNode::getSecond()
+{
+  return second;
+}
+void MethodDecNode::setThird(Node* trd)
+{ 
+  third = trd;
+}
+Node* MethodDecNode::getThird()
+{
+  return third;
+}
+
+
+/* CONSTRUCTOR DEC NODE DEFINITIONS */
+
+ConstructorDecNode::ConstructorDecNode(Node *lf, Node *mi, Node *rt) 
+  : Node(lf,rt) {
+  middle=mi;
+}
+void ConstructorDecNode::print() {
+  cout << "<ConstructorDec> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void ConstructorDecNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* ConstructorDecNode::getMiddle()
+{
+  return middle;
 }
 
 
@@ -320,7 +392,7 @@ VarDecNode::VarDecNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
   middle=mi;
 }
 void VarDecNode::print() {
-  cout << "<vardec> --> " + sval << endl;
+  cout << "<VarDec> --> " + sval << endl;
   if (left) left->print();
   if (middle) middle->print();
   if (right) right->print();
@@ -332,15 +404,6 @@ void VarDecNode::setMiddle(Node *mi)
 Node* VarDecNode::getMiddle()
 {
   return middle;
-}
-
-
-/* ELEMENTS NODE DEFINITIONS */
-
-void ElementsNode::print() {
-  cout << "<elements> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
 }
 
 
