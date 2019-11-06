@@ -38,6 +38,9 @@ void yyerror(const char *);
 /*
  * token stuff
  */
+%type<pnode> stmt
+%type<pnode> conditionalstmt
+%type<pnode> optionalexp
 %type<pnode> name
 %type<pnode> program
 %type<pnode> simpletype
@@ -49,6 +52,13 @@ void yyerror(const char *);
 %type<pnode> bracketexp
 %type<pnode> bracketexps
 
+%token<pnode> RETURN
+%token<pnode> WHILE
+%token<pnode> PRINT
+%token<pnode> SEMI
+%token<pnode> ELSE
+%token<pnode> IF
+%token<pnode> ASSIGN
 %token<pnode> READ
 %token<pnode> NULLT
 %token<pnode> DOT
@@ -85,6 +95,8 @@ void yyerror(const char *);
 %precedence SUMOP
 %precedence PRODUCTOP
 %precedence UNARYOP
+%precedence IF
+%precedence ELSE
 
 /*
  * The Grammar :o
@@ -99,6 +111,10 @@ input: program {
 program: exp {
   $$=new ProgramNode($1);
   $$->setVal("<Exp>");
+}
+| stmt {
+  $$=new ProgramNode($1);
+  $$->setVal("<Stmt>");
 }
 
 ; /* do not ever even think about forgetting this stupid thing */ 
@@ -121,6 +137,37 @@ simpletype: INT {
 | ID {
   $$=new SimpleTypeNode($1);
   $$->setVal("identifier");
+}
+
+;
+
+stmt: SEMI {
+  $$=new StmtNode();
+  $$->setVal("semi");
+}
+| name ASSIGN exp SEMI {
+  $$=new StmtNode($1,$3);
+  $$->setVal("<Name> assign <Exp> semi");
+}
+| name LPAREN arglist RPAREN SEMI {
+  $$=new StmtNode($1,$3);
+  $$->setVal("<Name> lparen <ArgList> rparen semi");
+}
+| PRINT LPAREN arglist RPAREN SEMI {
+  $$=new StmtNode($3);
+  $$->setVal("print lparen <ArgList> rparen semi");
+}
+| conditionalstmt {
+  $$=new StmtNode($1);
+  $$->setVal("<ConditionalStmt>");
+}
+| WHILE LPAREN exp RPAREN stmt {
+  $$=new StmtNode($3,$5);
+  $$->setVal("while lparen <Exp> rparen <Stmt>");
+}
+| RETURN optionalexp SEMI {
+  $$=new StmtNode($2);
+  $$->setVal("return <OptionalExp> semi");
 }
 
 ;
@@ -155,6 +202,28 @@ arglist: exp {
 | %empty {
   $$=new ArgListNode();
   $$->setVal("empty"); /* HOW TO SHOW THIS??? */
+}
+
+;
+
+conditionalstmt: IF LPAREN exp RPAREN stmt %prec IF {
+  $$=new ConditionalStmtNode($3,$5);
+  $$->setVal("if lparen <Exp> rparen <Stmt>");
+}
+| IF LPAREN exp RPAREN stmt ELSE stmt %prec ELSE {
+  $$=new ConditionalStmtNode($3,$5,$7);
+  $$->setVal("if lparen <Exp> rparen <Stmt> else <Stmt>");
+}
+
+;
+
+optionalexp: exp {
+  $$=new OptionalExpNode($1);
+  $$->setVal("<Exp>");
+}
+| %empty {
+  $$=new OptionalExpNode();
+  $$->setVal("empty");
 }
 
 ;

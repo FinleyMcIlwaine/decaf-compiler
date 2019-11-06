@@ -52,6 +52,22 @@ class IdNode : public Node
     void print();
 }; 
 
+/** OPT EXP NODE TYPE **/
+class OptionalExpNode : public Node
+{
+  public:
+    OptionalExpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** TYPE NODE TYPE **/
+class StmtNode : public Node
+{
+  public:
+    StmtNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
 /** TYPE NODE TYPE **/
 class TypeNode : public Node
 {
@@ -74,6 +90,18 @@ class ArgListNode : public Node
   public:
     ArgListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
+};
+
+/** EXP NODE TYPE **/
+class ConditionalStmtNode : public Node
+{
+  public:
+    ConditionalStmtNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
 };
 
 /** EXP NODE TYPE **/

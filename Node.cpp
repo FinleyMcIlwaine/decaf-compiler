@@ -95,6 +95,23 @@ void Node::print()
 }
 
 
+/* OPTIONAL EXP NODE DEFINITIONS */
+
+void OptionalExpNode::print() {
+  cout << "<OptionalExpNode> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* STMT NODE */
+
+void StmtNode::print() {
+  cout << "<Stmt> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
 /* TYPE NODE DEFINITIONS */
 
 void TypeNode::print() {
@@ -114,6 +131,28 @@ void ArgListNode::print() {
   cout << "<ArgList> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
+}
+
+
+/* CONDITIONAL STMT NODE DEFINITIONS */
+
+ConditionalStmtNode::ConditionalStmtNode(Node *lf, Node *mi, Node *rt) 
+  : Node(lf,rt) {
+  middle=mi;
+}
+void ConditionalStmtNode::print() {
+  cout << "<ConditionalStmt> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void ConditionalStmtNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* ConditionalStmtNode::getMiddle()
+{
+  return middle;
 }
 
 
