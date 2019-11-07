@@ -1,5 +1,5 @@
 class goo {
-  void main()
+  int main()
   {
   }
 }

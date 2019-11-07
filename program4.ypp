@@ -46,7 +46,6 @@ void yyerror(const char *);
 %type<pnode> vardec
 %type<pnode> constructordec
 %type<pnode> methoddec
-%type<pnode> resulttype
 %type<pnode> parameterlist
 %type<pnode> parameter
 %type<pnode> block
@@ -148,7 +147,6 @@ classbody: LBRACE vardecs constructordecs methoddecs RBRACE {
   $$->setVal("lbrace <ConstructorDecs> rbrace");
 }
 | LBRACE methoddecs RBRACE {
-  cout << "\nClass body\n";
   $$=new ClassBodyNode($2);
   $$->setVal("lbrace <MethodDecs> rbrace");
 }
@@ -222,32 +220,17 @@ methoddecs: methoddecs methoddec {
 | methoddec {
   $$=new MethodDecsNode($1);
   $$->setVal("<MethodDec>");
-  cout << "\nMethod Decs rule\n";
-  $$->print();
 }
 
 ;
 
-methoddec: resulttype ID LPAREN parameterlist RPAREN block {
-  cout << "\nHey?\n";
+methoddec: type ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($1,$2,$4,$6);
-  $$->setVal("<ResultType> identifier lparen <ParameterList> rparen <Block>");
-  $$->print();
+  $$->setVal("<Type> identifier lparen <ParameterList> rparen <Block>");
 }
-
-;
-
-resulttype: type {
-              cout << "\nwtf is up?\n";
-  $1->print();
-  cout << "\n";
-  $$=new ResultTypeNode($1);
-  $$->setVal("<Type>");
-  $$->print();
-}
-| VOID {
-  $$=new ResultTypeNode();
-  $$->setVal("void");
+| VOID ID LPAREN parameterlist RPAREN block {
+  $$=new MethodDecNode($2,$4,$6);
+  $$->setVal("VOID identifier lparen <ParameterList> rparen <Block>");
 }
 
 ;
@@ -349,6 +332,10 @@ stmt: SEMI {
 | RETURN optionalexp SEMI {
   $$=new StmtNode($2);
   $$->setVal("return <OptionalExp> semi");
+}
+| block {
+  $$=new StmtNode($1);
+  $$->setVal("<Block>");
 }
 
 ;
