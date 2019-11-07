@@ -216,27 +216,6 @@ class NameNode : public Node
     void print();
 };
 
-/** ID NODE TYPE **/
-class IdNode : public Node
-{
-  public:
-    IdNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-}; 
-
-/** OPT EXP NODE TYPE **/
-class OptionalExpNode : public Node
-{
-  public:
-    OptionalExpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-
-
-
-
-
 /** ARGLIST NODE TYPE **/
 class ArgListNode : public Node
 {
@@ -244,8 +223,6 @@ class ArgListNode : public Node
     ArgListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
-
-
 
 /** CONDITIONAL STMT NODE TYPE **/
 class ConditionalStmtNode : public Node
@@ -257,6 +234,14 @@ class ConditionalStmtNode : public Node
     Node* getMiddle();
   private:
     Node *middle;
+};
+
+/** OPT EXP NODE TYPE **/
+class OptionalExpNode : public Node
+{
+  public:
+    OptionalExpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
 };
 
 /** EXP NODE TYPE **/
@@ -309,7 +294,13 @@ class ProductOpNode : public Node
     void print();
 };
 
-
+/** ID NODE TYPE **/
+class IdNode : public Node
+{
+  public:
+    IdNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
 
 /** MULTIBRACKET NODE TYPE **/
 class MultibracketNode : public Node
@@ -334,7 +325,6 @@ class BracketExpsNode : public Node
     void print();
 };
 
-
 /** NUMBER NODE TYPE **/
 class NumberNode : public Node
 {
@@ -342,8 +332,4 @@ class NumberNode : public Node
     NumberNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
-
-
-
-
 #endif
