@@ -38,6 +38,8 @@ void yyerror(const char *);
 /*
  * token stuff
  */
+%type<pnode> classdec
+%type<pnode> classbody
 %type<pnode> methoddecs
 %type<pnode> constructordecs
 %type<pnode> vardecs
@@ -103,14 +105,57 @@ input: program {
 
 ;
 
-program: block {
+program: program classdec {
+  $$=new ProgramNode($1,$2);
+  $$->setVal("<Program> <ClassDec>");
+}
+| classdec {
   $$=new ProgramNode($1);
-  $$->setVal("<Exp>");
+  $$->setVal("<ClassDec>");
 }
 
 ; /* do not ever even think about forgetting this stupid thing */ 
 
-classbody: LBRACE vardecs {}
+classdec: CLASS ID classbody {
+  $$=new ClassDecNode($2,$3);
+  $$->setVal("class identifier <ClassBody>");
+}
+
+;
+
+classbody: LBRACE vardecs constructordecs methoddecs RBRACE {
+  $$=new ClassBodyNode($2,$3,$4);
+  $$->setVal("lbrace <VarDecs> <ConstructorDecs> <MethodDecs> rbrace");
+}
+| LBRACE vardecs constructordecs RBRACE {
+  $$=new ClassBodyNode($2,$3);
+  $$->setVal("lbrace <VarDecs> <ConstructorDecs> rbrace");
+}
+| LBRACE vardecs methoddecs RBRACE {
+  $$=new ClassBodyNode($2,$3);
+  $$->setVal("lbrace <VarDecs> <MethodDecs> rbrace");
+}
+| LBRACE vardecs RBRACE {
+  $$=new ClassBodyNode($2);
+  $$->setVal("lbrace <VarDecs> rbrace");
+}
+| LBRACE constructordecs methoddecs RBRACE {
+  $$=new ClassBodyNode($2,$3);
+  $$->setVal("lbrace <ConstructorDecs> <MethodDecs> rbrace");
+}
+| LBRACE constructordecs RBRACE {
+  $$=new ClassBodyNode($2);
+  $$->setVal("lbrace <ConstructorDecs> rbrace");
+}
+| LBRACE methoddecs RBRACE {
+  cout << "\nClass body\n";
+  $$=new ClassBodyNode($2);
+  $$->setVal("lbrace <MethodDecs> rbrace");
+}
+| LBRACE RBRACE {
+  $$=new ClassBodyNode();
+  $$->setVal("lbrace rbrace");
+}
 
 ;
 
@@ -177,20 +222,28 @@ methoddecs: methoddecs methoddec {
 | methoddec {
   $$=new MethodDecsNode($1);
   $$->setVal("<MethodDec>");
+  cout << "\nMethod Decs rule\n";
+  $$->print();
 }
 
 ;
 
 methoddec: resulttype ID LPAREN parameterlist RPAREN block {
+  cout << "\nHey?\n";
   $$=new MethodDecNode($1,$2,$4,$6);
   $$->setVal("<ResultType> identifier lparen <ParameterList> rparen <Block>");
+  $$->print();
 }
 
 ;
 
 resulttype: type {
+              cout << "\nwtf is up?\n";
+  $1->print();
+  cout << "\n";
   $$=new ResultTypeNode($1);
   $$->setVal("<Type>");
+  $$->print();
 }
 | VOID {
   $$=new ResultTypeNode();

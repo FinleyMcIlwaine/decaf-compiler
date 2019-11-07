@@ -404,12 +404,51 @@ void MethodDecsNode::print() {
 }
 
 
+/* RESULT TYPE NODE DEFINITIONS */
+
+void ResultTypeNode::print() {
+  cout << "<ResultType> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
+/* CLASS DEC NODE DEFINITIONS */
+
+void ClassDecNode::print() {
+  cout << "<ClassDec> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+
 /* VARDECS NODE DEFINITIONS */
 
 void VarDecsNode::print() {
   cout << "<VarDecs> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
+}
+
+
+/* CLASS BODY NODE DEFINITIONS */
+
+ClassBodyNode::ClassBodyNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
+  middle=mi;
+}
+void ClassBodyNode::print() {
+  cout << "<ClassBody> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void ClassBodyNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* ClassBodyNode::getMiddle()
+{
+  return middle;
 }
 
 

@@ -301,6 +301,26 @@ class VarDecsNode : public Node
     void print();
 };
 
+/** CLASS BODY NODE TYPE **/
+class ClassDecNode : public Node
+{
+  public:
+    ClassDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** CLASS DEC NODE TYPE **/
+class ClassBodyNode : public Node
+{
+  public:
+    ClassBodyNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
+};
+
 /** VARDEC NODE TYPE **/
 class VarDecNode : public Node
 {
