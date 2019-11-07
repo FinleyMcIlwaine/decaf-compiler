@@ -44,83 +44,52 @@ class Node {
     Node *left, *right;
 };
 
-/** ID NODE TYPE **/
-class IdNode : public Node
+/** PROGRAM NODE TYPE **/
+class ProgramNode : public Node
 {
   public:
-    IdNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-}; 
-
-/** OPT EXP NODE TYPE **/
-class OptionalExpNode : public Node
-{
-  public:
-    OptionalExpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    ProgramNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 
-/** TYPE NODE TYPE **/
-class StmtNode : public Node
+/** CLASS DEC NODE TYPE **/
+class ClassDecNode : public Node
 {
   public:
-    StmtNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    ClassDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 
-/** LOCAL VAR DEC NODE TYPE **/
-class LocalVarDecNode : public Node
+/** CLASS BODY NODE TYPE **/
+class ClassBodyNode : public Node
 {
   public:
-    LocalVarDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    ClassBodyNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
+};
+
+/** VARDECS NODE TYPE **/
+class VarDecsNode : public Node
+{
+  public:
+    VarDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 
-/** BLOCK NODE TYPE **/
-class BlockNode : public Node
+/** VARDEC NODE TYPE **/
+class VarDecNode : public Node
 {
   public:
-    BlockNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    VarDecNode(Node *lf=0, Node *mi=0, Node *rt=0);
     void print();
-};
-/** STMTS NODE TYPE **/
-class StmtsNode : public Node
-{
-  public:
-    StmtsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-/** RESULT TYPE NODE TYPE **/
-class ResultTypeNode : public Node
-{
-  public:
-    ResultTypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-/** LOCAL VAR DECS NODE TYPE **/
-class LocalVarDecsNode : public Node
-{
-  public:
-    LocalVarDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-/** PARAMETER NODE TYPE **/
-class ParameterListNode : public Node
-{
-  public:
-    ParameterListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-/** PARAMETER NODE TYPE **/
-class ParameterNode : public Node
-{
-  public:
-    ParameterNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
 };
 
 /** TYPE NODE TYPE **/
@@ -139,11 +108,31 @@ class SimpleTypeNode : public Node
     void print();
 };
 
-/** ARGLIST NODE TYPE **/
-class ArgListNode : public Node
+/** CONSTRUCTOR DECS NODE TYPE **/
+class ConstructorDecsNode : public Node
 {
   public:
-    ArgListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    ConstructorDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** CONSTRUCTOR DEC NODE TYPE **/
+class ConstructorDecNode : public Node
+{
+  public:
+    ConstructorDecNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
+};
+
+/** METHOD DECS NODE TYPE **/
+class MethodDecsNode : public Node
+{
+  public:
+    MethodDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 
@@ -160,19 +149,103 @@ class MethodDecNode : public Node
   private:
     Node* second;
     Node* third;
+
 };
 
-/** CONSTRUCTOR DEC NODE TYPE **/
-class ConstructorDecNode : public Node
+/** PARAMETER LIST NODE TYPE **/
+class ParameterListNode : public Node
 {
   public:
-    ConstructorDecNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    ParameterListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
-    void setMiddle(Node *mi);
-    Node* getMiddle();
-  private:
-    Node *middle;
 };
+
+/** PARAMETER NODE TYPE **/
+class ParameterNode : public Node
+{
+  public:
+    ParameterNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** BLOCK NODE TYPE **/
+class BlockNode : public Node
+{
+  public:
+    BlockNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** LOCAL VAR DECS NODE TYPE **/
+class LocalVarDecsNode : public Node
+{
+  public:
+    LocalVarDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** LOCAL VAR DEC NODE TYPE **/
+class LocalVarDecNode : public Node
+{
+  public:
+    LocalVarDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** STMTS NODE TYPE **/
+class StmtsNode : public Node
+{
+  public:
+    StmtsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** STMT NODE TYPE **/
+class StmtNode : public Node
+{
+  public:
+    StmtNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** NAME NODE TYPE **/
+class NameNode : public Node
+{
+  public:
+    NameNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** ID NODE TYPE **/
+class IdNode : public Node
+{
+  public:
+    IdNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+}; 
+
+/** OPT EXP NODE TYPE **/
+class OptionalExpNode : public Node
+{
+  public:
+    OptionalExpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+
+
+
+
+
+/** ARGLIST NODE TYPE **/
+class ArgListNode : public Node
+{
+  public:
+    ArgListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+
 
 /** CONDITIONAL STMT NODE TYPE **/
 class ConditionalStmtNode : public Node
@@ -236,13 +309,6 @@ class ProductOpNode : public Node
     void print();
 };
 
-/** NAME NODE TYPE **/
-class NameNode : public Node
-{
-  public:
-    NameNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
 
 
 /** MULTIBRACKET NODE TYPE **/
@@ -277,67 +343,7 @@ class NumberNode : public Node
     void print();
 };
 
-/** METHOD DECS NODE TYPE **/
-class MethodDecsNode : public Node
-{
-  public:
-    MethodDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
 
-/** CONSTRUCTOR DECS NODE TYPE **/
-class ConstructorDecsNode : public Node
-{
-  public:
-    ConstructorDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
 
-/** VARDECS NODE TYPE **/
-class VarDecsNode : public Node
-{
-  public:
-    VarDecsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
 
-/** CLASS BODY NODE TYPE **/
-class ClassDecNode : public Node
-{
-  public:
-    ClassDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
-
-/** CLASS DEC NODE TYPE **/
-class ClassBodyNode : public Node
-{
-  public:
-    ClassBodyNode(Node *lf=0, Node *mi=0, Node *rt=0);
-    void print();
-    void setMiddle(Node *mi);
-    Node* getMiddle();
-  private:
-    Node *middle;
-};
-
-/** VARDEC NODE TYPE **/
-class VarDecNode : public Node
-{
-  public:
-    VarDecNode(Node *lf=0, Node *mi=0, Node *rt=0);
-    void print();
-    void setMiddle(Node *mi);
-    Node* getMiddle();
-  private:
-    Node *middle;
-};
-
-/** PROGRAM NODE TYPE **/
-class ProgramNode : public Node
-{
-  public:
-    ProgramNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-};
 #endif

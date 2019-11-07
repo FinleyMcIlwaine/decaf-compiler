@@ -94,80 +94,66 @@ void Node::print()
   if (right) left->print();
 }
 
-
-/* OPTIONAL EXP NODE DEFINITIONS */
-
-void OptionalExpNode::print() {
-  cout << "<OptionalExpNode> --> " + sval << endl;
+/* PROGRAM NODE DEFINITIONS */
+void ProgramNode::print() {
+  cout << "<Program> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
 
-
-/* PARAMETER LIST NODE */
-
-void ParameterListNode::print() {
-  cout << "<ParameterList> --> " + sval << endl;
+/* CLASS DEC NODE DEFINITIONS */
+void ClassDecNode::print() {
+  cout << "<ClassDec> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
 
+/* CLASS BODY NODE DEFINITIONS */
+ClassBodyNode::ClassBodyNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
+  middle=mi;
+}
+void ClassBodyNode::print() {
+  cout << "<ClassBody> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void ClassBodyNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* ClassBodyNode::getMiddle()
+{
+  return middle;
+}
 
-/* PARAMETER NODE */
-
-void ParameterNode::print() {
-  cout << "<Parameter> --> " + sval << endl;
+/* VARDECS NODE DEFINITIONS */
+void VarDecsNode::print() {
+  cout << "<VarDecs> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
 
-
-/* BLOCK NODE */
-
-void BlockNode::print() {
-  cout << "<Block> --> " + sval << endl;
+/* VARDEC NODE DEFINITIONS */
+VarDecNode::VarDecNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
+  middle=mi;
+}
+void VarDecNode::print() {
+  cout << "<VarDec> --> " + sval << endl;
   if (left) left->print();
+  if (middle) middle->print();
   if (right) right->print();
 }
-
-
-/* STMTS NODE */
-
-void StmtsNode::print() {
-  cout << "<Stmts> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
+void VarDecNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
 }
-
-
-/* LOCAL VAR DECS NODE */
-
-void LocalVarDecsNode::print() {
-  cout << "<LocalVarDecs> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
-/* LOCAL VAR DEC NODE */
-
-void LocalVarDecNode::print() {
-  cout << "<LocalVarDec> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
-/* STMT NODE */
-
-void StmtNode::print() {
-  cout << "<Stmt> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
+Node* VarDecNode::getMiddle()
+{
+  return middle;
 }
 
 /* TYPE NODE DEFINITIONS */
-
 void TypeNode::print() {
   cout << "<Type> --> " + sval << endl;
   if (left) left->print();
@@ -178,18 +164,41 @@ void SimpleTypeNode::print() {
   if (left) left->print();
 }
 
-
-/* ARG LIST NODE DEFINITIONS */
-
-void ArgListNode::print() {
-  cout << "<ArgList> --> " + sval << endl;
+/* CONSTRUCTORDECS NODE DEFINITIONS */
+void ConstructorDecsNode::print() {
+  cout << "<ConstructorDecs> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
 
+/* CONSTRUCTOR DEC NODE DEFINITIONS */
+ConstructorDecNode::ConstructorDecNode(Node *lf, Node *mi, Node *rt) 
+  : Node(lf,rt) {
+  middle=mi;
+}
+void ConstructorDecNode::print() {
+  cout << "<ConstructorDec> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+void ConstructorDecNode::setMiddle(Node *mi)
+{ 
+  middle = mi;
+}
+Node* ConstructorDecNode::getMiddle()
+{
+  return middle;
+}
+
+/* METHODDECS NODE DEFINITIONS */
+void MethodDecsNode::print() {
+  cout << "<MethodDecs> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
 
 /* METHOD DEC NODE DEFINITIONS */
-
 MethodDecNode::MethodDecNode(Node *lf, Node *sec, Node* trd, Node *rt) 
   : Node(lf,rt) {
   second=sec;
@@ -219,31 +228,71 @@ Node* MethodDecNode::getThird()
   return third;
 }
 
-
-/* CONSTRUCTOR DEC NODE DEFINITIONS */
-
-ConstructorDecNode::ConstructorDecNode(Node *lf, Node *mi, Node *rt) 
-  : Node(lf,rt) {
-  middle=mi;
-}
-void ConstructorDecNode::print() {
-  cout << "<ConstructorDec> --> " + sval << endl;
+/* PARAMETER LIST NODE */
+void ParameterListNode::print() {
+  cout << "<ParameterList> --> " + sval << endl;
   if (left) left->print();
-  if (middle) middle->print();
   if (right) right->print();
 }
-void ConstructorDecNode::setMiddle(Node *mi)
-{ 
-  middle = mi;
-}
-Node* ConstructorDecNode::getMiddle()
-{
-  return middle;
+
+/* PARAMETER NODE */
+void ParameterNode::print() {
+  cout << "<Parameter> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
 }
 
+/* BLOCK NODE */
+void BlockNode::print() {
+  cout << "<Block> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* LOCAL VAR DECS NODE */
+void LocalVarDecsNode::print() {
+  cout << "<LocalVarDecs> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* LOCAL VAR DEC NODE */
+void LocalVarDecNode::print() {
+  cout << "<LocalVarDec> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* STMTS NODE */
+void StmtsNode::print() {
+  cout << "<Stmts> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* STMT NODE */
+void StmtNode::print() {
+  cout << "<Stmt> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* NAME NODE DEFINITIONS */
+void NameNode::print()
+{
+  cout << "<name> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* ARG LIST NODE DEFINITIONS */
+void ArgListNode::print() {
+  cout << "<ArgList> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
 
 /* CONDITIONAL STMT NODE DEFINITIONS */
-
 ConditionalStmtNode::ConditionalStmtNode(Node *lf, Node *mi, Node *rt) 
   : Node(lf,rt) {
   middle=mi;
@@ -263,9 +312,14 @@ Node* ConditionalStmtNode::getMiddle()
   return middle;
 }
 
+/* OPTIONAL EXP NODE DEFINITIONS */
+void OptionalExpNode::print() {
+  cout << "<OptionalExpNode> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
 
 /* EXP NODE DEFINITIONS */
-
 ExpNode::ExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
   middle=mi;
 }
@@ -286,7 +340,6 @@ Node* ExpNode::getMiddle()
 
 
 /* NEWEXP NODE DEFINITIONS */
-
 NewExpNode::NewExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
   middle=mi;
 }
@@ -305,9 +358,7 @@ Node* NewExpNode::getMiddle()
   return middle;
 }
 
-
 /* OPERATION NODE DEFINITIONS */
-
 void UnaryOpNode::print()
 {
   cout << "<UnaryOp> --> " + sval << endl;
@@ -333,44 +384,27 @@ void ProductOpNode::print()
   if (right) right->print();
 }
 
-
-/* NAME NODE DEFINITIONS */
-
-void NameNode::print()
-{
-  cout << "<name> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
 /* ID NODE DEFINITIONS */
-
 void IdNode::print()
 {
-  cout << "ID --> " + sval << endl;
+  cout << "identifier --> " + sval << endl;
 }
 
-
 /* MULTIBRACKET NODE DEFINITIONS */
-
 void MultibracketNode::print()
 {
-  cout << "<multibrackets> --> " + sval << endl;
+  cout << "<Multibrackets> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
 
-
 /* BRACKETEXP and BRACKETEXPS NODE DEFINITIONS */
-
 void BracketExpNode::print()
 {
   cout << "<bracketexp> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
-
 void BracketExpsNode::print()
 {
   cout << "<BracketExps> --> " + sval << endl;
@@ -378,106 +412,7 @@ void BracketExpsNode::print()
   if (right) right->print();
 }
 
-
 /* NUMBER NODE DEFINITIONS */
-
 void NumberNode::print() {
   cout << "number --> " + sval << endl;
 }
-
-
-/* CONSTRUCTORDECS NODE DEFINITIONS */
-
-void ConstructorDecsNode::print() {
-  cout << "<ConstructorDecs> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
-/* METHODDECS NODE DEFINITIONS */
-
-void MethodDecsNode::print() {
-  cout << "<MethodDecs> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
-/* RESULT TYPE NODE DEFINITIONS */
-
-void ResultTypeNode::print() {
-  cout << "<ResultType> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
-/* CLASS DEC NODE DEFINITIONS */
-
-void ClassDecNode::print() {
-  cout << "<ClassDec> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
-/* VARDECS NODE DEFINITIONS */
-
-void VarDecsNode::print() {
-  cout << "<VarDecs> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
-
-/* CLASS BODY NODE DEFINITIONS */
-
-ClassBodyNode::ClassBodyNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
-  middle=mi;
-}
-void ClassBodyNode::print() {
-  cout << "<ClassBody> --> " + sval << endl;
-  if (left) left->print();
-  if (middle) middle->print();
-  if (right) right->print();
-}
-void ClassBodyNode::setMiddle(Node *mi)
-{ 
-  middle = mi;
-}
-Node* ClassBodyNode::getMiddle()
-{
-  return middle;
-}
-
-
-/* VARDEC NODE DEFINITIONS */
-
-VarDecNode::VarDecNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
-  middle=mi;
-}
-void VarDecNode::print() {
-  cout << "<VarDec> --> " + sval << endl;
-  if (left) left->print();
-  if (middle) middle->print();
-  if (right) right->print();
-}
-void VarDecNode::setMiddle(Node *mi)
-{ 
-  middle = mi;
-}
-Node* VarDecNode::getMiddle()
-{
-  return middle;
-}
-
-
-/* PROGRAM NODE DEFINITIONS */
-
-void ProgramNode::print() {
-  cout << "<Program> --> " + sval << endl;
-  if (left) left->print();
-  if (right) right->print();
-}
-
