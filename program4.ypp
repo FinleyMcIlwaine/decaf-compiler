@@ -258,7 +258,7 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
   $$->setVal("VOID identifier lparen <ParameterList> rparen <Block>");
 }
 | idbrack ID LPAREN parameterlist RPAREN block {
-  $$=new MethodDecNode($2,$4,$6);
+  $$=new MethodDecNode($1,$2,$4,$6);
   $$->setVal("<IdBrack> identifier lparen <ParameterList> rparen <Block>");
 }
 
