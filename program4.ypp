@@ -554,14 +554,6 @@ newexp: NEW ID LPAREN arglist RPAREN {
   $$=new NewExpNode($2,$3);
   $$->setVal("new identifier <BracketExps>");
 }
-| NEW simpletype {
-  $$=new NewExpNode($2);
-  $$->setVal("new <SimpleType>");
-}
-| NEW ID {
-  $$=new NewExpNode($2);
-  $$->setVal("new identifier");
-}
 
 ;
 
