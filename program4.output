@@ -1,0 +1,2947 @@
+Grammar
+
+    0 $accept: input $end
+
+    1 input: program
+
+    2 program: program classdec
+    3        | classdec
+    4        | error
+
+    5 classdec: CLASS ID classbody
+    6         | error ID classbody
+    7         | CLASS error classbody
+    8         | CLASS ID error
+
+    9 classbody: LBRACE vardecs constructordecs methoddecs RBRACE
+   10          | LBRACE vardecs constructordecs RBRACE
+   11          | LBRACE vardecs methoddecs RBRACE
+   12          | LBRACE vardecs RBRACE
+   13          | LBRACE constructordecs methoddecs RBRACE
+   14          | LBRACE constructordecs RBRACE
+   15          | LBRACE methoddecs RBRACE
+   16          | LBRACE RBRACE
+
+   17 vardecs: vardecs vardec
+   18        | vardec
+
+   19 vardec: type ID SEMI
+   20       | idbrack ID SEMI
+
+   21 type: simpletype
+   22     | type LBRACK RBRACK
+
+   23 simpletype: INT
+
+   24 constructordecs: constructordecs constructordec
+   25                | constructordec
+
+   26 constructordec: ID LPAREN parameterlist RPAREN block
+
+   27 methoddecs: methoddecs methoddec
+   28           | methoddec
+
+   29 methoddec: type ID LPAREN parameterlist RPAREN block
+   30          | VOID ID LPAREN parameterlist RPAREN block
+   31          | idbrack ID LPAREN parameterlist RPAREN block
+
+   32 parameterlist: parameter
+   33              | parameterlist COMMA parameter
+   34              | %empty
+
+   35 parameter: type ID
+   36          | idbrack ID
+
+   37 block: LBRACE localvardecs stmts RBRACE
+   38      | LBRACE localvardecs RBRACE
+   39      | LBRACE stmts RBRACE
+   40      | LBRACE RBRACE
+
+   41 localvardecs: localvardecs localvardec
+   42             | localvardec
+
+   43 localvardec: type ID SEMI
+   44            | idbrack ID SEMI
+
+   45 stmts: stmts stmt
+   46      | stmt
+
+   47 stmt: SEMI
+   48     | name ASSIGN exp SEMI
+   49     | name LPAREN arglist RPAREN SEMI
+   50     | PRINT LPAREN arglist RPAREN SEMI
+   51     | conditionalstmt
+   52     | WHILE LPAREN exp RPAREN stmt
+   53     | RETURN optionalexp SEMI
+   54     | block
+
+   55 name: THIS
+   56     | ID
+   57     | name DOT ID
+   58     | name bracketexp
+
+   59 arglist: exp
+   60        | arglist COMMA exp
+   61        | %empty
+
+   62 conditionalstmt: IF LPAREN exp RPAREN stmt
+   63                | IF LPAREN exp RPAREN stmt ELSE stmt
+
+   64 optionalexp: exp
+   65            | %empty
+
+   66 exp: name
+   67    | NUMBER
+   68    | NULLT
+   69    | name LPAREN arglist RPAREN
+   70    | READ LPAREN RPAREN
+   71    | newexp
+   72    | PLUS exp
+   73    | MINUS exp
+   74    | NOT exp
+   75    | NOT error
+   76    | exp EQ exp
+   77    | exp NE exp
+   78    | exp LE exp
+   79    | exp GE exp
+   80    | exp LT exp
+   81    | exp GT exp
+   82    | exp PLUS exp
+   83    | exp MINUS exp
+   84    | exp OR exp
+   85    | exp TIMES exp
+   86    | exp DIV exp
+   87    | exp MOD exp
+   88    | exp AND exp
+   89    | LPAREN exp RPAREN
+
+   90 newexp: NEW ID LPAREN arglist RPAREN
+   91       | NEW simpletype bracketexps multibrackets
+   92       | NEW ID bracketexps multibrackets
+   93       | NEW simpletype bracketexps
+   94       | NEW ID bracketexps
+   95       | NEW simpletype
+   96       | NEW ID
+
+   97 bracketexps: bracketexp
+   98            | bracketexps bracketexp
+
+   99 bracketexp: LBRACK exp RBRACK
+
+  100 multibrackets: LBRACK RBRACK
+  101              | multibrackets LBRACK RBRACK
+
+  102 idbrack: ID
+  103        | ID multibrackets
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256) 4 6 7 8 75
+VOID (258) 30
+CLASS (259) 5 7 8
+RETURN (260) 53
+WHILE (261) 52
+PRINT (262) 50
+SEMI (263) 19 20 43 44 47 48 49 50 53
+ELSE (264) 63
+IF (265) 62 63
+ASSIGN (266) 48
+READ (267) 70
+NULLT (268) 68
+DOT (269) 57
+THIS (270) 55
+INT (271) 23
+NEW (272) 90 91 92 93 94 95 96
+COMMA (273) 33 60
+NUMBER (274) 67
+ID (275) 5 6 8 19 20 26 29 30 31 35 36 43 44 56 57 90 92 94 96 102
+    103
+RBRACK (276) 22 99 100 101
+LPAREN (277) 26 29 30 31 49 50 52 62 63 69 70 89 90
+RPAREN (278) 26 29 30 31 49 50 52 62 63 69 70 89 90
+LBRACE (279) 9 10 11 12 13 14 15 16 37 38 39 40
+RBRACE (280) 9 10 11 12 13 14 15 16 37 38 39 40
+EQ (281) 76
+NE (282) 77
+LE (283) 78
+GE (284) 79
+LT (285) 80
+GT (286) 81
+PLUS (287) 72 82
+MINUS (288) 73 83
+OR (289) 84
+TIMES (290) 85
+DIV (291) 86
+MOD (292) 87
+AND (293) 88
+NOT (294) 74 75
+UNARYOP (295)
+LBRACK (296) 22 99 100 101
+
+
+Nonterminals, with rules where they appear
+
+$accept (42)
+    on left: 0
+input (43)
+    on left: 1, on right: 0
+program (44)
+    on left: 2 3 4, on right: 1 2
+classdec (45)
+    on left: 5 6 7 8, on right: 2 3
+classbody (46)
+    on left: 9 10 11 12 13 14 15 16, on right: 5 6 7
+vardecs (47)
+    on left: 17 18, on right: 9 10 11 12 17
+vardec (48)
+    on left: 19 20, on right: 17 18
+type (49)
+    on left: 21 22, on right: 19 22 29 35 43
+simpletype (50)
+    on left: 23, on right: 21 91 93 95
+constructordecs (51)
+    on left: 24 25, on right: 9 10 13 14 24
+constructordec (52)
+    on left: 26, on right: 24 25
+methoddecs (53)
+    on left: 27 28, on right: 9 11 13 15 27
+methoddec (54)
+    on left: 29 30 31, on right: 27 28
+parameterlist (55)
+    on left: 32 33 34, on right: 26 29 30 31 33
+parameter (56)
+    on left: 35 36, on right: 32 33
+block (57)
+    on left: 37 38 39 40, on right: 26 29 30 31 54
+localvardecs (58)
+    on left: 41 42, on right: 37 38 41
+localvardec (59)
+    on left: 43 44, on right: 41 42
+stmts (60)
+    on left: 45 46, on right: 37 39 45
+stmt (61)
+    on left: 47 48 49 50 51 52 53 54, on right: 45 46 52 62 63
+name (62)
+    on left: 55 56 57 58, on right: 48 49 57 58 66 69
+arglist (63)
+    on left: 59 60 61, on right: 49 50 60 69 90
+conditionalstmt (64)
+    on left: 62 63, on right: 51
+optionalexp (65)
+    on left: 64 65, on right: 53
+exp (66)
+    on left: 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83
+    84 85 86 87 88 89, on right: 48 52 59 60 62 63 64 72 73 74 76 77
+    78 79 80 81 82 83 84 85 86 87 88 89 99
+newexp (67)
+    on left: 90 91 92 93 94 95 96, on right: 71
+bracketexps (68)
+    on left: 97 98, on right: 91 92 93 94 98
+bracketexp (69)
+    on left: 99, on right: 58 97 98
+multibrackets (70)
+    on left: 100 101, on right: 91 92 101 103
+idbrack (71)
+    on left: 102 103, on right: 20 31 36 44
+
+
+State 0
+
+    0 $accept: . input $end
+
+    error  shift, and go to state 1
+    CLASS  shift, and go to state 2
+
+    input     go to state 3
+    program   go to state 4
+    classdec  go to state 5
+
+
+State 1
+
+    4 program: error .
+    6 classdec: error . ID classbody
+
+    ID  shift, and go to state 6
+
+    $default  reduce using rule 4 (program)
+
+
+State 2
+
+    5 classdec: CLASS . ID classbody
+    7         | CLASS . error classbody
+    8         | CLASS . ID error
+
+    error  shift, and go to state 7
+    ID     shift, and go to state 8
+
+
+State 3
+
+    0 $accept: input . $end
+
+    $end  shift, and go to state 9
+
+
+State 4
+
+    1 input: program .
+    2 program: program . classdec
+
+    error  shift, and go to state 10
+    CLASS  shift, and go to state 2
+
+    $end  reduce using rule 1 (input)
+
+    classdec  go to state 11
+
+
+State 5
+
+    3 program: classdec .
+
+    $default  reduce using rule 3 (program)
+
+
+State 6
+
+    6 classdec: error ID . classbody
+
+    LBRACE  shift, and go to state 12
+
+    classbody  go to state 13
+
+
+State 7
+
+    7 classdec: CLASS error . classbody
+
+    LBRACE  shift, and go to state 12
+
+    classbody  go to state 14
+
+
+State 8
+
+    5 classdec: CLASS ID . classbody
+    8         | CLASS ID . error
+
+    error   shift, and go to state 15
+    LBRACE  shift, and go to state 12
+
+    classbody  go to state 16
+
+
+State 9
+
+    0 $accept: input $end .
+
+    $default  accept
+
+
+State 10
+
+    6 classdec: error . ID classbody
+
+    ID  shift, and go to state 6
+
+
+State 11
+
+    2 program: program classdec .
+
+    $default  reduce using rule 2 (program)
+
+
+State 12
+
+    9 classbody: LBRACE . vardecs constructordecs methoddecs RBRACE
+   10          | LBRACE . vardecs constructordecs RBRACE
+   11          | LBRACE . vardecs methoddecs RBRACE
+   12          | LBRACE . vardecs RBRACE
+   13          | LBRACE . constructordecs methoddecs RBRACE
+   14          | LBRACE . constructordecs RBRACE
+   15          | LBRACE . methoddecs RBRACE
+   16          | LBRACE . RBRACE
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 19
+    RBRACE  shift, and go to state 20
+
+    vardecs          go to state 21
+    vardec           go to state 22
+    type             go to state 23
+    simpletype       go to state 24
+    constructordecs  go to state 25
+    constructordec   go to state 26
+    methoddecs       go to state 27
+    methoddec        go to state 28
+    idbrack          go to state 29
+
+
+State 13
+
+    6 classdec: error ID classbody .
+
+    $default  reduce using rule 6 (classdec)
+
+
+State 14
+
+    7 classdec: CLASS error classbody .
+
+    $default  reduce using rule 7 (classdec)
+
+
+State 15
+
+    8 classdec: CLASS ID error .
+
+    $default  reduce using rule 8 (classdec)
+
+
+State 16
+
+    5 classdec: CLASS ID classbody .
+
+    $default  reduce using rule 5 (classdec)
+
+
+State 17
+
+   30 methoddec: VOID . ID LPAREN parameterlist RPAREN block
+
+    ID  shift, and go to state 30
+
+
+State 18
+
+   23 simpletype: INT .
+
+    $default  reduce using rule 23 (simpletype)
+
+
+State 19
+
+   26 constructordec: ID . LPAREN parameterlist RPAREN block
+  102 idbrack: ID .
+  103        | ID . multibrackets
+
+    LPAREN  shift, and go to state 31
+    LBRACK  shift, and go to state 32
+
+    $default  reduce using rule 102 (idbrack)
+
+    multibrackets  go to state 33
+
+
+State 20
+
+   16 classbody: LBRACE RBRACE .
+
+    $default  reduce using rule 16 (classbody)
+
+
+State 21
+
+    9 classbody: LBRACE vardecs . constructordecs methoddecs RBRACE
+   10          | LBRACE vardecs . constructordecs RBRACE
+   11          | LBRACE vardecs . methoddecs RBRACE
+   12          | LBRACE vardecs . RBRACE
+   17 vardecs: vardecs . vardec
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 19
+    RBRACE  shift, and go to state 34
+
+    vardec           go to state 35
+    type             go to state 23
+    simpletype       go to state 24
+    constructordecs  go to state 36
+    constructordec   go to state 26
+    methoddecs       go to state 37
+    methoddec        go to state 28
+    idbrack          go to state 29
+
+
+State 22
+
+   18 vardecs: vardec .
+
+    $default  reduce using rule 18 (vardecs)
+
+
+State 23
+
+   19 vardec: type . ID SEMI
+   22 type: type . LBRACK RBRACK
+   29 methoddec: type . ID LPAREN parameterlist RPAREN block
+
+    ID      shift, and go to state 38
+    LBRACK  shift, and go to state 39
+
+
+State 24
+
+   21 type: simpletype .
+
+    $default  reduce using rule 21 (type)
+
+
+State 25
+
+   13 classbody: LBRACE constructordecs . methoddecs RBRACE
+   14          | LBRACE constructordecs . RBRACE
+   24 constructordecs: constructordecs . constructordec
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 19
+    RBRACE  shift, and go to state 40
+
+    type            go to state 41
+    simpletype      go to state 24
+    constructordec  go to state 42
+    methoddecs      go to state 43
+    methoddec       go to state 28
+    idbrack         go to state 44
+
+
+State 26
+
+   25 constructordecs: constructordec .
+
+    $default  reduce using rule 25 (constructordecs)
+
+
+State 27
+
+   15 classbody: LBRACE methoddecs . RBRACE
+   27 methoddecs: methoddecs . methoddec
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 45
+    RBRACE  shift, and go to state 46
+
+    type        go to state 41
+    simpletype  go to state 24
+    methoddec   go to state 47
+    idbrack     go to state 44
+
+
+State 28
+
+   28 methoddecs: methoddec .
+
+    $default  reduce using rule 28 (methoddecs)
+
+
+State 29
+
+   20 vardec: idbrack . ID SEMI
+   31 methoddec: idbrack . ID LPAREN parameterlist RPAREN block
+
+    ID  shift, and go to state 48
+
+
+State 30
+
+   30 methoddec: VOID ID . LPAREN parameterlist RPAREN block
+
+    LPAREN  shift, and go to state 49
+
+
+State 31
+
+   26 constructordec: ID LPAREN . parameterlist RPAREN block
+
+    INT  shift, and go to state 18
+    ID   shift, and go to state 45
+
+    $default  reduce using rule 34 (parameterlist)
+
+    type           go to state 50
+    simpletype     go to state 24
+    parameterlist  go to state 51
+    parameter      go to state 52
+    idbrack        go to state 53
+
+
+State 32
+
+  100 multibrackets: LBRACK . RBRACK
+
+    RBRACK  shift, and go to state 54
+
+
+State 33
+
+  101 multibrackets: multibrackets . LBRACK RBRACK
+  103 idbrack: ID multibrackets .
+
+    LBRACK  shift, and go to state 55
+
+    $default  reduce using rule 103 (idbrack)
+
+
+State 34
+
+   12 classbody: LBRACE vardecs RBRACE .
+
+    $default  reduce using rule 12 (classbody)
+
+
+State 35
+
+   17 vardecs: vardecs vardec .
+
+    $default  reduce using rule 17 (vardecs)
+
+
+State 36
+
+    9 classbody: LBRACE vardecs constructordecs . methoddecs RBRACE
+   10          | LBRACE vardecs constructordecs . RBRACE
+   24 constructordecs: constructordecs . constructordec
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 19
+    RBRACE  shift, and go to state 56
+
+    type            go to state 41
+    simpletype      go to state 24
+    constructordec  go to state 42
+    methoddecs      go to state 57
+    methoddec       go to state 28
+    idbrack         go to state 44
+
+
+State 37
+
+   11 classbody: LBRACE vardecs methoddecs . RBRACE
+   27 methoddecs: methoddecs . methoddec
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 45
+    RBRACE  shift, and go to state 58
+
+    type        go to state 41
+    simpletype  go to state 24
+    methoddec   go to state 47
+    idbrack     go to state 44
+
+
+State 38
+
+   19 vardec: type ID . SEMI
+   29 methoddec: type ID . LPAREN parameterlist RPAREN block
+
+    SEMI    shift, and go to state 59
+    LPAREN  shift, and go to state 60
+
+
+State 39
+
+   22 type: type LBRACK . RBRACK
+
+    RBRACK  shift, and go to state 61
+
+
+State 40
+
+   14 classbody: LBRACE constructordecs RBRACE .
+
+    $default  reduce using rule 14 (classbody)
+
+
+State 41
+
+   22 type: type . LBRACK RBRACK
+   29 methoddec: type . ID LPAREN parameterlist RPAREN block
+
+    ID      shift, and go to state 62
+    LBRACK  shift, and go to state 39
+
+
+State 42
+
+   24 constructordecs: constructordecs constructordec .
+
+    $default  reduce using rule 24 (constructordecs)
+
+
+State 43
+
+   13 classbody: LBRACE constructordecs methoddecs . RBRACE
+   27 methoddecs: methoddecs . methoddec
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 45
+    RBRACE  shift, and go to state 63
+
+    type        go to state 41
+    simpletype  go to state 24
+    methoddec   go to state 47
+    idbrack     go to state 44
+
+
+State 44
+
+   31 methoddec: idbrack . ID LPAREN parameterlist RPAREN block
+
+    ID  shift, and go to state 64
+
+
+State 45
+
+  102 idbrack: ID .
+  103        | ID . multibrackets
+
+    LBRACK  shift, and go to state 32
+
+    $default  reduce using rule 102 (idbrack)
+
+    multibrackets  go to state 33
+
+
+State 46
+
+   15 classbody: LBRACE methoddecs RBRACE .
+
+    $default  reduce using rule 15 (classbody)
+
+
+State 47
+
+   27 methoddecs: methoddecs methoddec .
+
+    $default  reduce using rule 27 (methoddecs)
+
+
+State 48
+
+   20 vardec: idbrack ID . SEMI
+   31 methoddec: idbrack ID . LPAREN parameterlist RPAREN block
+
+    SEMI    shift, and go to state 65
+    LPAREN  shift, and go to state 66
+
+
+State 49
+
+   30 methoddec: VOID ID LPAREN . parameterlist RPAREN block
+
+    INT  shift, and go to state 18
+    ID   shift, and go to state 45
+
+    $default  reduce using rule 34 (parameterlist)
+
+    type           go to state 50
+    simpletype     go to state 24
+    parameterlist  go to state 67
+    parameter      go to state 52
+    idbrack        go to state 53
+
+
+State 50
+
+   22 type: type . LBRACK RBRACK
+   35 parameter: type . ID
+
+    ID      shift, and go to state 68
+    LBRACK  shift, and go to state 39
+
+
+State 51
+
+   26 constructordec: ID LPAREN parameterlist . RPAREN block
+   33 parameterlist: parameterlist . COMMA parameter
+
+    COMMA   shift, and go to state 69
+    RPAREN  shift, and go to state 70
+
+
+State 52
+
+   32 parameterlist: parameter .
+
+    $default  reduce using rule 32 (parameterlist)
+
+
+State 53
+
+   36 parameter: idbrack . ID
+
+    ID  shift, and go to state 71
+
+
+State 54
+
+  100 multibrackets: LBRACK RBRACK .
+
+    $default  reduce using rule 100 (multibrackets)
+
+
+State 55
+
+  101 multibrackets: multibrackets LBRACK . RBRACK
+
+    RBRACK  shift, and go to state 72
+
+
+State 56
+
+   10 classbody: LBRACE vardecs constructordecs RBRACE .
+
+    $default  reduce using rule 10 (classbody)
+
+
+State 57
+
+    9 classbody: LBRACE vardecs constructordecs methoddecs . RBRACE
+   27 methoddecs: methoddecs . methoddec
+
+    VOID    shift, and go to state 17
+    INT     shift, and go to state 18
+    ID      shift, and go to state 45
+    RBRACE  shift, and go to state 73
+
+    type        go to state 41
+    simpletype  go to state 24
+    methoddec   go to state 47
+    idbrack     go to state 44
+
+
+State 58
+
+   11 classbody: LBRACE vardecs methoddecs RBRACE .
+
+    $default  reduce using rule 11 (classbody)
+
+
+State 59
+
+   19 vardec: type ID SEMI .
+
+    $default  reduce using rule 19 (vardec)
+
+
+State 60
+
+   29 methoddec: type ID LPAREN . parameterlist RPAREN block
+
+    INT  shift, and go to state 18
+    ID   shift, and go to state 45
+
+    $default  reduce using rule 34 (parameterlist)
+
+    type           go to state 50
+    simpletype     go to state 24
+    parameterlist  go to state 74
+    parameter      go to state 52
+    idbrack        go to state 53
+
+
+State 61
+
+   22 type: type LBRACK RBRACK .
+
+    $default  reduce using rule 22 (type)
+
+
+State 62
+
+   29 methoddec: type ID . LPAREN parameterlist RPAREN block
+
+    LPAREN  shift, and go to state 60
+
+
+State 63
+
+   13 classbody: LBRACE constructordecs methoddecs RBRACE .
+
+    $default  reduce using rule 13 (classbody)
+
+
+State 64
+
+   31 methoddec: idbrack ID . LPAREN parameterlist RPAREN block
+
+    LPAREN  shift, and go to state 66
+
+
+State 65
+
+   20 vardec: idbrack ID SEMI .
+
+    $default  reduce using rule 20 (vardec)
+
+
+State 66
+
+   31 methoddec: idbrack ID LPAREN . parameterlist RPAREN block
+
+    INT  shift, and go to state 18
+    ID   shift, and go to state 45
+
+    $default  reduce using rule 34 (parameterlist)
+
+    type           go to state 50
+    simpletype     go to state 24
+    parameterlist  go to state 75
+    parameter      go to state 52
+    idbrack        go to state 53
+
+
+State 67
+
+   30 methoddec: VOID ID LPAREN parameterlist . RPAREN block
+   33 parameterlist: parameterlist . COMMA parameter
+
+    COMMA   shift, and go to state 69
+    RPAREN  shift, and go to state 76
+
+
+State 68
+
+   35 parameter: type ID .
+
+    $default  reduce using rule 35 (parameter)
+
+
+State 69
+
+   33 parameterlist: parameterlist COMMA . parameter
+
+    INT  shift, and go to state 18
+    ID   shift, and go to state 45
+
+    type        go to state 50
+    simpletype  go to state 24
+    parameter   go to state 77
+    idbrack     go to state 53
+
+
+State 70
+
+   26 constructordec: ID LPAREN parameterlist RPAREN . block
+
+    LBRACE  shift, and go to state 78
+
+    block  go to state 79
+
+
+State 71
+
+   36 parameter: idbrack ID .
+
+    $default  reduce using rule 36 (parameter)
+
+
+State 72
+
+  101 multibrackets: multibrackets LBRACK RBRACK .
+
+    $default  reduce using rule 101 (multibrackets)
+
+
+State 73
+
+    9 classbody: LBRACE vardecs constructordecs methoddecs RBRACE .
+
+    $default  reduce using rule 9 (classbody)
+
+
+State 74
+
+   29 methoddec: type ID LPAREN parameterlist . RPAREN block
+   33 parameterlist: parameterlist . COMMA parameter
+
+    COMMA   shift, and go to state 69
+    RPAREN  shift, and go to state 80
+
+
+State 75
+
+   31 methoddec: idbrack ID LPAREN parameterlist . RPAREN block
+   33 parameterlist: parameterlist . COMMA parameter
+
+    COMMA   shift, and go to state 69
+    RPAREN  shift, and go to state 81
+
+
+State 76
+
+   30 methoddec: VOID ID LPAREN parameterlist RPAREN . block
+
+    LBRACE  shift, and go to state 78
+
+    block  go to state 82
+
+
+State 77
+
+   33 parameterlist: parameterlist COMMA parameter .
+
+    $default  reduce using rule 33 (parameterlist)
+
+
+State 78
+
+   37 block: LBRACE . localvardecs stmts RBRACE
+   38      | LBRACE . localvardecs RBRACE
+   39      | LBRACE . stmts RBRACE
+   40      | LBRACE . RBRACE
+
+    RETURN  shift, and go to state 83
+    WHILE   shift, and go to state 84
+    PRINT   shift, and go to state 85
+    SEMI    shift, and go to state 86
+    IF      shift, and go to state 87
+    THIS    shift, and go to state 88
+    INT     shift, and go to state 18
+    ID      shift, and go to state 89
+    LBRACE  shift, and go to state 78
+    RBRACE  shift, and go to state 90
+
+    type             go to state 91
+    simpletype       go to state 24
+    block            go to state 92
+    localvardecs     go to state 93
+    localvardec      go to state 94
+    stmts            go to state 95
+    stmt             go to state 96
+    name             go to state 97
+    conditionalstmt  go to state 98
+    idbrack          go to state 99
+
+
+State 79
+
+   26 constructordec: ID LPAREN parameterlist RPAREN block .
+
+    $default  reduce using rule 26 (constructordec)
+
+
+State 80
+
+   29 methoddec: type ID LPAREN parameterlist RPAREN . block
+
+    LBRACE  shift, and go to state 78
+
+    block  go to state 100
+
+
+State 81
+
+   31 methoddec: idbrack ID LPAREN parameterlist RPAREN . block
+
+    LBRACE  shift, and go to state 78
+
+    block  go to state 101
+
+
+State 82
+
+   30 methoddec: VOID ID LPAREN parameterlist RPAREN block .
+
+    $default  reduce using rule 30 (methoddec)
+
+
+State 83
+
+   53 stmt: RETURN . optionalexp SEMI
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    $default  reduce using rule 65 (optionalexp)
+
+    name         go to state 111
+    optionalexp  go to state 112
+    exp          go to state 113
+    newexp       go to state 114
+
+
+State 84
+
+   52 stmt: WHILE . LPAREN exp RPAREN stmt
+
+    LPAREN  shift, and go to state 115
+
+
+State 85
+
+   50 stmt: PRINT . LPAREN arglist RPAREN SEMI
+
+    LPAREN  shift, and go to state 116
+
+
+State 86
+
+   47 stmt: SEMI .
+
+    $default  reduce using rule 47 (stmt)
+
+
+State 87
+
+   62 conditionalstmt: IF . LPAREN exp RPAREN stmt
+   63                | IF . LPAREN exp RPAREN stmt ELSE stmt
+
+    LPAREN  shift, and go to state 117
+
+
+State 88
+
+   55 name: THIS .
+
+    $default  reduce using rule 55 (name)
+
+
+State 89
+
+   56 name: ID .
+  102 idbrack: ID .
+  103        | ID . multibrackets
+
+    LBRACK  shift, and go to state 32
+
+    ID        reduce using rule 102 (idbrack)
+    $default  reduce using rule 56 (name)
+
+    multibrackets  go to state 33
+
+
+State 90
+
+   40 block: LBRACE RBRACE .
+
+    $default  reduce using rule 40 (block)
+
+
+State 91
+
+   22 type: type . LBRACK RBRACK
+   43 localvardec: type . ID SEMI
+
+    ID      shift, and go to state 118
+    LBRACK  shift, and go to state 39
+
+
+State 92
+
+   54 stmt: block .
+
+    $default  reduce using rule 54 (stmt)
+
+
+State 93
+
+   37 block: LBRACE localvardecs . stmts RBRACE
+   38      | LBRACE localvardecs . RBRACE
+   41 localvardecs: localvardecs . localvardec
+
+    RETURN  shift, and go to state 83
+    WHILE   shift, and go to state 84
+    PRINT   shift, and go to state 85
+    SEMI    shift, and go to state 86
+    IF      shift, and go to state 87
+    THIS    shift, and go to state 88
+    INT     shift, and go to state 18
+    ID      shift, and go to state 89
+    LBRACE  shift, and go to state 78
+    RBRACE  shift, and go to state 119
+
+    type             go to state 91
+    simpletype       go to state 24
+    block            go to state 92
+    localvardec      go to state 120
+    stmts            go to state 121
+    stmt             go to state 96
+    name             go to state 97
+    conditionalstmt  go to state 98
+    idbrack          go to state 99
+
+
+State 94
+
+   42 localvardecs: localvardec .
+
+    $default  reduce using rule 42 (localvardecs)
+
+
+State 95
+
+   39 block: LBRACE stmts . RBRACE
+   45 stmts: stmts . stmt
+
+    RETURN  shift, and go to state 83
+    WHILE   shift, and go to state 84
+    PRINT   shift, and go to state 85
+    SEMI    shift, and go to state 86
+    IF      shift, and go to state 87
+    THIS    shift, and go to state 88
+    ID      shift, and go to state 106
+    LBRACE  shift, and go to state 78
+    RBRACE  shift, and go to state 122
+
+    block            go to state 92
+    stmt             go to state 123
+    name             go to state 97
+    conditionalstmt  go to state 98
+
+
+State 96
+
+   46 stmts: stmt .
+
+    $default  reduce using rule 46 (stmts)
+
+
+State 97
+
+   48 stmt: name . ASSIGN exp SEMI
+   49     | name . LPAREN arglist RPAREN SEMI
+   57 name: name . DOT ID
+   58     | name . bracketexp
+
+    ASSIGN  shift, and go to state 124
+    DOT     shift, and go to state 125
+    LPAREN  shift, and go to state 126
+    LBRACK  shift, and go to state 127
+
+    bracketexp  go to state 128
+
+
+State 98
+
+   51 stmt: conditionalstmt .
+
+    $default  reduce using rule 51 (stmt)
+
+
+State 99
+
+   44 localvardec: idbrack . ID SEMI
+
+    ID  shift, and go to state 129
+
+
+State 100
+
+   29 methoddec: type ID LPAREN parameterlist RPAREN block .
+
+    $default  reduce using rule 29 (methoddec)
+
+
+State 101
+
+   31 methoddec: idbrack ID LPAREN parameterlist RPAREN block .
+
+    $default  reduce using rule 31 (methoddec)
+
+
+State 102
+
+   70 exp: READ . LPAREN RPAREN
+
+    LPAREN  shift, and go to state 130
+
+
+State 103
+
+   68 exp: NULLT .
+
+    $default  reduce using rule 68 (exp)
+
+
+State 104
+
+   90 newexp: NEW . ID LPAREN arglist RPAREN
+   91       | NEW . simpletype bracketexps multibrackets
+   92       | NEW . ID bracketexps multibrackets
+   93       | NEW . simpletype bracketexps
+   94       | NEW . ID bracketexps
+   95       | NEW . simpletype
+   96       | NEW . ID
+
+    INT  shift, and go to state 18
+    ID   shift, and go to state 131
+
+    simpletype  go to state 132
+
+
+State 105
+
+   67 exp: NUMBER .
+
+    $default  reduce using rule 67 (exp)
+
+
+State 106
+
+   56 name: ID .
+
+    $default  reduce using rule 56 (name)
+
+
+State 107
+
+   89 exp: LPAREN . exp RPAREN
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 133
+    newexp  go to state 114
+
+
+State 108
+
+   72 exp: PLUS . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 134
+    newexp  go to state 114
+
+
+State 109
+
+   73 exp: MINUS . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 135
+    newexp  go to state 114
+
+
+State 110
+
+   74 exp: NOT . exp
+   75    | NOT . error
+
+    error   shift, and go to state 136
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 137
+    newexp  go to state 114
+
+
+State 111
+
+   57 name: name . DOT ID
+   58     | name . bracketexp
+   66 exp: name .
+   69    | name . LPAREN arglist RPAREN
+
+    DOT     shift, and go to state 125
+    LPAREN  shift, and go to state 138
+    LBRACK  shift, and go to state 127
+
+    $default  reduce using rule 66 (exp)
+
+    bracketexp  go to state 128
+
+
+State 112
+
+   53 stmt: RETURN optionalexp . SEMI
+
+    SEMI  shift, and go to state 139
+
+
+State 113
+
+   64 optionalexp: exp .
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    EQ     shift, and go to state 140
+    NE     shift, and go to state 141
+    LE     shift, and go to state 142
+    GE     shift, and go to state 143
+    LT     shift, and go to state 144
+    GT     shift, and go to state 145
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 64 (optionalexp)
+
+
+State 114
+
+   71 exp: newexp .
+
+    $default  reduce using rule 71 (exp)
+
+
+State 115
+
+   52 stmt: WHILE LPAREN . exp RPAREN stmt
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 153
+    newexp  go to state 114
+
+
+State 116
+
+   50 stmt: PRINT LPAREN . arglist RPAREN SEMI
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    $default  reduce using rule 61 (arglist)
+
+    name     go to state 111
+    arglist  go to state 154
+    exp      go to state 155
+    newexp   go to state 114
+
+
+State 117
+
+   62 conditionalstmt: IF LPAREN . exp RPAREN stmt
+   63                | IF LPAREN . exp RPAREN stmt ELSE stmt
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 156
+    newexp  go to state 114
+
+
+State 118
+
+   43 localvardec: type ID . SEMI
+
+    SEMI  shift, and go to state 157
+
+
+State 119
+
+   38 block: LBRACE localvardecs RBRACE .
+
+    $default  reduce using rule 38 (block)
+
+
+State 120
+
+   41 localvardecs: localvardecs localvardec .
+
+    $default  reduce using rule 41 (localvardecs)
+
+
+State 121
+
+   37 block: LBRACE localvardecs stmts . RBRACE
+   45 stmts: stmts . stmt
+
+    RETURN  shift, and go to state 83
+    WHILE   shift, and go to state 84
+    PRINT   shift, and go to state 85
+    SEMI    shift, and go to state 86
+    IF      shift, and go to state 87
+    THIS    shift, and go to state 88
+    ID      shift, and go to state 106
+    LBRACE  shift, and go to state 78
+    RBRACE  shift, and go to state 158
+
+    block            go to state 92
+    stmt             go to state 123
+    name             go to state 97
+    conditionalstmt  go to state 98
+
+
+State 122
+
+   39 block: LBRACE stmts RBRACE .
+
+    $default  reduce using rule 39 (block)
+
+
+State 123
+
+   45 stmts: stmts stmt .
+
+    $default  reduce using rule 45 (stmts)
+
+
+State 124
+
+   48 stmt: name ASSIGN . exp SEMI
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 159
+    newexp  go to state 114
+
+
+State 125
+
+   57 name: name DOT . ID
+
+    ID  shift, and go to state 160
+
+
+State 126
+
+   49 stmt: name LPAREN . arglist RPAREN SEMI
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    $default  reduce using rule 61 (arglist)
+
+    name     go to state 111
+    arglist  go to state 161
+    exp      go to state 155
+    newexp   go to state 114
+
+
+State 127
+
+   99 bracketexp: LBRACK . exp RBRACK
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 162
+    newexp  go to state 114
+
+
+State 128
+
+   58 name: name bracketexp .
+
+    $default  reduce using rule 58 (name)
+
+
+State 129
+
+   44 localvardec: idbrack ID . SEMI
+
+    SEMI  shift, and go to state 163
+
+
+State 130
+
+   70 exp: READ LPAREN . RPAREN
+
+    RPAREN  shift, and go to state 164
+
+
+State 131
+
+   90 newexp: NEW ID . LPAREN arglist RPAREN
+   92       | NEW ID . bracketexps multibrackets
+   94       | NEW ID . bracketexps
+   96       | NEW ID .
+
+    LPAREN  shift, and go to state 165
+    LBRACK  shift, and go to state 127
+
+    $default  reduce using rule 96 (newexp)
+
+    bracketexps  go to state 166
+    bracketexp   go to state 167
+
+
+State 132
+
+   91 newexp: NEW simpletype . bracketexps multibrackets
+   93       | NEW simpletype . bracketexps
+   95       | NEW simpletype .
+
+    LBRACK  shift, and go to state 127
+
+    $default  reduce using rule 95 (newexp)
+
+    bracketexps  go to state 168
+    bracketexp   go to state 167
+
+
+State 133
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+   89    | LPAREN exp . RPAREN
+
+    RPAREN  shift, and go to state 169
+    EQ      shift, and go to state 140
+    NE      shift, and go to state 141
+    LE      shift, and go to state 142
+    GE      shift, and go to state 143
+    LT      shift, and go to state 144
+    GT      shift, and go to state 145
+    PLUS    shift, and go to state 146
+    MINUS   shift, and go to state 147
+    OR      shift, and go to state 148
+    TIMES   shift, and go to state 149
+    DIV     shift, and go to state 150
+    MOD     shift, and go to state 151
+    AND     shift, and go to state 152
+
+
+State 134
+
+   72 exp: PLUS exp .
+   76    | exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    $default  reduce using rule 72 (exp)
+
+
+State 135
+
+   73 exp: MINUS exp .
+   76    | exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    $default  reduce using rule 73 (exp)
+
+
+State 136
+
+   75 exp: NOT error .
+
+    $default  reduce using rule 75 (exp)
+
+
+State 137
+
+   74 exp: NOT exp .
+   76    | exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    $default  reduce using rule 74 (exp)
+
+
+State 138
+
+   69 exp: name LPAREN . arglist RPAREN
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    $default  reduce using rule 61 (arglist)
+
+    name     go to state 111
+    arglist  go to state 170
+    exp      go to state 155
+    newexp   go to state 114
+
+
+State 139
+
+   53 stmt: RETURN optionalexp SEMI .
+
+    $default  reduce using rule 53 (stmt)
+
+
+State 140
+
+   76 exp: exp EQ . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 171
+    newexp  go to state 114
+
+
+State 141
+
+   77 exp: exp NE . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 172
+    newexp  go to state 114
+
+
+State 142
+
+   78 exp: exp LE . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 173
+    newexp  go to state 114
+
+
+State 143
+
+   79 exp: exp GE . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 174
+    newexp  go to state 114
+
+
+State 144
+
+   80 exp: exp LT . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 175
+    newexp  go to state 114
+
+
+State 145
+
+   81 exp: exp GT . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 176
+    newexp  go to state 114
+
+
+State 146
+
+   82 exp: exp PLUS . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 177
+    newexp  go to state 114
+
+
+State 147
+
+   83 exp: exp MINUS . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 178
+    newexp  go to state 114
+
+
+State 148
+
+   84 exp: exp OR . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 179
+    newexp  go to state 114
+
+
+State 149
+
+   85 exp: exp TIMES . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 180
+    newexp  go to state 114
+
+
+State 150
+
+   86 exp: exp DIV . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 181
+    newexp  go to state 114
+
+
+State 151
+
+   87 exp: exp MOD . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 182
+    newexp  go to state 114
+
+
+State 152
+
+   88 exp: exp AND . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 183
+    newexp  go to state 114
+
+
+State 153
+
+   52 stmt: WHILE LPAREN exp . RPAREN stmt
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    RPAREN  shift, and go to state 184
+    EQ      shift, and go to state 140
+    NE      shift, and go to state 141
+    LE      shift, and go to state 142
+    GE      shift, and go to state 143
+    LT      shift, and go to state 144
+    GT      shift, and go to state 145
+    PLUS    shift, and go to state 146
+    MINUS   shift, and go to state 147
+    OR      shift, and go to state 148
+    TIMES   shift, and go to state 149
+    DIV     shift, and go to state 150
+    MOD     shift, and go to state 151
+    AND     shift, and go to state 152
+
+
+State 154
+
+   50 stmt: PRINT LPAREN arglist . RPAREN SEMI
+   60 arglist: arglist . COMMA exp
+
+    COMMA   shift, and go to state 185
+    RPAREN  shift, and go to state 186
+
+
+State 155
+
+   59 arglist: exp .
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    EQ     shift, and go to state 140
+    NE     shift, and go to state 141
+    LE     shift, and go to state 142
+    GE     shift, and go to state 143
+    LT     shift, and go to state 144
+    GT     shift, and go to state 145
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 59 (arglist)
+
+
+State 156
+
+   62 conditionalstmt: IF LPAREN exp . RPAREN stmt
+   63                | IF LPAREN exp . RPAREN stmt ELSE stmt
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    RPAREN  shift, and go to state 187
+    EQ      shift, and go to state 140
+    NE      shift, and go to state 141
+    LE      shift, and go to state 142
+    GE      shift, and go to state 143
+    LT      shift, and go to state 144
+    GT      shift, and go to state 145
+    PLUS    shift, and go to state 146
+    MINUS   shift, and go to state 147
+    OR      shift, and go to state 148
+    TIMES   shift, and go to state 149
+    DIV     shift, and go to state 150
+    MOD     shift, and go to state 151
+    AND     shift, and go to state 152
+
+
+State 157
+
+   43 localvardec: type ID SEMI .
+
+    $default  reduce using rule 43 (localvardec)
+
+
+State 158
+
+   37 block: LBRACE localvardecs stmts RBRACE .
+
+    $default  reduce using rule 37 (block)
+
+
+State 159
+
+   48 stmt: name ASSIGN exp . SEMI
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    SEMI   shift, and go to state 188
+    EQ     shift, and go to state 140
+    NE     shift, and go to state 141
+    LE     shift, and go to state 142
+    GE     shift, and go to state 143
+    LT     shift, and go to state 144
+    GT     shift, and go to state 145
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+
+State 160
+
+   57 name: name DOT ID .
+
+    $default  reduce using rule 57 (name)
+
+
+State 161
+
+   49 stmt: name LPAREN arglist . RPAREN SEMI
+   60 arglist: arglist . COMMA exp
+
+    COMMA   shift, and go to state 185
+    RPAREN  shift, and go to state 189
+
+
+State 162
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+   99 bracketexp: LBRACK exp . RBRACK
+
+    RBRACK  shift, and go to state 190
+    EQ      shift, and go to state 140
+    NE      shift, and go to state 141
+    LE      shift, and go to state 142
+    GE      shift, and go to state 143
+    LT      shift, and go to state 144
+    GT      shift, and go to state 145
+    PLUS    shift, and go to state 146
+    MINUS   shift, and go to state 147
+    OR      shift, and go to state 148
+    TIMES   shift, and go to state 149
+    DIV     shift, and go to state 150
+    MOD     shift, and go to state 151
+    AND     shift, and go to state 152
+
+
+State 163
+
+   44 localvardec: idbrack ID SEMI .
+
+    $default  reduce using rule 44 (localvardec)
+
+
+State 164
+
+   70 exp: READ LPAREN RPAREN .
+
+    $default  reduce using rule 70 (exp)
+
+
+State 165
+
+   90 newexp: NEW ID LPAREN . arglist RPAREN
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    $default  reduce using rule 61 (arglist)
+
+    name     go to state 111
+    arglist  go to state 191
+    exp      go to state 155
+    newexp   go to state 114
+
+
+State 166
+
+   92 newexp: NEW ID bracketexps . multibrackets
+   94       | NEW ID bracketexps .
+   98 bracketexps: bracketexps . bracketexp
+
+    LBRACK  shift, and go to state 192
+
+    $default  reduce using rule 94 (newexp)
+
+    bracketexp     go to state 193
+    multibrackets  go to state 194
+
+
+State 167
+
+   97 bracketexps: bracketexp .
+
+    $default  reduce using rule 97 (bracketexps)
+
+
+State 168
+
+   91 newexp: NEW simpletype bracketexps . multibrackets
+   93       | NEW simpletype bracketexps .
+   98 bracketexps: bracketexps . bracketexp
+
+    LBRACK  shift, and go to state 192
+
+    $default  reduce using rule 93 (newexp)
+
+    bracketexp     go to state 193
+    multibrackets  go to state 195
+
+
+State 169
+
+   89 exp: LPAREN exp RPAREN .
+
+    $default  reduce using rule 89 (exp)
+
+
+State 170
+
+   60 arglist: arglist . COMMA exp
+   69 exp: name LPAREN arglist . RPAREN
+
+    COMMA   shift, and go to state 185
+    RPAREN  shift, and go to state 196
+
+
+State 171
+
+   76 exp: exp . EQ exp
+   76    | exp EQ exp .
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 76 (exp)
+
+
+State 172
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   77    | exp NE exp .
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 77 (exp)
+
+
+State 173
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   78    | exp LE exp .
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 78 (exp)
+
+
+State 174
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   79    | exp GE exp .
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 79 (exp)
+
+
+State 175
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   80    | exp LT exp .
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 80 (exp)
+
+
+State 176
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   81    | exp GT exp .
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 81 (exp)
+
+
+State 177
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   82    | exp PLUS exp .
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 82 (exp)
+
+
+State 178
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   83    | exp MINUS exp .
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 83 (exp)
+
+
+State 179
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   84    | exp OR exp .
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 84 (exp)
+
+
+State 180
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   85    | exp TIMES exp .
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    $default  reduce using rule 85 (exp)
+
+
+State 181
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   86    | exp DIV exp .
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    $default  reduce using rule 86 (exp)
+
+
+State 182
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   87    | exp MOD exp .
+   88    | exp . AND exp
+
+    $default  reduce using rule 87 (exp)
+
+
+State 183
+
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+   88    | exp AND exp .
+
+    $default  reduce using rule 88 (exp)
+
+
+State 184
+
+   52 stmt: WHILE LPAREN exp RPAREN . stmt
+
+    RETURN  shift, and go to state 83
+    WHILE   shift, and go to state 84
+    PRINT   shift, and go to state 85
+    SEMI    shift, and go to state 86
+    IF      shift, and go to state 87
+    THIS    shift, and go to state 88
+    ID      shift, and go to state 106
+    LBRACE  shift, and go to state 78
+
+    block            go to state 92
+    stmt             go to state 197
+    name             go to state 97
+    conditionalstmt  go to state 98
+
+
+State 185
+
+   60 arglist: arglist COMMA . exp
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 198
+    newexp  go to state 114
+
+
+State 186
+
+   50 stmt: PRINT LPAREN arglist RPAREN . SEMI
+
+    SEMI  shift, and go to state 199
+
+
+State 187
+
+   62 conditionalstmt: IF LPAREN exp RPAREN . stmt
+   63                | IF LPAREN exp RPAREN . stmt ELSE stmt
+
+    RETURN  shift, and go to state 83
+    WHILE   shift, and go to state 84
+    PRINT   shift, and go to state 85
+    SEMI    shift, and go to state 86
+    IF      shift, and go to state 87
+    THIS    shift, and go to state 88
+    ID      shift, and go to state 106
+    LBRACE  shift, and go to state 78
+
+    block            go to state 92
+    stmt             go to state 200
+    name             go to state 97
+    conditionalstmt  go to state 98
+
+
+State 188
+
+   48 stmt: name ASSIGN exp SEMI .
+
+    $default  reduce using rule 48 (stmt)
+
+
+State 189
+
+   49 stmt: name LPAREN arglist RPAREN . SEMI
+
+    SEMI  shift, and go to state 201
+
+
+State 190
+
+   99 bracketexp: LBRACK exp RBRACK .
+
+    $default  reduce using rule 99 (bracketexp)
+
+
+State 191
+
+   60 arglist: arglist . COMMA exp
+   90 newexp: NEW ID LPAREN arglist . RPAREN
+
+    COMMA   shift, and go to state 185
+    RPAREN  shift, and go to state 202
+
+
+State 192
+
+   99 bracketexp: LBRACK . exp RBRACK
+  100 multibrackets: LBRACK . RBRACK
+
+    READ    shift, and go to state 102
+    NULLT   shift, and go to state 103
+    THIS    shift, and go to state 88
+    NEW     shift, and go to state 104
+    NUMBER  shift, and go to state 105
+    ID      shift, and go to state 106
+    RBRACK  shift, and go to state 54
+    LPAREN  shift, and go to state 107
+    PLUS    shift, and go to state 108
+    MINUS   shift, and go to state 109
+    NOT     shift, and go to state 110
+
+    name    go to state 111
+    exp     go to state 162
+    newexp  go to state 114
+
+
+State 193
+
+   98 bracketexps: bracketexps bracketexp .
+
+    $default  reduce using rule 98 (bracketexps)
+
+
+State 194
+
+   92 newexp: NEW ID bracketexps multibrackets .
+  101 multibrackets: multibrackets . LBRACK RBRACK
+
+    LBRACK  shift, and go to state 55
+
+    $default  reduce using rule 92 (newexp)
+
+
+State 195
+
+   91 newexp: NEW simpletype bracketexps multibrackets .
+  101 multibrackets: multibrackets . LBRACK RBRACK
+
+    LBRACK  shift, and go to state 55
+
+    $default  reduce using rule 91 (newexp)
+
+
+State 196
+
+   69 exp: name LPAREN arglist RPAREN .
+
+    $default  reduce using rule 69 (exp)
+
+
+State 197
+
+   52 stmt: WHILE LPAREN exp RPAREN stmt .
+
+    $default  reduce using rule 52 (stmt)
+
+
+State 198
+
+   60 arglist: arglist COMMA exp .
+   76 exp: exp . EQ exp
+   77    | exp . NE exp
+   78    | exp . LE exp
+   79    | exp . GE exp
+   80    | exp . LT exp
+   81    | exp . GT exp
+   82    | exp . PLUS exp
+   83    | exp . MINUS exp
+   84    | exp . OR exp
+   85    | exp . TIMES exp
+   86    | exp . DIV exp
+   87    | exp . MOD exp
+   88    | exp . AND exp
+
+    EQ     shift, and go to state 140
+    NE     shift, and go to state 141
+    LE     shift, and go to state 142
+    GE     shift, and go to state 143
+    LT     shift, and go to state 144
+    GT     shift, and go to state 145
+    PLUS   shift, and go to state 146
+    MINUS  shift, and go to state 147
+    OR     shift, and go to state 148
+    TIMES  shift, and go to state 149
+    DIV    shift, and go to state 150
+    MOD    shift, and go to state 151
+    AND    shift, and go to state 152
+
+    $default  reduce using rule 60 (arglist)
+
+
+State 199
+
+   50 stmt: PRINT LPAREN arglist RPAREN SEMI .
+
+    $default  reduce using rule 50 (stmt)
+
+
+State 200
+
+   62 conditionalstmt: IF LPAREN exp RPAREN stmt .
+   63                | IF LPAREN exp RPAREN stmt . ELSE stmt
+
+    ELSE  shift, and go to state 203
+
+    $default  reduce using rule 62 (conditionalstmt)
+
+
+State 201
+
+   49 stmt: name LPAREN arglist RPAREN SEMI .
+
+    $default  reduce using rule 49 (stmt)
+
+
+State 202
+
+   90 newexp: NEW ID LPAREN arglist RPAREN .
+
+    $default  reduce using rule 90 (newexp)
+
+
+State 203
+
+   63 conditionalstmt: IF LPAREN exp RPAREN stmt ELSE . stmt
+
+    RETURN  shift, and go to state 83
+    WHILE   shift, and go to state 84
+    PRINT   shift, and go to state 85
+    SEMI    shift, and go to state 86
+    IF      shift, and go to state 87
+    THIS    shift, and go to state 88
+    ID      shift, and go to state 106
+    LBRACE  shift, and go to state 78
+
+    block            go to state 92
+    stmt             go to state 204
+    name             go to state 97
+    conditionalstmt  go to state 98
+
+
+State 204
+
+   63 conditionalstmt: IF LPAREN exp RPAREN stmt ELSE stmt .
+
+    $default  reduce using rule 63 (conditionalstmt)

@@ -416,3 +416,12 @@ void BracketExpsNode::print()
 void NumberNode::print() {
   cout << "number --> " + sval << endl;
 }
+
+/* ID BRACK NODE DEFS */
+void IdBrackNode::print()
+{
+  cout << "<IdBrack> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+

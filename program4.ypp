@@ -65,6 +65,7 @@ void yyerror(const char *);
 %type<pnode> multibrackets
 %type<pnode> bracketexp
 %type<pnode> bracketexps
+%type<pnode> idbrack
 
 %token<pnode> VOID
 %token<pnode> CLASS
@@ -84,7 +85,7 @@ void yyerror(const char *);
 %token<pnode> COMMA
 %token<pnode> NUMBER
 %token<pnode> ID
-%token<pnode> LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE
+%token<pnode> RBRACK LPAREN RPAREN LBRACE RBRACE
 %left<pnode> EQ NE LE GE LT GT
 %left<pnode> PLUS MINUS OR
 %left<pnode> TIMES DIV MOD AND
@@ -93,7 +94,7 @@ void yyerror(const char *);
 %precedence UNARYOP
 %precedence IF
 %precedence ELSE
-
+%precedence<pnode> LBRACK
 /*
  * The Grammar :o
  */
@@ -195,6 +196,10 @@ vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
 }
+| idbrack ID SEMI {
+  $$=new VarDecNode($1,$2);
+  $$->setVal("<IdBrack> identifier semi");
+}
 
 ;
 
@@ -212,10 +217,6 @@ type: simpletype {
 simpletype: INT {
   $$=new SimpleTypeNode();
   $$->setVal("int");
-}
-| ID {
-  $$=new SimpleTypeNode($1);
-  $$->setVal("identifier");
 }
 
 ;
@@ -256,6 +257,10 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($2,$4,$6);
   $$->setVal("VOID identifier lparen <ParameterList> rparen <Block>");
 }
+| idbrack ID LPAREN parameterlist RPAREN block {
+  $$=new MethodDecNode($2,$4,$6);
+  $$->setVal("<IdBrack> identifier lparen <ParameterList> rparen <Block>");
+}
 
 ;
 
@@ -277,6 +282,10 @@ parameterlist: parameter {
 parameter: type ID {
   $$=new ParameterNode($1,$2);
   $$->setVal("<Type> identifier");
+}
+| idbrack ID {
+  $$=new ParameterNode($1,$2);
+  $$->setVal("<IdBrack> identifier");
 }
 
 ;
@@ -314,6 +323,10 @@ localvardecs: localvardecs localvardec {
 localvardec: type ID SEMI {
   $$=new LocalVarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
+}
+| idbrack ID SEMI {
+  $$=new LocalVarDecNode($1,$2);
+  $$->setVal("<IdBrack> identifier semi");
 }
 
 ;
@@ -368,7 +381,7 @@ name: THIS {
   $$=new NameNode();
   $$->setVal("this");
 }
-| ID {
+| ID %prec IF {
   $$=new NameNode($1);
   $$->setVal("identifier");
 }
@@ -529,13 +542,25 @@ newexp: NEW ID LPAREN arglist RPAREN {
   $$=new NewExpNode($2,$3,$4);
   $$->setVal("new <SimpleType> <BracketExps> <MultiBrackets>");
 }
+| NEW ID bracketexps multibrackets {
+  $$=new NewExpNode($2,$3,$4);
+  $$->setVal("new identifier <BracketExps> <MultiBrackets>");
+}
 | NEW simpletype bracketexps {
   $$=new NewExpNode($2,$3);
   $$->setVal("new <SimpleType> <BracketExps>");
 }
+| NEW ID bracketexps {
+  $$=new NewExpNode($2,$3);
+  $$->setVal("new identifier <BracketExps>");
+}
 | NEW simpletype {
   $$=new NewExpNode($2);
   $$->setVal("new <SimpleType>");
+}
+| NEW ID {
+  $$=new NewExpNode($2);
+  $$->setVal("new identifier");
 }
 
 ;
@@ -567,6 +592,14 @@ multibrackets: LBRACK RBRACK {
   $$->setVal("<Multibrackets> lbrack rbrack");
 }
 
+idbrack: ID {
+  $$=new IdBrackNode($1);
+  $$->setVal("identifier");
+}
+| ID multibrackets {
+  $$=new IdBrackNode($1,$2);
+  $$->setVal("identifier <MultiBrackets>");
+}
 ;
 
 

@@ -332,4 +332,12 @@ class NumberNode : public Node
     NumberNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
+
+/** IDBRACK NODE TYPE **/
+class IdBrackNode : public Node
+{
+  public:
+    IdBrackNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
 #endif

@@ -1,0 +1,7 @@
+class boo {
+  int a;
+  foo b;
+  goo[][] c;
+
+
+}
