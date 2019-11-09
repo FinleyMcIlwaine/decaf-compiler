@@ -85,7 +85,7 @@ void yyerror(const char *);
 %token<pnode> COMMA
 %token<pnode> NUMBER
 %token<pnode> ID
-%token<pnode> RBRACK LPAREN RPAREN LBRACE RBRACE
+%token<pnode> RBRACK LPAREN RPAREN LBRACE
 %left<pnode> EQ NE LE GE LT GT
 %left<pnode> PLUS MINUS OR
 %left<pnode> TIMES DIV MOD AND
@@ -94,7 +94,7 @@ void yyerror(const char *);
 %precedence UNARYOP
 %precedence IF
 %precedence ELSE
-%precedence<pnode> LBRACK
+%precedence<pnode> LBRACK RBRACE
 /*
  * The Grammar :o
  */
@@ -126,12 +126,6 @@ classdec: CLASS ID classbody {
   $$=new ClassDecNode($2,$3);
   $$->setVal("class identifier <ClassBody>");
 }
-| error ID classbody {
-  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
-  scanner.addError(*err);
-  $$=new ClassDecNode();
-  $$->setVal("<Error> identifier <ClassBody>");
-}
 | CLASS error classbody {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
@@ -151,6 +145,36 @@ classbody: LBRACE vardecs constructordecs methoddecs RBRACE {
   $$=new ClassBodyNode($2,$3,$4);
   $$->setVal("lbrace <VarDecs> <ConstructorDecs> <MethodDecs> rbrace");
 }
+| error vardecs constructordecs methoddecs RBRACE {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2,$3,$4);
+  $$->setVal("<Error> <VarDecs> <ConstructorDecs> <MethodDecs> rbrace");
+}
+| LBRACE error constructordecs methoddecs RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($3,$4);
+  $$->setVal("lbrace <Error> <ConstructorDecs> <MethodDecs> rbrace");
+}
+| LBRACE vardecs error methoddecs RBRACE {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2,$4);
+  $$->setVal("lbrace <VarDecs> <Error> <MethodDecs> rbrace");
+}
+| LBRACE vardecs constructordecs error RBRACE {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2,$3);
+  $$->setVal("lbrace <VarDecs> <ConstructorDecs> <Error> rbrace");
+}
+| LBRACE vardecs constructordecs methoddecs error {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2,$3,$4);
+  $$->setVal("lbrace <VarDecs> <ConstructorDecs> <MethodDecs> <Error>");
+}
 | LBRACE vardecs constructordecs RBRACE {
   $$=new ClassBodyNode($2,$3);
   $$->setVal("lbrace <VarDecs> <ConstructorDecs> rbrace");
@@ -167,6 +191,30 @@ classbody: LBRACE vardecs constructordecs methoddecs RBRACE {
   $$=new ClassBodyNode($2,$3);
   $$->setVal("lbrace <ConstructorDecs> <MethodDecs> rbrace");
 }
+| error constructordecs methoddecs RBRACE {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2,$3);
+  $$->setVal("<Error> <ConstructorDecs> <MethodDecs> rbrace");
+}
+| LBRACE error methoddecs RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($3);
+  $$->setVal("lbrace <Error> <MethodDecs> rbrace");
+}
+| LBRACE constructordecs error RBRACE {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2);
+  $$->setVal("lbrace <ConstructorDecs> <Error> rbrace");
+}
+| LBRACE constructordecs methoddecs error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2,$3);
+  $$->setVal("lbrace <ConstructorDecs> <MethodDecs> <Error>");
+}
 | LBRACE constructordecs RBRACE {
   $$=new ClassBodyNode($2);
   $$->setVal("lbrace <ConstructorDecs> rbrace");
@@ -175,9 +223,51 @@ classbody: LBRACE vardecs constructordecs methoddecs RBRACE {
   $$=new ClassBodyNode($2);
   $$->setVal("lbrace <MethodDecs> rbrace");
 }
+| LBRACE error RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode();
+  $$->setVal("lbrace <Error> rbrace");
+}
+| LBRACE methoddecs error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2);
+  $$->setVal("lbrace <MethodDecs> <Error>");
+}
+| error methoddecs RBRACE {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2);
+  $$->setVal("<Error> <MethodDecs> rbrace");
+}
+| LBRACE constructordecs error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2);
+  $$->setVal("lbrace <ConstructorDecs> <Error>");
+}
+| error constructordecs RBRACE {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode($2);
+  $$->setVal("<Error> <ConstructorDecs> rbrace");
+}
 | LBRACE RBRACE {
   $$=new ClassBodyNode();
   $$->setVal("lbrace rbrace");
+}
+| error RBRACE {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode();
+  $$->setVal("<Error> rbrace");
+}
+| LBRACE error {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ClassBodyNode();
+  $$->setVal("lbrace <Error>");
 }
 
 ;
@@ -196,9 +286,33 @@ vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
 }
+| type error SEMI {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1);
+  $$->setVal("<Type> <Error> semi");
+}
+| type ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2);
+  $$->setVal("<Type> identifier <Error>");
+}
 | idbrack ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<IdBrack> identifier semi");
+}
+| idbrack error SEMI {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1);
+  $$->setVal("<IdBrack> <Error> semi");
+}
+| idbrack ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new VarDecNode($1,$2);
+  $$->setVal("<IdBrack> identifier <Error>");
 }
 
 ;
@@ -210,6 +324,18 @@ type: simpletype {
 | type LBRACK RBRACK {
   $$=new TypeNode($1);
   $$->setVal("<Type> lbrack rbrack");
+}
+| type error RBRACK {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new TypeNode($1);
+  $$->setVal("<Type> <Error> rbrack");
+}
+| type LBRACK error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new TypeNode($1);
+  $$->setVal("<Type> lbrack <Error>");
 }
 
 ;
@@ -235,12 +361,36 @@ constructordec: ID LPAREN parameterlist RPAREN block {
   $$=new ConstructorDecNode($1,$3,$5);
   $$->setVal("identifier lparen <ParameterList> rparen <Block>");
 }
+| ID LPAREN error RPAREN block {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ConstructorDecNode($1,$5);
+  $$->setVal("identifier lparen <Error> rparen <Block>");
+}
+| ID LPAREN error block {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ConstructorDecNode($1,$4);
+  $$->setVal("identifier lparen <Error> <Block>");
+}
+| ID LPAREN parameterlist RPAREN error {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new ConstructorDecNode($1,$3);
+  $$->setVal("identifier lparen <ParameterList> rparen <Error>");
+}
 
 ;
 
 methoddecs: methoddecs methoddec {
   $$=new MethodDecsNode($1,$2);
   $$->setVal("<MethodDecs> <MethodDec>");
+}
+| methoddecs error {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecsNode($1);
+  $$->setVal("<MethodDecs> <Error>");
 }
 | methoddec {
   $$=new MethodDecsNode($1);
@@ -253,13 +403,67 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($1,$2,$4,$6);
   $$->setVal("<Type> identifier lparen <ParameterList> rparen <Block>");
 }
+| type error LPAREN parameterlist RPAREN block {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$4,$6);
+  $$->setVal("<Type> <Error> lparen <ParameterList> rparen <Block>");
+}
+| type ID LPAREN error RPAREN block {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$6);
+  $$->setVal("<Type> identifier lparen <Error> rparen <Block>");
+}
+| type ID LPAREN parameterlist RPAREN error {
+  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$4);
+  $$->setVal("<Type> identifier lparen <ParameterList> rparen <Error>");
+}
 | VOID ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($2,$4,$6);
   $$->setVal("VOID identifier lparen <ParameterList> rparen <Block>");
 }
+| VOID error LPAREN parameterlist RPAREN block {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$4,$6);
+  $$->setVal("void <Error> lparen <ParameterList> rparen <Block>");
+}
+| VOID ID LPAREN error RPAREN block {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$6);
+  $$->setVal("void identifier lparen <Error> rparen <Block>");
+}
+| VOID ID LPAREN parameterlist RPAREN error {
+  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$4);
+  $$->setVal("void identifier lparen <ParameterList> rparen <Error>");
+}
 | idbrack ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($1,$2,$4,$6);
   $$->setVal("<IdBrack> identifier lparen <ParameterList> rparen <Block>");
+}
+| idbrack error LPAREN parameterlist RPAREN block {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$4,$6);
+  $$->setVal("<IdBrack> <Error> lparen <ParameterList> rparen <Block>");
+}
+| idbrack ID LPAREN error RPAREN block {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$6);
+  $$->setVal("<IdBrack> identifier lparen <Error> rparen <Block>");
+}
+| idbrack ID LPAREN parameterlist RPAREN error {
+  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$4);
+  $$->setVal("<IdBrack> identifier lparen <ParameterList> rparen <Error>");
 }
 
 ;
@@ -271,6 +475,18 @@ parameterlist: parameter {
 | parameterlist COMMA parameter {
   $$=new ParameterListNode($1,$3);
   $$->setVal("<ParameterList> comma <Exp>");
+}
+| error COMMA parameter {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ParameterListNode($3);
+  $$->setVal("<Error> comma <Exp>");
+}
+| parameterlist COMMA error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ParameterListNode($1);
+  $$->setVal("<ParameterList> comma <Error>");
 }
 | %empty {
   $$=new ParameterListNode();
@@ -294,6 +510,18 @@ block: LBRACE localvardecs stmts RBRACE {
   $$=new BlockNode($2,$3);
   $$->setVal("lbrace <LocalVarDecs> <Stmts> rbrace");
 }
+| LBRACE error stmts RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new BlockNode($3);
+  $$->setVal("lbrace <Error> <Stmts> rbrace");
+}
+| LBRACE localvardecs error RBRACE {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new BlockNode($2);
+  $$->setVal("lbrace <LocalVarDecs> <Error> rbrace");
+}
 | LBRACE localvardecs RBRACE {
   $$=new BlockNode($2);
   $$->setVal("lbrace <LocalVarDecs> rbrace");
@@ -301,6 +529,12 @@ block: LBRACE localvardecs stmts RBRACE {
 | LBRACE stmts RBRACE {
   $$=new BlockNode($2);
   $$->setVal("lbrace <Stmts> rbrace");
+}
+| LBRACE error RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new BlockNode();
+  $$->setVal("lbrace <Error> rbrace");
 }
 | LBRACE RBRACE {
   $$=new BlockNode();
@@ -313,6 +547,12 @@ localvardecs: localvardecs localvardec {
   $$=new LocalVarDecsNode($1,$2);
   $$->setVal("<LocalVarDecs> <LocalVarDec>");
 }
+| localvardecs error %prec IF {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new LocalVarDecsNode($1);
+  $$->setVal("<LocalVarDecs> <Error>");
+}
 | localvardec {
   $$=new LocalVarDecsNode($1);
   $$->setVal("<LocalVarDec>");
@@ -324,9 +564,33 @@ localvardec: type ID SEMI {
   $$=new LocalVarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
 }
+| type error SEMI {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new LocalVarDecsNode($1);
+  $$->setVal("<Type> <Error> semi");
+}
+| type ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new LocalVarDecsNode($1,$2);
+  $$->setVal("<Type> identifier <Error>");
+}
 | idbrack ID SEMI {
   $$=new LocalVarDecNode($1,$2);
   $$->setVal("<IdBrack> identifier semi");
+}
+| idbrack error SEMI {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new LocalVarDecsNode($1);
+  $$->setVal("<IdBrack> <Error> semi");
+}
+| idbrack ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new LocalVarDecsNode($1,$2);
+  $$->setVal("<IdBrack> identifier <Error>");
 }
 
 ;
@@ -334,6 +598,12 @@ localvardec: type ID SEMI {
 stmts: stmts stmt {
   $$=new StmtsNode($1,$2);
   $$->setVal("<Stmts> <Stmt>");
+}
+| stmts error {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new StmtsNode($1);
+  $$->setVal("<Stmts> <Error>");
 }
 | stmt {
   $$=new StmtsNode($1);
@@ -538,9 +808,33 @@ newexp: NEW ID LPAREN arglist RPAREN {
   $$=new NewExpNode($2,$4);
   $$->setVal("new identifier lparen <ArgList> rparen");
 }
+| NEW error LPAREN arglist RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($4);
+  $$->setVal("new <Error> lparen <ArgList> rparen");
+}
+| NEW ID LPAREN error RPAREN {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($2);
+  $$->setVal("new identifier lparen <Error> rparen");
+}
 | NEW simpletype bracketexps multibrackets {
   $$=new NewExpNode($2,$3,$4);
   $$->setVal("new <SimpleType> <BracketExps> <MultiBrackets>");
+}
+| NEW error bracketexps multibrackets {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($3,$4);
+  $$->setVal("new <Error> <BracketExps> <MultiBrackets>");
+}
+| NEW simpletype error multibrackets {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($2,$4);
+  $$->setVal("new <SimpleType> <Error> <MultiBrackets>");
 }
 | NEW ID bracketexps multibrackets {
   $$=new NewExpNode($2,$3,$4);
@@ -549,6 +843,12 @@ newexp: NEW ID LPAREN arglist RPAREN {
 | NEW simpletype bracketexps {
   $$=new NewExpNode($2,$3);
   $$->setVal("new <SimpleType> <BracketExps>");
+}
+| NEW error bracketexps {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($3);
+  $$->setVal("new <Error> <BracketExps>");
 }
 | NEW ID bracketexps {
   $$=new NewExpNode($2,$3);
@@ -572,6 +872,18 @@ bracketexp: LBRACK exp RBRACK {
   $$=new BracketExpNode($2);
   $$->setVal("lbrack <Exp> rbrack");
 }
+| LBRACK error RBRACK {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new BracketExpNode();
+  $$->setVal("lbrack <Error> rbrack");
+}
+| LBRACK exp error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new BracketExpNode($2);
+  $$->setVal("lbrack <Exp> <Error>");
+}
 
 ;
 
@@ -592,6 +904,7 @@ idbrack: ID {
   $$=new IdBrackNode($1,$2);
   $$->setVal("identifier <MultiBrackets>");
 }
+
 ;
 
 
