@@ -280,7 +280,7 @@ void StmtNode::print() {
 /* NAME NODE DEFINITIONS */
 void NameNode::print()
 {
-  cout << "<name> --> " + sval << endl;
+  cout << "<Name> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }

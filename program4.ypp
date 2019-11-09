@@ -409,6 +409,12 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($1,$4,$6);
   $$->setVal("<Type> <Error> lparen <ParameterList> rparen <Block>");
 }
+| type ID LPAREN parameterlist error block {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$4,$6);
+  $$->setVal("<Type> identifier lparen <ParameterList> <Error> <Block>");
+}
 | type ID LPAREN error RPAREN block {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
@@ -420,6 +426,22 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
   scanner.addError(*err);
   $$=new MethodDecNode($1,$2,$4);
   $$->setVal("<Type> identifier lparen <ParameterList> rparen <Error>");
+}
+| type ID LPAREN RPAREN block {
+  $$=new MethodDecNode($1,$2,$5);
+  $$->setVal("<Type> identifier lparen rparen <Block>");
+}
+| type ID LPAREN error block {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$5);
+  $$->setVal("<Type> identifier lparen <Error> <Block>");
+}
+| type ID error block {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$4);
+  $$->setVal("<Type> identifier <Error> <Block>");
 }
 | VOID ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($2,$4,$6);
@@ -487,10 +509,6 @@ parameterlist: parameter {
   scanner.addError(*err);
   $$=new ParameterListNode($1);
   $$->setVal("<ParameterList> comma <Error>");
-}
-| %empty {
-  $$=new ParameterListNode();
-  $$->setVal("empty"); /* HOW TO SHOW THIS??? */
 }
 
 ;
@@ -730,6 +748,12 @@ name: THIS {
 | name DOT ID {
   $$=new NameNode($1,$3);
   $$->setVal("<Name> dot identifier");
+}
+| name DOT error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new NameNode($1);
+  $$->setVal("<Name> dot <Error>");
 }
 | name bracketexp {
   $$=new NameNode($1,$2);
