@@ -620,13 +620,55 @@ stmt: SEMI {
   $$=new StmtNode($1,$3);
   $$->setVal("<Name> assign <Exp> semi");
 }
+| error ASSIGN exp SEMI {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($3);
+  $$->setVal("<Error> assign <Exp> semi");
+}
+| name ASSIGN error SEMI {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($1);
+  $$->setVal("<Name> assign <Error> semi");
+}
+| name ASSIGN exp error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($1,$3);
+  $$->setVal("<Name> assign <Exp> <Error>");
+}
 | name LPAREN arglist RPAREN SEMI {
   $$=new StmtNode($1,$3);
   $$->setVal("<Name> lparen <ArgList> rparen semi");
 }
+| name LPAREN error RPAREN SEMI {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($1);
+  $$->setVal("<Name> lparen <Error> rparen semi");
+}
+| name LPAREN arglist RPAREN error {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($1,$3);
+  $$->setVal("<Name> lparen <ArgList> rparen <Error>");
+}
 | PRINT LPAREN arglist RPAREN SEMI {
   $$=new StmtNode($3);
   $$->setVal("print lparen <ArgList> rparen semi");
+}
+| PRINT LPAREN error RPAREN SEMI {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($1);
+  $$->setVal("print lparen <Error> rparen semi");
+}
+| PRINT LPAREN arglist RPAREN error {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($1,$3);
+  $$->setVal("print lparen <ArgList> rparen <Error>");
 }
 | conditionalstmt {
   $$=new StmtNode($1);
@@ -636,9 +678,39 @@ stmt: SEMI {
   $$=new StmtNode($3,$5);
   $$->setVal("while lparen <Exp> rparen <Stmt>");
 }
+| WHILE error exp RPAREN stmt {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($3,$5);
+  $$->setVal("while <Error> <Exp> rparen <Stmt>");
+}
+| WHILE LPAREN error RPAREN stmt {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($5);
+  $$->setVal("while lparen <Error> rparen <Stmt>");
+}
+| WHILE LPAREN exp error stmt {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($3,$5);
+  $$->setVal("while lparen <Exp> <Error> <Stmt>");
+}
+| WHILE LPAREN exp RPAREN error {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode($3);
+  $$->setVal("while lparen <Exp> rparen <Error>");
+}
 | RETURN optionalexp SEMI {
   $$=new StmtNode($2);
   $$->setVal("return <OptionalExp> semi");
+}
+| RETURN optionalexp error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new StmtNode();
+  $$->setVal("return <OptionalExp> <Error>");
 }
 | block {
   $$=new StmtNode($1);
