@@ -54,7 +54,6 @@ void yyerror(const char *);
 %type<pnode> localvardec
 %type<pnode> stmt
 %type<pnode> conditionalstmt
-%type<pnode> optionalexp
 %type<pnode> name
 %type<pnode> program
 %type<pnode> simpletype
@@ -450,19 +449,31 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
 | VOID error LPAREN parameterlist RPAREN block {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($1,$4,$6);
+  $$=new MethodDecNode($4,$6);
   $$->setVal("void <Error> lparen <ParameterList> rparen <Block>");
+}
+| VOID ID error parameterlist RPAREN block {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($2,$4,$6);
+  $$->setVal("void identifier <Error> <ParameterList> rparen <Block>");
 }
 | VOID ID LPAREN error RPAREN block {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$6);
+  $$=new MethodDecNode($2,$6);
   $$->setVal("void identifier lparen <Error> rparen <Block>");
+}
+| VOID ID LPAREN parameterlist error block {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($2,$4,$6);
+  $$->setVal("void identifier lparen <ParameterList> <Error> <Block>");
 }
 | VOID ID LPAREN parameterlist RPAREN error {
   err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$4);
+  $$=new MethodDecNode($2,$4);
   $$->setVal("void identifier lparen <ParameterList> rparen <Error>");
 }
 | idbrack ID LPAREN parameterlist RPAREN block {
@@ -476,10 +487,16 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
   $$->setVal("<IdBrack> <Error> lparen <ParameterList> rparen <Block>");
 }
 | idbrack ID LPAREN error RPAREN block {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
   $$=new MethodDecNode($1,$2,$6);
   $$->setVal("<IdBrack> identifier lparen <Error> rparen <Block>");
+}
+| idbrack ID LPAREN parameterlist error block {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new MethodDecNode($1,$2,$4,$6);
+  $$->setVal("<IdBrack> identifier lparen <ParameterList> <Error> <Block>");
 }
 | idbrack ID LPAREN parameterlist RPAREN error {
   err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
@@ -720,15 +737,19 @@ stmt: SEMI {
   $$=new StmtNode($3);
   $$->setVal("while lparen <Exp> rparen <Error>");
 }
-| RETURN optionalexp SEMI {
+| RETURN exp SEMI {
   $$=new StmtNode($2);
-  $$->setVal("return <OptionalExp> semi");
+  $$->setVal("return <Exp> semi");
 }
-| RETURN optionalexp error {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+| RETURN SEMI {
+  $$=new StmtNode();
+  $$->setVal("return semi");
+}
+| RETURN error {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   $$=new StmtNode();
-  $$->setVal("return <OptionalExp> <Error>");
+  $$->setVal("return <Error>");
 }
 | block {
   $$=new StmtNode($1);
@@ -788,17 +809,6 @@ conditionalstmt: IF LPAREN exp RPAREN stmt %prec IF {
 
 ;
 
-optionalexp: exp {
-  $$=new OptionalExpNode($1);
-  $$->setVal("<Exp>");
-}
-| %empty {
-  $$=new OptionalExpNode();
-  $$->setVal("empty");
-}
-
-;
-
 exp: name {
   $$=new ExpNode($1);
   $$->setVal("<Name>");
@@ -815,9 +825,27 @@ exp: name {
   $$=new ExpNode($1,$3);
   $$->setVal("<Name> lparen <ArgList> rparen");
 }
+| name LPAREN error RPAREN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($1);
+  $$->setVal("<Name> lparen <Error> rparen");
+}
 | READ LPAREN RPAREN {
   $$=new ExpNode();
   $$->setVal("read lparen rparen");
+}
+| READ error RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("read <Error> rparen");
+}
+| READ LPAREN error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("read lparen <Error>");
 }
 | newexp {
   $$=new ExpNode($1);
@@ -827,15 +855,27 @@ exp: name {
   $$=new ExpNode($2);
   $$->setVal("plus <Exp>");
 }
+| PLUS error %prec UNARYOP {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("plus <Error>");
+}
 | MINUS exp %prec UNARYOP {
   $$=new ExpNode($2);
   $$->setVal("minus <Exp>");
+}
+| MINUS error %prec UNARYOP {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("minus <Error>");
 }
 | NOT exp %prec UNARYOP {
   $$=new ExpNode($2);
   $$->setVal("not <Exp>");
 }
-| NOT error {
+| NOT error %prec UNARYOP {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   $$=new ExpNode();
@@ -845,57 +885,147 @@ exp: name {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> eq <Exp>");
 }
+| error EQ exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> eq <Exp>");
+}
 | exp NE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> ne <Exp>");
+}
+| error NE exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> ne <Exp>");
 }
 | exp LE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> le <Exp>");
 }
+| error LE exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> le <Exp>");
+}
 | exp GE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> ge <Exp>");
+}
+| error GE exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> ge <Exp>");
 }
 | exp LT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> lt <Exp>");
 }
+| error LT exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> lt <Exp>");
+}
 | exp GT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> gt <Exp>");
+}
+| error GT exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> gt <Exp>");
 }
 | exp PLUS exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> plus <Exp>");
 }
+| error PLUS exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> plus <Exp>");
+}
 | exp MINUS exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> minus <Exp>");
+}
+| error MINUS exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> minus <Exp>");
 }
 | exp OR exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> or <Exp>");
 }
+| error OR exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> or <Exp>");
+}
 | exp TIMES exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> times <Exp>");
+}
+| error TIMES exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> times <Exp>");
 }
 | exp DIV exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> div <Exp>");
 }
+| error DIV exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> div <Exp>");
+}
 | exp MOD exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> mod <Exp>");
+}
+| error MOD exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> mod <Exp>");
 }
 | exp AND exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> and <Exp>");
 }
+| error AND exp {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode($3);
+  $$->setVal("<Error> and <Exp>");
+}
 | LPAREN exp RPAREN {
   $$=new ExpNode($2);
   $$->setVal("lparen <Exp> rparen");
+}
+| LPAREN error RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("lparen <Error> rparen");
+}
+| LPAREN exp error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new ExpNode();
+  $$->setVal("lparen <Exp> <Error>");
 }
 
 ;
