@@ -360,6 +360,10 @@ constructordec: ID LPAREN parameterlist RPAREN block {
   $$=new ConstructorDecNode($1,$3,$5);
   $$->setVal("identifier lparen <ParameterList> rparen <Block>");
 }
+| ID LPAREN RPAREN block {
+  $$=new ConstructorDecNode($1,$4);
+  $$->setVal("identifier lparen rparen <Block>");
+}
 | ID LPAREN error RPAREN block {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
@@ -1040,6 +1044,12 @@ newexp: NEW ID LPAREN arglist RPAREN {
   $$=new NewExpNode($4);
   $$->setVal("new <Error> lparen <ArgList> rparen");
 }
+| NEW ID error arglist RPAREN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new NewExpNode($2,$4);
+  $$->setVal("new identifier <Error> <ArgList> rparen");
+}
 | NEW ID LPAREN error RPAREN {
   err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
@@ -1121,6 +1131,14 @@ multibrackets: LBRACK RBRACK {
   $$=new MultibracketNode($1);
   $$->setVal("<Multibrackets> lbrack rbrack");
 }
+| multibrackets LBRACK error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MultibracketNode($1);
+  $$->setVal("<Multibrackets> lbrack <Error>");
+}
+
+;
 
 idbrack: ID {
   $$=new IdBrackNode($1);
