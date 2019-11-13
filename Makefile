@@ -1,7 +1,7 @@
 # Makefile
 # Finley McIlwaine
-# Nov. 10, 2019
-# COSC 4785 Program 4
+# Nov. 26, 2019
+# COSC 4785 Program 5
 
 CXX=g++
 CXXFLAGS=-ggdb -Wall -Wno-sign-compare -std=c++11
@@ -10,31 +10,31 @@ LFLAGS=--warn
 YACC=bison
 YFLAGS=--report=state -W -d -v
 
-all: program4
+all: program5
 
 .PHONY: clean tarball
 
 lexer: Node.hpp MyScanner.hpp Error.hpp
-	${LEXXX} ${LFLAGS} program4.lpp
+	${LEXXX} ${LFLAGS} program5.lpp
 
 parser: Node.hpp Error.hpp
-	${YACC} ${YFLAGS} program4.ypp
+	${YACC} ${YFLAGS} program5.ypp
 
-program4: parser lexer program4.tab.hpp MyScanner.hpp Node.hpp
-	${CXX} ${CXXFLAGS} program4.tab.cpp program4_lex.cpp program4.cpp \
-		Node.cpp MyScanner.cpp Error.cpp -o program4
+program5: parser lexer program5.tab.hpp MyScanner.hpp Node.hpp
+	${CXX} ${CXXFLAGS} program5.tab.cpp program5_lex.cpp program5.cpp \
+		SymbolTable.cpp Node.cpp MyScanner.cpp Error.cpp -o program5
 
 tidy:
-	/bin/rm -rf a.out core.* program4.tab.* program4.output \
-		program4_lex.cpp tarball
+	/bin/rm -rf a.out core.* program5.tab.* program5.output \
+		program5_lex.cpp tarball
 
 clean: tidy
-	/bin/rm -rf program4
+	/bin/rm -rf program5
 
 tarball:
 	rm -rf tarball
 	mkdir tarball
-	tar cf ./tarball/program4.tar Makefile Node.hpp Node.cpp MyScanner.hpp\
-			MyScanner.cpp Error.hpp Error.cpp program4.lpp\
-			program4.ypp program4.cpp
+	tar cf ./tarball/program5.tar Makefile Node.hpp Node.cpp MyScanner.hpp\
+			MyScanner.cpp Error.hpp Error.cpp program5.lpp\
+			program5.ypp program5.cpp
 

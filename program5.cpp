@@ -1,14 +1,15 @@
 /*
- * program4.cpp
+ * program5.cpp
  * Finley McIlwaine
- * Nov. 10, 2019
- * COSC4785, Program 4
+ * Nov. 26, 2019
+ * COSC4785, Program 5
  *
  * Main file
 */
 #include "Node.hpp"
-#include "program4.tab.hpp"
+#include "program5.tab.hpp"
 #include "MyScanner.hpp"
+#include "SymbolTable.hpp"
 #include <string>
 #include <iostream>
 
@@ -17,10 +18,14 @@ using std::endl;
 using std::string;
 
 MyScanner scanner;
-Node *tree;
+Node* tree;
+SymbolTable* root;
 
 int main(int argc, char **argv)
 {
+  // Make the root symbol table
+  root=new SymbolTable(nullptr);
+
   // Parse
   yyparse();
 

@@ -1,8 +1,8 @@
 /*
  * Node.hpp
  * Finley McIlwaine
- * Nov. 10, 2019
- * COSC4785, Program 4
+ * Nov. 26, 2019
+ * COSC4785, Program 5
  *
  * Declaration of all node classes
 */
@@ -57,6 +57,14 @@ class ClassDecNode : public Node
 {
   public:
     ClassDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** CLASS START NODE TYPE **/
+class ClassStartNode : public Node
+{
+  public:
+    ClassStartNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 

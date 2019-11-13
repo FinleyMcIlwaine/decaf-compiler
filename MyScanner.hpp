@@ -1,8 +1,8 @@
 /*
  * MyScanner.hpp
  * Finley McIlwaine
- * Nov. 10, 2019
- * COSC4785, Program 4
+ * Nov. 26, 2019
+ * COSC4785, Program 5
  *
  * Declaration of MyScanner class
 */

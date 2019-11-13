@@ -1,13 +1,13 @@
 /*
  * MyScanner.cpp
  * Finley McIlwaine
- * Nov. 10, 2019
- * COSC4785, Program 4
+ * Nov. 26, 2019
+ * COSC4785, Program 5
  *
  * Definition of MyScanner class member functions
 */
 #include "Node.hpp"
-#include "program4.tab.hpp"
+#include "program5.tab.hpp"
 #include "MyScanner.hpp"
 
 MyScanner::MyScanner()

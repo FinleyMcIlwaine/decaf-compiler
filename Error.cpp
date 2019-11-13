@@ -1,11 +1,12 @@
 /*
  * Error.cpp
  * Finley McIlwaine
- * Nov. 10, 2019
- * COSC4785, Program 4
+ * Nov. 26, 2019
+ * COSC4785, Program 5
  *
  * Definition of Error class member functions
 */
+
 #include "Error.hpp"
 
 Error* Error::withColNumber(int col)

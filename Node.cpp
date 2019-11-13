@@ -1,8 +1,8 @@
 /*
  * Node.cpp
  * Finley McIlwaine
- * Nov. 10, 2019
- * COSC4785, Program 4
+ * Nov. 26, 2019
+ * COSC4785, Program 5
  *
  * Definition of all node class member functions
 */
@@ -104,6 +104,13 @@ void ProgramNode::print() {
 /* CLASS DEC NODE DEFINITIONS */
 void ClassDecNode::print() {
   cout << "<ClassDec> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* CLASS START NODE DEFINITIONS */
+void ClassStartNode::print() {
+  cout << "<ClassStart> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
