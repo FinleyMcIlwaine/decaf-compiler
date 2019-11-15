@@ -2,51 +2,54 @@
 #define SYMBOL_HPP
 #include <string>
 #include <vector>
+#include <iostream>
+using std::cout;
 using std::string;
 using std::vector;
 
 class Symbol
 {
   public:
-    enum SymbolType
-    {
-      DEF_TYPE,
-      CLASS_TYPE,
-      METHOD_TYPE,
-      VARIABLE_TYPE
-    };
-    // Necessary?
-    enum DataType
-    {
-      DEF,
-      INT,
-      VOID,
-      CLASS
-    };
-
     Symbol();
-    Symbol* clear();
+    virtual Symbol* clear();
     Symbol* withName(string name);
     Symbol* withLineNumber(int ln);
-    Symbol* withSymType(SymbolType type);
     
     string getName();
+    virtual string getDataType();
+    virtual void print();
 
-  private:
-    SymbolType symType;
-    DataType dataType;
-    DataType returnType;
-    
-    // For every symbol type
+  protected:
     string name;
     int lineNumber;
+    string dataType;
+};
 
-    // If this is a class
-    string classType;
-
-    // If this is a function
+class MethodSymbol : public Symbol
+{
+  public:
+    MethodSymbol();
+    virtual MethodSymbol* clear();
+    virtual string getDataType();
+    string getSymType();
+    virtual void print();
+  private:
+    const string SYM_TYPE="method_type";
     int numArgs;
     vector<Symbol*> argList;
+};
+
+class ClassSymbol : public Symbol
+{
+  public:
+    ClassSymbol();
+    virtual ClassSymbol* clear();
+    virtual string getDataType();
+    string getSymType();
+    virtual void print();
+  private:
+    const string SYM_TYPE="class_type";
+    string classId;
 };
 #endif
 

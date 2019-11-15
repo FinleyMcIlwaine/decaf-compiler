@@ -10,6 +10,12 @@
 #include "Symbol.hpp"
 #include "SymbolTable.hpp"
 
+SymbolTable::SymbolTable(SymbolTable* p)
+{
+  this->clear();
+  this->withParent(p);
+}
+
 SymbolTable::SymbolTable()
 {
   this->clear();

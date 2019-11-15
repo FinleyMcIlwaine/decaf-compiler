@@ -18,6 +18,7 @@ class SymbolTable
 {
   public:
     SymbolTable();
+    SymbolTable(SymbolTable* parent);
     SymbolTable* clear();
     SymbolTable* withParent(SymbolTable*);
     Symbol* lookup(string);

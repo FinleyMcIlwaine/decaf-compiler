@@ -23,7 +23,7 @@ extern MyScanner scanner;
 extern SymbolTable* root;
 extern SymbolTable* cur;
 
-Symbol* sym=new Symbol();
+Symbol* sym;
 
 Error* err=new Error();
 
@@ -146,16 +146,15 @@ classstart: CLASS ID {
   $$=new ClassStartNode($2);
   $$->setVal("class identifier");
   // Create a symbol for the class
-  sym->clear()->
-    withName($2->getString())->
-    withLineNumber(@2.first_line)->
-    withSymType(Symbol::CLASS_TYPE);
+  sym=new ClassSymbol();
+  sym->withName($2->getString())->
+    withLineNumber(@2.first_line);
 
   // Put it in the root table
   root->insert(*sym);
-
+  delete sym;
   // Then make the current symbol table the class' symbol table
-   
+  cur=new SymbolTable(); 
 } 
 | CLASS error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
