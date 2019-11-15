@@ -11,6 +11,7 @@
 #include "Error.hpp"
 #include "Node.hpp"
 #include "MyScanner.hpp"
+#include "Symbol.hpp"
 #include "SymbolTable.hpp"
   
 using std::cout;
@@ -20,6 +21,7 @@ using std::cerr;
 extern Node* tree;
 extern MyScanner scanner;
 extern SymbolTable* root;
+SymbolTable* cur;
 Error* err=new Error();
 
 #define yylex() scanner.yylex()

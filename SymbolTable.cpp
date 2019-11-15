@@ -7,19 +7,31 @@
  * Definition of Symbol Table class member functions
 */
 
+#include "Symbol.hpp"
 #include "SymbolTable.hpp"
 
-SymbolTable::SymbolTable(SymbolTable* p)
+int SymbolTable::init(SymbolTable* p)
 {
   parent=p;
-}
-
-int SymbolTable::lookup(string id)
-{
   return 0;
 }
 
-int SymbolTable::insert(Symbol s)
+Symbol* SymbolTable::lookup(string name)
 {
-  return 0;
+  try {
+    return table.at(name);
+  } catch (...) {
+    return nullptr;
+  }
+}
+
+int SymbolTable::insert(Symbol* s)
+{
+  try {
+    table.at(s->name);
+    return -1;
+  } catch (...) {
+    table.emplace(s->name,s);
+    return 0;
+  }
 }

@@ -7,5 +7,4 @@
  * Definition of Symbol class member functions
 */
 
-#include "Symbol.hpp"
 

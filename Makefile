@@ -20,9 +20,11 @@ lexer: Node.hpp MyScanner.hpp Error.hpp
 parser: Node.hpp Error.hpp
 	${YACC} ${YFLAGS} program5.ypp
 
-program5: parser lexer program5.tab.hpp MyScanner.hpp Node.hpp
+program5: parser lexer program5.tab.hpp MyScanner.hpp Node.hpp \
+	SymbolTable.hpp
 	${CXX} ${CXXFLAGS} program5.tab.cpp program5_lex.cpp program5.cpp \
-		SymbolTable.cpp Node.cpp MyScanner.cpp Error.cpp -o program5
+		Symbol.cpp SymbolTable.cpp Node.cpp MyScanner.cpp Error.cpp \
+		-o program5
 
 tidy:
 	/bin/rm -rf a.out core.* program5.tab.* program5.output \

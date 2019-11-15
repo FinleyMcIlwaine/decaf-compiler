@@ -11,22 +11,18 @@
 #define SYMBOLTABLE_HPP
 #include <map>
 #include <string>
-#include "Symbol.hpp"
-
 using std::map;
 using std::string;
 
 class SymbolTable
 {
   public:
-    SymbolTable(SymbolTable* p);
-    int lookup(string id);
-    int insert(Symbol s);
+    int init(SymbolTable* p);
+    Symbol* lookup(string);
+    int insert(Symbol*);
 
   private:
-    map<string,Symbol> table;
+    map<string,Symbol*> table;
     SymbolTable* parent;
 };
 #endif
-
-

@@ -9,6 +9,7 @@
 #include "Node.hpp"
 #include "program5.tab.hpp"
 #include "MyScanner.hpp"
+#include "Symbol.hpp"
 #include "SymbolTable.hpp"
 #include <string>
 #include <iostream>
@@ -24,7 +25,8 @@ SymbolTable* root;
 int main(int argc, char **argv)
 {
   // Make the root symbol table
-  root=new SymbolTable(nullptr);
+  root=new SymbolTable();
+  root->init(nullptr);
 
   // Parse
   yyparse();
