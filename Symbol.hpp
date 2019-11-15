@@ -11,6 +11,7 @@ class Symbol
 {
   public:
     Symbol();
+    virtual ~Symbol() = default;
     virtual Symbol* clear();
     Symbol* withName(string name);
     Symbol* withLineNumber(int ln);
@@ -29,6 +30,7 @@ class MethodSymbol : public Symbol
 {
   public:
     MethodSymbol();
+    virtual ~MethodSymbol()=default;
     virtual MethodSymbol* clear();
     virtual string getDataType();
     string getSymType();
@@ -43,6 +45,7 @@ class ClassSymbol : public Symbol
 {
   public:
     ClassSymbol();
+    virtual ~ClassSymbol()=default;
     virtual ClassSymbol* clear();
     virtual string getDataType();
     string getSymType();
