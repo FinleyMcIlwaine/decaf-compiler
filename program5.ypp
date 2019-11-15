@@ -155,7 +155,7 @@ classstart: CLASS ID {
   root->insert(*sym);
 
   // Then make the current symbol table the class' symbol table
-  
+   
 } 
 | CLASS error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);

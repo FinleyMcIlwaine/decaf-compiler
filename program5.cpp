@@ -27,9 +27,9 @@ int main(int argc, char **argv)
 {
   // Make the root symbol table
   root=new SymbolTable();
-  root->init(nullptr);
+  root->withParent(nullptr);
   cur=new SymbolTable();
-  cur->init(root);
+  cur->withParent(root);
 
   // Parse
   yyparse();

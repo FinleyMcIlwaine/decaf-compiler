@@ -17,12 +17,20 @@ using std::string;
 class SymbolTable
 {
   public:
-    int init(SymbolTable* p);
+    SymbolTable();
+    SymbolTable* clear();
+    SymbolTable* withParent(SymbolTable*);
     Symbol* lookup(string);
     int insert(Symbol);
-
+    SymbolTable* addChild(SymbolTable*);
+    vector<SymbolTable*> getChildren();
+    SymbolTable* getChild(int);
+    int getScope();
+ 
   private:
     map<string,Symbol> table;
     SymbolTable* parent;
+    vector<SymbolTable*> children;
+    int scope;
 };
 #endif
