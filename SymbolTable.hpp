@@ -19,10 +19,10 @@ class SymbolTable
   public:
     int init(SymbolTable* p);
     Symbol* lookup(string);
-    int insert(Symbol*);
+    int insert(Symbol);
 
   private:
-    map<string,Symbol*> table;
+    map<string,Symbol> table;
     SymbolTable* parent;
 };
 #endif

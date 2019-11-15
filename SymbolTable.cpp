@@ -19,19 +19,19 @@ int SymbolTable::init(SymbolTable* p)
 Symbol* SymbolTable::lookup(string name)
 {
   try {
-    return table.at(name);
+    return &table.at(name);
   } catch (...) {
     return nullptr;
   }
 }
 
-int SymbolTable::insert(Symbol* s)
+int SymbolTable::insert(Symbol s)
 {
   try {
-    table.at(s->name);
+    table.at(s.getName());
     return -1;
   } catch (...) {
-    table.emplace(s->name,s);
+    table.emplace(s.getName(),s);
     return 0;
   }
 }

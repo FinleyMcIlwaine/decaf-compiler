@@ -21,12 +21,15 @@ using std::string;
 MyScanner scanner;
 Node* tree;
 SymbolTable* root;
+SymbolTable* cur;
 
 int main(int argc, char **argv)
 {
   // Make the root symbol table
   root=new SymbolTable();
   root->init(nullptr);
+  cur=new SymbolTable();
+  cur->init(root);
 
   // Parse
   yyparse();

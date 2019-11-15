@@ -10,6 +10,7 @@ class Symbol
   public:
     enum SymbolType
     {
+      DEF_TYPE,
       CLASS_TYPE,
       METHOD_TYPE,
       VARIABLE_TYPE
@@ -17,12 +18,21 @@ class Symbol
     // Necessary?
     enum DataType
     {
-      NULLT,
+      DEF,
       INT,
       VOID,
       CLASS
     };
 
+    Symbol();
+    Symbol* clear();
+    Symbol* withName(string name);
+    Symbol* withLineNumber(int ln);
+    Symbol* withSymType(SymbolType type);
+    
+    string getName();
+
+  private:
     SymbolType symType;
     DataType dataType;
     DataType returnType;

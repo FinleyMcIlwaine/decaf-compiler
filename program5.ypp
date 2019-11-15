@@ -21,7 +21,10 @@ using std::cerr;
 extern Node* tree;
 extern MyScanner scanner;
 extern SymbolTable* root;
-SymbolTable* cur;
+extern SymbolTable* cur;
+
+Symbol* sym=new Symbol();
+
 Error* err=new Error();
 
 #define yylex() scanner.yylex()
@@ -142,8 +145,17 @@ classdec: classstart classbody {
 classstart: CLASS ID {
   $$=new ClassStartNode($2);
   $$->setVal("class identifier");
-  // root->insert() new class type
-  // then make the current symbol table the class' symbol table
+  // Create a symbol for the class
+  sym->clear()->
+    withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withSymType(Symbol::CLASS_TYPE);
+
+  // Put it in the root table
+  root->insert(*sym);
+
+  // Then make the current symbol table the class' symbol table
+  
 } 
 | CLASS error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
