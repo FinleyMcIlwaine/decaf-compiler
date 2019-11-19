@@ -24,7 +24,7 @@ program5: parser lexer program5.tab.hpp MyScanner.hpp Node.hpp \
 	SymbolTable.hpp
 	${CXX} ${CXXFLAGS} program5.tab.cpp program5_lex.cpp program5.cpp \
 		Symbol.cpp SymbolTable.cpp Node.cpp MyScanner.cpp Error.cpp \
-		-o program5
+		Type.cpp TypeTable.cpp -o program5
 
 tidy:
 	/bin/rm -rf a.out core.* program5.tab.* program5.output \

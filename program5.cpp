@@ -11,6 +11,8 @@
 #include "MyScanner.hpp"
 #include "Symbol.hpp"
 #include "SymbolTable.hpp"
+#include "Type.hpp"
+#include "TypeTable.hpp"
 #include <string>
 #include <iostream>
 
