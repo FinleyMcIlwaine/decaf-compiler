@@ -60,8 +60,9 @@ int SymbolTable::insert(Symbol* s)
 
 SymbolTable* SymbolTable::addChild(SymbolTable* child)
 {
+  child->withParent(this);
   children.push_back(child);
-  return this;
+  return child;
 }
 
 vector<SymbolTable*> SymbolTable::getChildren()

@@ -155,8 +155,9 @@ classstart: CLASS ID {
   root->insert(copySym);
   delete sym;
 
-  // Then make the current symbol table the class' symbol table
-  cur=new SymbolTable(); 
+  // Then make the current symbol table the class' new symbol table
+  cur=root->addChild(new SymbolTable()); 
+  
 } 
 | CLASS error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -551,6 +552,17 @@ vardecs: vardecs vardec {
 vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
+  // Create a symbol for the id
+  sym=new Symbol();
+  sym->
+    withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withDataType($1->getString());
+
+  // Put it in the current table
+  copySym = new Symbol(*sym);
+  cur->insert(copySym);
+  delete sym;
 }
 | type error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);

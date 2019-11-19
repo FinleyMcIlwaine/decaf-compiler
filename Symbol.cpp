@@ -14,6 +14,13 @@ Symbol::Symbol()
   this->clear();
 }
 
+Symbol::Symbol(Symbol& copied)
+{
+  name=copied.getName();
+  lineNumber=copied.getLineNumber();
+  dataType=copied.getDataType();
+}
+
 Symbol* Symbol::clear()
 {
   name="";
@@ -31,6 +38,12 @@ Symbol* Symbol::withName(string nm)
 Symbol* Symbol::withLineNumber(int n)
 {
   lineNumber=n;
+  return this;
+}
+
+Symbol* Symbol::withDataType(string dt)
+{
+  dataType=dt;
   return this;
 }
 

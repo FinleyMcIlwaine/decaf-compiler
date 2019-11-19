@@ -1,1 +1,7 @@
-class heyo {}
+class heyo 
+{
+    int haha;
+    int[] lol;
+    int hi;
+}
+
