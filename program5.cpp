@@ -42,5 +42,8 @@ int main(int argc, char **argv)
   else cout << "Parse error at end of input." << endl;
   cout << endl;
 
+  // Print the symbol tables
+  root->print();
+
   return 0;
 }

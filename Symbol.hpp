@@ -17,6 +17,7 @@ class Symbol
     Symbol* withLineNumber(int ln);
     
     string getName();
+    int getLineNumber();
     virtual string getDataType();
     virtual void print();
 
@@ -45,6 +46,7 @@ class ClassSymbol : public Symbol
 {
   public:
     ClassSymbol();
+    ClassSymbol(Symbol& copied);
     virtual ~ClassSymbol()=default;
     virtual ClassSymbol* clear();
     virtual string getDataType();
@@ -52,7 +54,6 @@ class ClassSymbol : public Symbol
     virtual void print();
   private:
     const string SYM_TYPE="class_type";
-    string classId;
 };
 #endif
 

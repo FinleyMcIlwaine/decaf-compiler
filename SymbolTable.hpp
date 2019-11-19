@@ -11,8 +11,10 @@
 #define SYMBOLTABLE_HPP
 #include <map>
 #include <string>
+#include <iostream>
 using std::map;
 using std::string;
+using std::endl;
 
 class SymbolTable
 {
@@ -22,16 +24,17 @@ class SymbolTable
     SymbolTable* clear();
     SymbolTable* withParent(SymbolTable*);
     Symbol* lookup(string);
-    int insert(Symbol);
+    int insert(Symbol*);
     SymbolTable* addChild(SymbolTable*);
     vector<SymbolTable*> getChildren();
     SymbolTable* getChild(int);
-    int getScope();
+    int getDepth();
+    void print();
  
   private:
-    map<string,Symbol> table;
+    map<string,Symbol*> table;
     SymbolTable* parent;
     vector<SymbolTable*> children;
-    int scope;
+    int depth;
 };
 #endif

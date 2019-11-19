@@ -24,6 +24,7 @@ extern SymbolTable* root;
 extern SymbolTable* cur;
 
 Symbol* sym;
+Symbol* copySym;
 
 Error* err=new Error();
 
@@ -147,12 +148,13 @@ classstart: CLASS ID {
   $$->setVal("class identifier");
   // Create a symbol for the class
   sym=new ClassSymbol();
-  sym->withName($2->getString())->
-    withLineNumber(@2.first_line);
+  sym->withName($2->getString())->withLineNumber(@2.first_line);
 
   // Put it in the root table
-  root->insert(*sym);
+  copySym = new ClassSymbol(*sym);
+  root->insert(copySym);
   delete sym;
+
   // Then make the current symbol table the class' symbol table
   cur=new SymbolTable(); 
 } 

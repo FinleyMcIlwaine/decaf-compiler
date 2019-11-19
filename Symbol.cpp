@@ -39,6 +39,11 @@ string Symbol::getName()
   return name;
 }
 
+int Symbol::getLineNumber()
+{
+  return lineNumber;
+}
+
 string Symbol::getDataType()
 {
   return dataType;
@@ -92,16 +97,22 @@ ClassSymbol::ClassSymbol() : Symbol()
   this->clear();
 }
 
+ClassSymbol::ClassSymbol(Symbol& copied)
+{
+  name=copied.getName();
+  lineNumber=copied.getLineNumber();
+  dataType=copied.getDataType();
+}
+
 ClassSymbol* ClassSymbol::clear()
 {
   Symbol::clear();
-  classId="";
   return this;
 }
 
 string ClassSymbol::getDataType()
 {
-  return classId;
+  return name;
 }
 
 string ClassSymbol::getSymType()
@@ -111,5 +122,5 @@ string ClassSymbol::getSymType()
 
 void ClassSymbol::print()
 {
-  cout << classId << " " << SYM_TYPE;
+  cout << name << " " << SYM_TYPE;
 }

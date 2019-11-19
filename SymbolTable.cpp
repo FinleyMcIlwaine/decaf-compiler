@@ -26,34 +26,34 @@ SymbolTable* SymbolTable::clear()
   table.clear();
   parent=nullptr;
   children.clear();
-  scope=-1;
+  depth=-1;
   return this;
 }
 
 SymbolTable* SymbolTable::withParent(SymbolTable* p)
 {
   parent=p;
-  if (parent==nullptr) scope=0;
-  else scope=parent->getScope();
+  if (parent==nullptr) depth=0;
+  else depth=parent->getDepth()+1;
   return this;
 }
 
 Symbol* SymbolTable::lookup(string name)
 {
   try {
-    return &table.at(name);
+    return table.at(name);
   } catch (...) {
     return nullptr;
   }
 }
 
-int SymbolTable::insert(Symbol s)
+int SymbolTable::insert(Symbol* s)
 {
   try {
-    table.at(s.getName());
+    table.at(s->getName());
     return -1;
   } catch (...) {
-    table.emplace(s.getName(),s);
+    table.emplace(s->getName(),s);
     return 0;
   }
 }
@@ -79,7 +79,22 @@ SymbolTable* SymbolTable::getChild(int i)
   }
 }
 
-int SymbolTable::getScope()
+int SymbolTable::getDepth()
 {
-  return scope;
+  return depth;
+}
+
+void SymbolTable::print()
+{
+  int spaces=depth*2;
+  for (auto& entry : table)
+  {
+    for(int i=0; i<spaces; i++) cout << " ";
+    entry.second->print();
+    cout << endl;
+  }
+  for (auto& child : children)
+  {
+    child->print();
+  }
 }
