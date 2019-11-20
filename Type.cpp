@@ -14,6 +14,16 @@ string Type::getTypeString()
   return typeString;
 }
 
+string Type::getFullTypeString()
+{
+  string s=typeString;
+  for(int i=0; i<dimension; i++)
+  {
+    s+="[]";
+  }
+  return s;
+}
+
 Type* Type::withTypeString(string str)
 {
   typeString=str;

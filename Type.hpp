@@ -17,6 +17,7 @@ class Type
 {
   public:
     string getTypeString();
+    string getFullTypeString();
     Type* withTypeString(string);
     int getDimension();
     Type* withDimension(int);

@@ -68,7 +68,7 @@ string Symbol::getTypeString()
 {
   Type* t=types->getType(typePtr);
   if (!t) return "";
-  return t->getTypeString();
+  return t->getFullTypeString();
 }
 
 void Symbol::print()
