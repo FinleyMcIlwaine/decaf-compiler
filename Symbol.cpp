@@ -7,6 +7,8 @@
  * Definition of Symbol class member functions
  */
 
+#include "Type.hpp"
+#include "TypeTable.hpp"
 #include "Symbol.hpp"
 
 Symbol::Symbol()
@@ -18,14 +20,14 @@ Symbol::Symbol(Symbol& copied)
 {
   name=copied.getName();
   lineNumber=copied.getLineNumber();
-  dataType=copied.getDataType();
+  typePtr=copied.getTypePtr();
 }
 
 Symbol* Symbol::clear()
 {
   name="";
   lineNumber=-1;
-  dataType="";
+  typePtr=-1;
   return this;
 }
 
@@ -41,9 +43,9 @@ Symbol* Symbol::withLineNumber(int n)
   return this;
 }
 
-Symbol* Symbol::withDataType(string dt)
+Symbol* Symbol::withTypePtr(int tp)
 {
-  dataType=dt;
+  typePtr=tp;
   return this;
 }
 
@@ -57,14 +59,21 @@ int Symbol::getLineNumber()
   return lineNumber;
 }
 
-string Symbol::getDataType()
+int Symbol::getTypePtr()
 {
-  return dataType;
+  return typePtr;
+}
+
+string Symbol::getTypeString()
+{
+  Type* t=types->getType(typePtr);
+  if (!t) return "";
+  return t->getTypeString();
 }
 
 void Symbol::print()
 {
-  cout << name << " " << dataType;
+  cout << name << " " << getTypeString();
 }
 
 MethodSymbol::MethodSymbol() : Symbol()
@@ -80,19 +89,20 @@ MethodSymbol* MethodSymbol::clear()
   return this;
 }
 
-string MethodSymbol::getDataType()
+string MethodSymbol::getTypeString()
 {
-  string t = dataType + " <- ";
-  if (argList.size()==0) t+="void";
+  Type* t=types->getType(typePtr);
+  if (!t) return "";
+  string ts = t->getTypeString() + " <- ";
+  if (argList.size()==0) ts+="void";
   else
   {
-    // TODO DOES THIS NEED ID NAMES TOO?
     for (int i=0; i<argList.size(); i++)
     {
-      t+=argList.at(i)->getDataType()+" ";
+      ts+=argList.at(i)->getTypeString()+" ";
     }
   }
-  return t;
+  return ts;
 }
 
 string MethodSymbol::getSymType()
@@ -102,7 +112,7 @@ string MethodSymbol::getSymType()
 
 void MethodSymbol::print()
 {
-  cout << name << " " << getSymType() << " " << getDataType();
+  cout << name << " " << getSymType() << " " << getTypeString();
 }
 
 ClassSymbol::ClassSymbol() : Symbol()
@@ -114,7 +124,7 @@ ClassSymbol::ClassSymbol(Symbol& copied)
 {
   name=copied.getName();
   lineNumber=copied.getLineNumber();
-  dataType=copied.getDataType();
+  typePtr=copied.getTypePtr();
 }
 
 ClassSymbol* ClassSymbol::clear()

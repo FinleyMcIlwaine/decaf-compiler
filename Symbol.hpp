@@ -1,11 +1,14 @@
 #ifndef SYMBOL_HPP
 #define SYMBOL_HPP
+class TypeTable;
 #include <string>
 #include <vector>
 #include <iostream>
 using std::cout;
 using std::string;
 using std::vector;
+
+extern TypeTable* types;
 
 class Symbol
 {
@@ -16,17 +19,18 @@ class Symbol
     virtual Symbol* clear();
     Symbol* withName(string name);
     Symbol* withLineNumber(int ln);
-    Symbol* withDataType(string dt);
+    Symbol* withTypePtr(int tp);
+    int getTypePtr();
+    virtual string getTypeString();
     
     string getName();
     int getLineNumber();
-    virtual string getDataType();
     virtual void print();
 
   protected:
     string name;
     int lineNumber;
-    string dataType;
+    int typePtr;
 };
 
 class MethodSymbol : public Symbol
@@ -35,7 +39,7 @@ class MethodSymbol : public Symbol
     MethodSymbol();
     virtual ~MethodSymbol()=default;
     virtual MethodSymbol* clear();
-    virtual string getDataType();
+    virtual string getTypeString();
     string getSymType();
     virtual void print();
   private:

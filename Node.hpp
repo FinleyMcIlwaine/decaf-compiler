@@ -107,8 +107,11 @@ class TypeNode : public Node
     TypeNode(Node *lf=0, Node *rt=0);
     void print();
     virtual int getDimension();
+    string getTypeString();
+    void withTypeString(string);
   protected:
     TypeNode* leftType;
+    string typeString;
 };
 
 /** SIMPLETYPE NODE TYPE **/

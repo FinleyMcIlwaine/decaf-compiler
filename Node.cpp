@@ -164,6 +164,7 @@ Node* VarDecNode::getMiddle()
 TypeNode::TypeNode(Node* lf, Node* rt) : Node(lf,rt)
 {
   leftType=(TypeNode*)lf;
+  typeString="";
 }
 void TypeNode::print() {
   cout << "<Type> --> " + sval << endl;
@@ -174,6 +175,14 @@ int TypeNode::getDimension()
 {
   if (leftType) return 1+leftType->getDimension();
   return 0;
+}
+string TypeNode::getTypeString()
+{
+  return typeString;
+}
+void TypeNode::withTypeString(string s)
+{
+  typeString=s;
 }
 
 void SimpleTypeNode::print() {

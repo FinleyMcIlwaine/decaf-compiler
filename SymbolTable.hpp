@@ -9,10 +9,10 @@
 
 #ifndef SYMBOLTABLE_HPP
 #define SYMBOLTABLE_HPP
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <iostream>
-using std::map;
+using std::unordered_map;
 using std::string;
 using std::cout;
 using std::endl;
@@ -33,7 +33,7 @@ class SymbolTable
     void print();
  
   private:
-    map<string,Symbol*> table;
+    unordered_map<string,Symbol*> table;
     SymbolTable* parent;
     vector<SymbolTable*> children;
     int depth;

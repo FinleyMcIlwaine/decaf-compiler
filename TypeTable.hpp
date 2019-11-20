@@ -9,6 +9,8 @@
 
 #ifndef TYPETABLE_HPP
 #define TYPETABLE_HPP
+class Type;
+class SymbolTable;
 #include <vector>
 #include <string>
 using std::vector;
@@ -20,9 +22,10 @@ class TypeTable
     TypeTable();
     ~TypeTable();
     TypeTable* clear();
-    int lookup(string);
-    int addType(Type*);
+    int lookup(string,int);
+    int addType(string, int);
     Type* getType(int);
+    SymbolTable* hasSymbolTable(Type*);
  
   private:
     vector<Type*> table;

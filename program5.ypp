@@ -555,12 +555,18 @@ vardecs: vardecs vardec {
 vardec: type ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
+
+  // Figure out the type
+  string t = ((TypeNode*)$1)->getTypeString();  // Type string
+  int d    = ((TypeNode*)$1)->getDimension();   // Dimension
+  int loc  = types->addType(t,d);  // Add to type table
+
   // Create a symbol for the id
   sym=new Symbol();
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
-    withDataType($1->getString());
+    withTypePtr(loc);
 
   // Put it in the current table
   copySym = new Symbol(*sym);
@@ -602,10 +608,12 @@ vardec: type ID SEMI {
 type: simpletype {
   $$=new TypeNode($1);
   $$->setVal("<SimpleType>");
+  ((TypeNode*)$$)->withTypeString("int");
 }
 | type LBRACK RBRACK {
   $$=new TypeNode($1);
   $$->setVal("<Type> lbrack rbrack");
+  ((TypeNode*)$$)->withTypeString(((TypeNode*)$1)->getTypeString());
 }
 | type error RBRACK {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
