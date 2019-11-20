@@ -24,9 +24,13 @@ MyScanner scanner;
 Node* tree;
 SymbolTable* root;
 SymbolTable* cur;
+TypeTable* types;
 
 int main(int argc, char **argv)
 {
+  // Make the type table
+  types=new TypeTable();
+
   // Make the root symbol table
   root=new SymbolTable();
   root->withParent(nullptr);

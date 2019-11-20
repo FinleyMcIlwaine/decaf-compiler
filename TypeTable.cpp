@@ -10,6 +10,30 @@
 #include "Type.hpp"
 #include "TypeTable.hpp"
 
+TypeTable::TypeTable()
+{
+  // DEFAULT TYPES //
+  Type* intType=new Type();
+  intType->
+    withTypeString("int")->
+    withDimension(0);
+  table.push_back(intType);
+  Type* voidType=new Type();
+  voidType->
+    withTypeString("void")->
+    withDimension(0);
+  table.push_back(voidType);
+}
+
+TypeTable::~TypeTable()
+{
+  for(auto& t : table)
+  {
+    delete t;
+  }
+  table.clear();
+}
+
 TypeTable* TypeTable::clear()
 {
   table.clear();

@@ -17,6 +17,8 @@ using std::string;
 class TypeTable
 {
   public:
+    TypeTable();
+    ~TypeTable();
     TypeTable* clear();
     int lookup(string);
     int addType(Type*);

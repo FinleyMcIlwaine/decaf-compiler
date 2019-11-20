@@ -104,16 +104,22 @@ class VarDecNode : public Node
 class TypeNode : public Node
 {
   public:
-    TypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    TypeNode(Node *lf=0, Node *rt=0);
     void print();
+    virtual int getDimension();
+  protected:
+    TypeNode* leftType;
 };
 
 /** SIMPLETYPE NODE TYPE **/
-class SimpleTypeNode : public Node
+class SimpleTypeNode : public TypeNode
 {
   public:
-    SimpleTypeNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    SimpleTypeNode(Node *lf=0, Node *rt=0) : TypeNode(lf,rt) {}
     void print();
+    virtual int getDimension();
+  private:
+    const int ZERO_DIM = 0;
 };
 
 /** CONSTRUCTOR DECS NODE TYPE **/
@@ -347,5 +353,9 @@ class IdBrackNode : public Node
   public:
     IdBrackNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
+    void setDimension(int);
+    int getDimension();
+  private:
+    int dimension;
 };
 #endif

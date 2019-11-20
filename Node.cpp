@@ -161,14 +161,28 @@ Node* VarDecNode::getMiddle()
 }
 
 /* TYPE NODE DEFINITIONS */
+TypeNode::TypeNode(Node* lf, Node* rt) : Node(lf,rt)
+{
+  leftType=(TypeNode*)lf;
+}
 void TypeNode::print() {
   cout << "<Type> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }
+int TypeNode::getDimension()
+{
+  if (leftType) return 1+leftType->getDimension();
+  return 0;
+}
+
 void SimpleTypeNode::print() {
   cout << "<SimpleType> --> " + sval << endl;
   if (left) left->print();
+}
+int SimpleTypeNode::getDimension()
+{
+  return ZERO_DIM;
 }
 
 /* CONSTRUCTORDECS NODE DEFINITIONS */

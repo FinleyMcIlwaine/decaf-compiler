@@ -14,9 +14,10 @@ string Type::getTypeString()
   return typeString;
 }
 
-void Type::setTypeString(string str)
+Type* Type::withTypeString(string str)
 {
   typeString=str;
+  return this;
 }
 
 int Type::getDimension()
@@ -24,9 +25,10 @@ int Type::getDimension()
   return dimension;
 }
 
-void Type::setDimension(int d)
+Type* Type::withDimension(int d)
 {
   dimension=d;
+  return this;
 }
 
 SymbolTable* Type::getSymbolTable()
@@ -34,7 +36,8 @@ SymbolTable* Type::getSymbolTable()
   return myTable;
 }
 
-void Type::setSymbolTable(SymbolTable* tab)
+Type* Type::withSymbolTable(SymbolTable* tab)
 {
   myTable=tab;
+  return this;
 }

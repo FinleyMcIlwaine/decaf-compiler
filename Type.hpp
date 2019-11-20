@@ -17,11 +17,11 @@ class Type
 {
   public:
     string getTypeString();
-    void setTypeString(string);
+    Type* withTypeString(string);
     int getDimension();
-    void setDimension(int);
+    Type* withDimension(int);
     SymbolTable* getSymbolTable();
-    void setSymbolTable(SymbolTable*);
+    Type* withSymbolTable(SymbolTable*);
  
   private:
     SymbolTable* myTable;

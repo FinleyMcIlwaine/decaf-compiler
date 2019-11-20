@@ -13,7 +13,9 @@
 #include "MyScanner.hpp"
 #include "Symbol.hpp"
 #include "SymbolTable.hpp"
-  
+#include "Type.hpp"
+#include "TypeTable.hpp"
+
 using std::cout;
 using std::endl;
 using std::cerr;
@@ -22,6 +24,7 @@ extern Node* tree;
 extern MyScanner scanner;
 extern SymbolTable* root;
 extern SymbolTable* cur;
+extern TypeTable* types;
 
 Symbol* sym;
 Symbol* copySym;
