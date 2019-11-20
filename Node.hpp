@@ -323,6 +323,11 @@ class MultibracketNode : public Node
   public:
     MultibracketNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
+    int getDimension();
+    void setDimension(int);
+
+  protected:
+    int dimension;
 };
 
 /** BRACKETEXP and BRACKETEXPS NODE TYPE **/
@@ -354,8 +359,8 @@ class IdBrackNode : public Node
   public:
     IdBrackNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
-    void setDimension(int);
     int getDimension();
+    string getId();
   private:
     int dimension;
 };

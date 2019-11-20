@@ -427,6 +427,14 @@ void MultibracketNode::print()
   if (left) left->print();
   if (right) right->print();
 }
+int MultibracketNode::getDimension()
+{
+  return dimension;
+}
+void MultibracketNode::setDimension(int d)
+{
+  dimension=d;
+}
 
 /* BRACKETEXP and BRACKETEXPS NODE DEFINITIONS */
 void BracketExpNode::print()
@@ -454,4 +462,13 @@ void IdBrackNode::print()
   if (left) left->print();
   if (right) right->print();
 }
-
+int IdBrackNode::getDimension()
+{
+  if (right) return ((MultibracketNode*)right)->getDimension();
+  return 0;
+}
+string IdBrackNode::getId()
+{
+  if (left) return left->getString();
+  return "";
+}

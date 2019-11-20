@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 
   // Print the symbol tables
   root->print();
+  cout << endl;
 
   return 0;
 }

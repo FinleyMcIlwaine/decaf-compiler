@@ -589,6 +589,23 @@ vardec: type ID SEMI {
 | idbrack ID SEMI {
   $$=new VarDecNode($1,$2);
   $$->setVal("<IdBrack> identifier semi");
+
+  // Figure out the type
+  string t = ((IdBrackNode*)$1)->getId();          // Type string
+  int d    = ((IdBrackNode*)$1)->getDimension();   // Dimension
+  int loc  = types->addType(t,d);              // Add to type table
+
+  // Create a symbol for the id
+  sym=new Symbol();
+  sym->
+    withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  copySym = new Symbol(*sym);
+  cur->insert(copySym);
+  delete sym;
 }
 | idbrack error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -1507,10 +1524,13 @@ bracketexp: LBRACK exp RBRACK {
 multibrackets: LBRACK RBRACK {
   $$=new MultibracketNode();
   $$->setVal("lbrack rbrack");
+  ((MultibracketNode*)$$)->setDimension(1);
 }
 | multibrackets LBRACK RBRACK {
   $$=new MultibracketNode($1);
   $$->setVal("<Multibrackets> lbrack rbrack");
+  ((MultibracketNode*)$$)->
+    setDimension(((MultibracketNode*)$1)->getDimension()+1);
 }
 | multibrackets LBRACK error {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
