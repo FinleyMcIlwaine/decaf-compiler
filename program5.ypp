@@ -566,6 +566,7 @@ vardec: type ID SEMI {
   copySym = new Symbol(*sym);
   cur->insert(copySym);
   delete sym;
+  cout << ((TypeNode*)$1)->getDimension()<< endl;
 }
 | type error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);

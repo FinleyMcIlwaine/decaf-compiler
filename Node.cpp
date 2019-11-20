@@ -182,7 +182,7 @@ void SimpleTypeNode::print() {
 }
 int SimpleTypeNode::getDimension()
 {
-  return ZERO_DIM;
+  return -1;
 }
 
 /* CONSTRUCTORDECS NODE DEFINITIONS */

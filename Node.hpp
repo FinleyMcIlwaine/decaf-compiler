@@ -118,8 +118,6 @@ class SimpleTypeNode : public TypeNode
     SimpleTypeNode(Node *lf=0, Node *rt=0) : TypeNode(lf,rt) {}
     void print();
     virtual int getDimension();
-  private:
-    const int ZERO_DIM = 0;
 };
 
 /** CONSTRUCTOR DECS NODE TYPE **/

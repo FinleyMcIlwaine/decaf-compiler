@@ -1,7 +1,8 @@
 class heyo 
 {
-    int haha;
-    int[][][] lol;
-    int hi;
+    int zero;
+    int[] one;
+    hi[][] two;
+    int[][][] three;
 }
 
