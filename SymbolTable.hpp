@@ -21,6 +21,7 @@ class SymbolTable
 {
   public:
     SymbolTable();
+    ~SymbolTable();
     SymbolTable(SymbolTable* parent);
     SymbolTable* clear();
     SymbolTable* withParent(SymbolTable*);

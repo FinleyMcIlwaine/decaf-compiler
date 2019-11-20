@@ -8,6 +8,8 @@
 */
 
 #include "Type.hpp"
+#include "Symbol.hpp"
+#include "SymbolTable.hpp"
 #include "TypeTable.hpp"
 
 TypeTable::TypeTable()
@@ -79,6 +81,7 @@ Type* TypeTable::getType(int i)
 
 SymbolTable* TypeTable::hasSymbolTable(Type* t)
 {
+  if (!t) return nullptr;
   for(auto& tp : table)
   {
     if (t->getTypeString() == tp->getTypeString())
@@ -87,4 +90,10 @@ SymbolTable* TypeTable::hasSymbolTable(Type* t)
     }
   }
   return nullptr;
+}
+
+void TypeTable::printSymbolTable(int typeIndex)
+{
+  SymbolTable* st=hasSymbolTable(getType(typeIndex));
+  if (st) st->print();
 }

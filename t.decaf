@@ -6,3 +6,9 @@ class heyo
     int[][][] three;
 }
 
+class yo
+{
+    int dis;
+    int[] is;
+    int kewl;
+}

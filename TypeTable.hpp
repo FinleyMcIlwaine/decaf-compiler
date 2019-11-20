@@ -26,6 +26,7 @@ class TypeTable
     int addType(string, int);
     Type* getType(int);
     SymbolTable* hasSymbolTable(Type*);
+    void printSymbolTable(int typeIndex);
  
   private:
     vector<Type*> table;

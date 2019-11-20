@@ -6,7 +6,6 @@
  * 
  * Implementation of the Type class
 */
-
 #include "Type.hpp"
 
 string Type::getTypeString()

@@ -15,6 +15,19 @@ SymbolTable::SymbolTable(SymbolTable* p)
   this->clear();
   this->withParent(p);
 }
+SymbolTable::~SymbolTable()
+{
+  for (auto& entry : table)
+  {
+    delete entry.second;
+  }
+  table.clear();
+  for(auto& c : children)
+  {
+    delete c;
+  }
+  children.clear();
+}
 
 SymbolTable::SymbolTable()
 {
@@ -92,10 +105,5 @@ void SymbolTable::print()
   {
     for(int i=0; i<spaces; i++) cout << " ";
     entry.second->print();
-    cout << endl;
-  }
-  for (auto& child : children)
-  {
-    child->print();
   }
 }

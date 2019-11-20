@@ -26,9 +26,6 @@ extern SymbolTable* root;
 extern SymbolTable* cur;
 extern TypeTable* types;
 
-Symbol* sym;
-Symbol* copySym;
-
 Error* err=new Error();
 
 #define yylex() scanner.yylex()
@@ -149,18 +146,16 @@ classdec: classstart classbody {
 classstart: CLASS ID {
   $$=new ClassStartNode($2);
   $$->setVal("class identifier");
+
   // Create a symbol for the class
-  sym=new ClassSymbol();
+  Symbol* sym=new ClassSymbol();
   sym->withName($2->getString())->withLineNumber(@2.first_line);
 
   // Put it in the root table
-  copySym = new ClassSymbol(*sym);
-  root->insert(copySym);
-  delete sym;
+  root->insert(sym);
 
   // Then make the current symbol table the class' new symbol table
   cur=root->addChild(new SymbolTable()); 
-  
 } 
 | CLASS error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -562,17 +557,14 @@ vardec: type ID SEMI {
   int loc  = types->addType(t,d);  // Add to type table
 
   // Create a symbol for the id
-  sym=new Symbol();
+  Symbol* sym=new Symbol();
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
     withTypePtr(loc);
 
   // Put it in the current table
-  copySym = new Symbol(*sym);
-  cur->insert(copySym);
-  delete sym;
-  cout << ((TypeNode*)$1)->getDimension()<< endl;
+  cur->insert(sym);
 }
 | type error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -596,16 +588,14 @@ vardec: type ID SEMI {
   int loc  = types->addType(t,d);              // Add to type table
 
   // Create a symbol for the id
-  sym=new Symbol();
+  Symbol* sym=new Symbol();
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
     withTypePtr(loc);
 
   // Put it in the current table
-  copySym = new Symbol(*sym);
-  cur->insert(copySym);
-  delete sym;
+  cur->insert(sym);
 }
 | idbrack error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);

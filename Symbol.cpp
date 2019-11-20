@@ -73,7 +73,8 @@ string Symbol::getTypeString()
 
 void Symbol::print()
 {
-  cout << name << " " << getTypeString();
+  cout << name << " " << getTypeString() << endl;
+  types->printSymbolTable(typePtr);
 }
 
 MethodSymbol::MethodSymbol() : Symbol()
@@ -112,7 +113,8 @@ string MethodSymbol::getSymType()
 
 void MethodSymbol::print()
 {
-  cout << name << " " << getSymType() << " " << getTypeString();
+  cout << name << " " << getSymType() << " " << getTypeString() << endl;
+  types->printSymbolTable(typePtr);
 }
 
 ClassSymbol::ClassSymbol() : Symbol()
@@ -145,5 +147,7 @@ string ClassSymbol::getSymType()
 
 void ClassSymbol::print()
 {
-  cout << name << " " << SYM_TYPE;
+  cout << name << " " << SYM_TYPE << endl;
+  cout << typePtr << endl;
+  types->printSymbolTable(typePtr);
 }
