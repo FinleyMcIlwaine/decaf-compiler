@@ -49,7 +49,7 @@ int main(int argc, char **argv)
   cout << endl;
 
   // Print the symbol tables
-  root->print();
+  root->print(true);
   cout << endl;
 
   return 0;

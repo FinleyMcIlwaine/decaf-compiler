@@ -31,7 +31,7 @@ class SymbolTable
     vector<SymbolTable*> getChildren();
     SymbolTable* getChild(int);
     int getDepth();
-    void print();
+    void print(bool root=false);
  
   private:
     unordered_map<string,Symbol*> table;

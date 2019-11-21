@@ -98,12 +98,13 @@ int SymbolTable::getDepth()
   return depth;
 }
 
-void SymbolTable::print()
+void SymbolTable::print(bool root)
 {
   int spaces=depth*2;
   for (auto& entry : table)
   {
     for(int i=0; i<spaces; i++) cout << " ";
     entry.second->print();
+    if (root) cout << endl;
   }
 }
