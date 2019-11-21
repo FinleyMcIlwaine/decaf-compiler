@@ -24,6 +24,7 @@ class TypeTable
     TypeTable* clear();
     int lookup(string,int);
     int addType(string, int);
+    int addType(Type*);
     Type* getType(int);
     SymbolTable* hasSymbolTable(Type*);
     void printSymbolTable(int typeIndex);

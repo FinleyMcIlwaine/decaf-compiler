@@ -48,6 +48,7 @@ void MyScanner::read(char* txt)
 // Prints all errors stored in the errors array.
 void MyScanner::printErrors()
 {
+  if (errors.size()==0) return;
   for(Error &err : errors)
   {
     if (err.getErrLine()=="")

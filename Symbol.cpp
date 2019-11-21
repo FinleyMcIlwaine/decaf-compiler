@@ -148,6 +148,5 @@ string ClassSymbol::getSymType()
 void ClassSymbol::print()
 {
   cout << name << " " << SYM_TYPE << endl;
-  cout << typePtr << endl;
   types->printSymbolTable(typePtr);
 }

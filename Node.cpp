@@ -114,6 +114,22 @@ void ClassStartNode::print() {
   if (left) left->print();
   if (right) right->print();
 }
+string ClassStartNode::getClassId()
+{
+  return classId;
+}
+void ClassStartNode::setClassId(string id)
+{
+  classId=id;
+}
+SymbolTable* ClassStartNode::getSymbolTable()
+{
+  return classTable;
+}
+void ClassStartNode::setSymbolTable(SymbolTable* st)
+{
+  classTable=st;
+}
 
 /* CLASS BODY NODE DEFINITIONS */
 ClassBodyNode::ClassBodyNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {

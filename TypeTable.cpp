@@ -73,6 +73,20 @@ int TypeTable::addType(string ts, int d)
   }
 }
 
+int TypeTable::addType(Type* t)
+{
+  int exist=lookup(t->getTypeString(),t->getDimension());
+  if (exist==-1)
+  {
+    table.push_back(t);
+    return table.size()-1;
+  }
+  else
+  {
+    return exist;
+  }
+}
+
 Type* TypeTable::getType(int i)
 {
   if (i>=table.size() || i < 0) return nullptr;

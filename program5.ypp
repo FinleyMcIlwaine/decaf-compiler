@@ -133,6 +133,18 @@ program: program classdec {
 classdec: classstart classbody {
   $$=new ClassDecNode($1,$2);
   $$->setVal("<ClassStart> <ClassBody>");
+  Type* cType=new Type();
+  cType->withTypeString(((ClassStartNode*)$1)->getClassId())->
+    withDimension(0)->
+    withSymbolTable(((ClassStartNode*)$1)->getSymbolTable());
+
+  // TODO maybe check if already declared here??
+  Symbol* classSym = root->lookup(cType->getTypeString());
+  if (classSym) 
+  {
+    classSym->withTypePtr(types->addType(cType));
+  }
+  // TODO else error?
 }
 | classstart error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -156,6 +168,9 @@ classstart: CLASS ID {
 
   // Then make the current symbol table the class' new symbol table
   cur=root->addChild(new SymbolTable()); 
+
+  ((ClassStartNode*)$$)->setClassId($2->getString());
+  ((ClassStartNode*)$$)->setSymbolTable(cur);
 } 
 | CLASS error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);

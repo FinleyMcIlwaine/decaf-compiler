@@ -10,7 +10,7 @@
 #define NODE_HPP
 #include<iostream>
 #include<string>
-
+class SymbolTable;
 using std::string;
 using std::endl;
 using std::cout;
@@ -66,6 +66,13 @@ class ClassStartNode : public Node
   public:
     ClassStartNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
+    string getClassId();
+    void setClassId(string);
+    SymbolTable* getSymbolTable();
+    void setSymbolTable(SymbolTable*);
+  protected:
+    string classId;
+    SymbolTable* classTable;
 };
 
 /** CLASS BODY NODE TYPE **/
