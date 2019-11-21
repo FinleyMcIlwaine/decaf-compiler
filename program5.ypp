@@ -797,6 +797,10 @@ methoddec: type ID LPAREN parameterlist RPAREN block {
   $$=new MethodDecNode($2,$4,$6);
   $$->setVal("VOID identifier lparen <ParameterList> rparen <Block>");
 }
+| VOID ID LPAREN RPAREN block {
+  $$=new MethodDecNode($2,$5);
+  $$->setVal("VOID identifier lparen rparen <Block>");
+}
 | VOID error LPAREN parameterlist RPAREN block {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);

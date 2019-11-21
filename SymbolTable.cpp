@@ -27,6 +27,7 @@ SymbolTable::~SymbolTable()
     delete c;
   }
   children.clear();
+  printOrder.clear();
 }
 
 SymbolTable::SymbolTable()
@@ -37,6 +38,7 @@ SymbolTable::SymbolTable()
 SymbolTable* SymbolTable::clear()
 {
   table.clear();
+  printOrder.clear();
   parent=nullptr;
   children.clear();
   depth=-1;
@@ -63,10 +65,12 @@ Symbol* SymbolTable::lookup(string name)
 int SymbolTable::insert(Symbol* s)
 {
   try {
+    // TODO should check if name match except for method types
     table.at(s->getName());
     return -1;
   } catch (...) {
     table.emplace(s->getName(),s);
+    printOrder.push_back(s->getName());
     return 0;
   }
 }
@@ -101,10 +105,14 @@ int SymbolTable::getDepth()
 void SymbolTable::print(bool root)
 {
   int spaces=depth*2;
-  for (auto& entry : table)
+  for (auto& name : printOrder)
   {
     for(int i=0; i<spaces; i++) cout << " ";
-    entry.second->print();
+    try {
+      table.at(name)->print();
+    } catch (...) {
+      cout << "Could not print symbol: " + name << endl;
+    }
     if (root) cout << endl;
   }
 }

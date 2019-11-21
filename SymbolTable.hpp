@@ -37,6 +37,7 @@ class SymbolTable
     unordered_map<string,Symbol*> table;
     SymbolTable* parent;
     vector<SymbolTable*> children;
+    vector<string> printOrder;
     int depth;
 };
 #endif

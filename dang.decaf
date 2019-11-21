@@ -1,0 +1,11 @@
+void fb(){;;}
+
+void names()
+{
+
+    goo a;
+
+    a.main();
+    a.c.a=a.boo(5);
+    return ;
+}
