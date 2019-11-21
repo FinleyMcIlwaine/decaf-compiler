@@ -22,6 +22,7 @@ class Symbol
     Symbol* withLineNumber(int ln);
     Symbol* withTypePtr(int tp);
     int getTypePtr();
+    virtual string getSymType();
     virtual string getTypeString();
     
     string getName();
@@ -29,6 +30,7 @@ class Symbol
     virtual void print();
 
   protected:
+    const string SYM_TYPE="var_type";
     string name;
     int lineNumber;
     int typePtr;
@@ -41,12 +43,20 @@ class MethodSymbol : public Symbol
     virtual ~MethodSymbol()=default;
     virtual MethodSymbol* clear();
     virtual string getTypeString();
-    string getSymType();
+    virtual string getSymType();
     virtual void print();
-  private:
+  protected:
     const string SYM_TYPE="method_type";
     int numArgs;
     vector<Symbol*> argList;
+};
+
+class CtorSymbol : public MethodSymbol
+{
+  public:
+
+  private:
+    const string SYM_TYPE="ctor_method_type";
 };
 
 class ClassSymbol : public Symbol

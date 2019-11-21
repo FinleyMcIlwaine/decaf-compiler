@@ -138,6 +138,23 @@ class ConstructorDecsNode : public Node
     void print();
 };
 
+/** CONSTRUCTOR START NODE TYPE **/
+class CtorStartNode : public Node
+{
+  public:
+    CtorStartNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+    string getMethodId();
+    void setMethodId(string);
+    SymbolTable* getSymbolTable();
+    void setSymbolTable(SymbolTable*);
+  protected:
+    string methodId;
+    SymbolTable* methodTable;
+};
+
+
+
 /** CONSTRUCTOR DEC NODE TYPE **/
 class ConstructorDecNode : public Node
 {

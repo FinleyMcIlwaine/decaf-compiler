@@ -54,6 +54,7 @@ void yyerror(const char *);
 %type<pnode> vardecs
 %type<pnode> vardec
 %type<pnode> constructordec
+%type<pnode> constructorstart
 %type<pnode> methoddec
 %type<pnode> parameterlist
 %type<pnode> parameter
@@ -133,6 +134,7 @@ program: program classdec {
 classdec: classstart classbody {
   $$=new ClassDecNode($1,$2);
   $$->setVal("<ClassStart> <ClassBody>");
+
   Type* cType=new Type();
   cType->withTypeString(((ClassStartNode*)$1)->getClassId())->
     withDimension(0)->
@@ -165,6 +167,8 @@ classstart: CLASS ID {
 
   // Put it in the root table
   root->insert(sym);
+  // TODO somehow mark the symbol table for deletion
+  // if this class symbol already exists.
 
   // Then make the current symbol table the class' new symbol table
   cur=root->addChild(new SymbolTable()); 
@@ -669,39 +673,72 @@ constructordecs: constructordecs constructordec {
 }
 ;
 
-constructordec: ID LPAREN parameterlist RPAREN block {
-  $$=new ConstructorDecNode($1,$3,$5);
-  $$->setVal("identifier lparen <ParameterList> rparen <Block>");
+constructordec: constructorstart parameterlist RPAREN block {
+  $$=new ConstructorDecNode($1,$2,$4);
+  $$->setVal("<ConstructorStart> <ParameterList> rparen <Block>");
+
+  Type* cType=new Type();
+  cType->withTypeString(((CtorStartNode*)$1)->getMethodId())->
+    withDimension(0)->
+    withSymbolTable(((CtorStartNode*)$1)->getSymbolTable());
+
+  // TODO maybe check if already declared here??
+  Symbol* classSym = root->lookup(cType->getTypeString());
+  if (classSym) 
+  {
+    classSym->withTypePtr(types->addType(cType));
+  }
+  // TODO else error?
 }
-| ID LPAREN RPAREN block {
-  $$=new ConstructorDecNode($1,$4);
-  $$->setVal("identifier lparen rparen <Block>");
+| constructorstart RPAREN block {
+  $$=new ConstructorDecNode($1,$3);
+  $$->setVal("<ConstructorStart> rparen <Block>");
 }
-| ID LPAREN error RPAREN block {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
-  scanner.addError(*err);
-  $$=new ConstructorDecNode($1,$5);
-  $$->setVal("identifier lparen <Error> rparen <Block>");
-}
-| ID LPAREN error block {
+| constructorstart error RPAREN block {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   $$=new ConstructorDecNode($1,$4);
-  $$->setVal("identifier lparen <Error> <Block>");
+  $$->setVal("<ConstructorStart> <Error> rparen <Block>");
 }
-| ID LPAREN parameterlist RPAREN error {
-  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+| constructorstart error block {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   $$=new ConstructorDecNode($1,$3);
-  $$->setVal("identifier lparen <ParameterList> rparen <Error>");
+  $$->setVal("<ConstructorStart> <Error> <Block>");
 }
-| ID LPAREN error RPAREN error {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+| constructorstart parameterlist RPAREN error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
-  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  $$=new ConstructorDecNode($1,$2);
+  $$->setVal("<ConstructorStart> <ParameterList> rparen <Error>");
+}
+| constructorstart error RPAREN error {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
   $$=new ConstructorDecNode($1);
-  $$->setVal("identifier lparen <Error> rparen <Error>");
+  $$->setVal("<ConstructorStart> <Error> rparen <Error>");
+}
+
+;
+
+constructorstart: ID LPAREN {
+  $$=new CtorStartNode($1);
+  $$->setVal("identifier lparen"); 
+
+  // Create a symbol for the ctor
+  CtorSymbol* sym=new CtorSymbol();
+  sym->withName($1->getString())->withLineNumber(@1.first_line);
+
+  // Put it in the current table
+  cur->insert(sym);
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(new SymbolTable()); 
+
+  ((CtorStartNode*)$$)->setMethodId($1->getString());
+  ((CtorStartNode*)$$)->setSymbolTable(cur);
 }
 
 ;

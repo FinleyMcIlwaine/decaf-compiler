@@ -237,6 +237,29 @@ Node* ConstructorDecNode::getMiddle()
   return middle;
 }
 
+/* CONSTRUCTOR START NODE DEFINITIONS */
+void CtorStartNode::print() {
+  cout << "<ConstructorStart> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+string CtorStartNode::getMethodId()
+{
+  return methodId;
+}
+void CtorStartNode::setMethodId(string id)
+{
+  methodId=id;
+}
+SymbolTable* CtorStartNode::getSymbolTable()
+{
+  return methodTable;
+}
+void CtorStartNode::setSymbolTable(SymbolTable* st)
+{
+  methodTable=st;
+}
+
 /* METHODDECS NODE DEFINITIONS */
 void MethodDecsNode::print() {
   cout << "<MethodDecs> --> " + sval << endl;

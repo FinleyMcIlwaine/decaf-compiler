@@ -4,6 +4,11 @@ class heyo
     int[] one;
     hi[][] two;
     int[][][] three;
+
+    void whaddup(int a, int[] b)
+    {
+        read();
+    }
 }
 
 class yo

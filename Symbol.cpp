@@ -71,6 +71,11 @@ string Symbol::getTypeString()
   return t->getFullTypeString();
 }
 
+string Symbol::getSymType()
+{
+  return SYM_TYPE;
+}
+
 void Symbol::print()
 {
   cout << name << " " << getTypeString() << endl;
