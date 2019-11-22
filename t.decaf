@@ -16,4 +16,6 @@ class yo
     int dis;
     int[] is;
     int kewl;
+
+    yo() { }
 }

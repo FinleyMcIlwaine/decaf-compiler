@@ -700,6 +700,17 @@ constructordec: constructorstart parameterlist RPAREN block {
 | constructorstart RPAREN block {
   $$=new ConstructorDecNode($1,$3);
   $$->setVal("<ConstructorStart> rparen <Block>");
+
+  cur = cur->getParent();
+  MethodType* mType=new MethodType();
+  ((MethodType*)(mType->withTypeString("void")->
+    withDimension(0)->
+    withSymbolTable(((CtorStartNode*)$1)->getSymbolTable())));
+
+  // TODO check if marked for deletion and if so do not update
+  // the type ptr
+  CtorSymbol* ctorSym = (CtorSymbol*)(cur->lookup(((CtorStartNode*)$1)->getMethodId()));
+  ctorSym->withTypePtr(types->addType(mType));
 }
 | constructorstart error RPAREN block {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -742,8 +753,8 @@ constructorstart: ID LPAREN {
   cur->insert(sym);
 
   // Then make the current symbol table the method's new symbol table
-  cur=cur->addChild(new SymbolTable()); 
-
+  SymbolTable* newSymTab = new SymbolTable();
+  cur=cur->addChild(newSymTab); 
   ((CtorStartNode*)$$)->setMethodId($1->getString());
   ((CtorStartNode*)$$)->setSymbolTable(cur);
 }
@@ -977,6 +988,7 @@ parameter: type ID {
     withTypePtr(loc);
 
   ((ParameterNode*)$$)->setSymbol(sym);
+  ((ParameterNode*)$$)->setTypeString(types->getType(loc)->getFullTypeString());
 
   // Put it in the current table
   cur->insert(sym);

@@ -65,16 +65,8 @@ int TypeTable::addType(string ts, int d)
 
 int TypeTable::addType(Type* t)
 {
-  int exist=lookup(t->getTypeString(),t->getDimension());
-  if (exist==-1)
-  {
-    table.push_back(t);
-    return table.size()-1;
-  }
-  else
-  {
-    return exist;
-  }
+  table.push_back(t);
+  return table.size()-1;
 }
 
 Type* TypeTable::getType(int i)
@@ -88,7 +80,7 @@ SymbolTable* TypeTable::hasSymbolTable(Type* t)
   if (!t) return nullptr;
   for(auto& tp : table)
   {
-    if (t->getTypeString() == tp->getTypeString())
+    if (t->getFullTypeString() == tp->getFullTypeString())
     {
       return tp->getSymbolTable();
     }
