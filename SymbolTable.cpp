@@ -65,9 +65,12 @@ Symbol* SymbolTable::lookup(string name)
 int SymbolTable::insert(Symbol* s)
 {
   try {
-    // TODO should check if name match except for method types
-    table.at(s->getName());
-    return -1;
+    Symbol* test = table.at(s->getName());
+    if (test->getSymType()==s->getSymType()) return -1;
+    // TODO HUGE PROBLEM, HOW TO CHAIN ENTRIES WITH SAME NAME!?!?!?!?!?!? ***************
+    table.emplace(s->getName(),s);
+    printOrder.push_back(s->getName());
+    return 0;
   } catch (...) {
     table.emplace(s->getName(),s);
     printOrder.push_back(s->getName());
@@ -95,6 +98,11 @@ SymbolTable* SymbolTable::getChild(int i)
   } else {
     return children.at(i);
   }
+}
+
+SymbolTable* SymbolTable::getParent()
+{
+  return parent;
 }
 
 int SymbolTable::getDepth()

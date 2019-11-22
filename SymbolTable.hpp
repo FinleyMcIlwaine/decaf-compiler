@@ -32,6 +32,7 @@ class SymbolTable
     SymbolTable* getChild(int);
     int getDepth();
     void print(bool root=false);
+    SymbolTable* getParent();
  
   private:
     unordered_map<string,Symbol*> table;

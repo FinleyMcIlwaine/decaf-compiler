@@ -42,7 +42,6 @@ class MethodSymbol : public Symbol
     MethodSymbol();
     virtual ~MethodSymbol()=default;
     virtual MethodSymbol* clear();
-    virtual string getTypeString();
     virtual string getSymType();
     virtual void print();
   protected:
@@ -54,9 +53,9 @@ class MethodSymbol : public Symbol
 class CtorSymbol : public MethodSymbol
 {
   public:
-
+    virtual string getSymType();
   private:
-    const string SYM_TYPE="ctor_method_type";
+    const string SYM_TYPE="constructor_type";
 };
 
 class ClassSymbol : public Symbol
@@ -67,7 +66,7 @@ class ClassSymbol : public Symbol
     virtual ~ClassSymbol()=default;
     virtual ClassSymbol* clear();
     virtual string getDataType();
-    string getSymType();
+    virtual string getSymType();
     virtual void print();
   private:
     const string SYM_TYPE="class_type";

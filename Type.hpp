@@ -11,22 +11,37 @@
 #define TYPE_HPP
 class SymbolTable;
 #include <string>
+#include <vector>
 using std::string;
+using std::vector;
 
 class Type
 {
   public:
     string getTypeString();
-    string getFullTypeString();
+    virtual string getFullTypeString();
+    virtual ~Type() = default;
     Type* withTypeString(string);
     int getDimension();
     Type* withDimension(int);
     SymbolTable* getSymbolTable();
     Type* withSymbolTable(SymbolTable*);
  
-  private:
+  protected:
     SymbolTable* myTable;
     string typeString;
     int dimension;
 };
+
+class MethodType : public Type
+{
+  public:
+    virtual string getFullTypeString();
+    void addArgType(string);
+    MethodType* withArgumentTypeList(vector<string>&);
+
+  private:
+    vector<string> argTypeStrs;
+};
+
 #endif

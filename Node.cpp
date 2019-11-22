@@ -303,6 +303,15 @@ void ParameterListNode::print() {
   if (left) left->print();
   if (right) right->print();
 }
+void ParameterListNode::buildArgTypeList(vector<string>* args)
+{
+  if (!right) args->push_back(((ParameterNode*)left)->getSymbol()->getTypeString());
+  else
+  {
+    ((ParameterListNode*)left)->buildArgTypeList(args);
+    args->push_back(((ParameterNode*)right)->getTypeString());
+  }
+}
 
 /* PARAMETER NODE */
 void ParameterNode::print() {
@@ -310,10 +319,33 @@ void ParameterNode::print() {
   if (left) left->print();
   if (right) right->print();
 }
+void ParameterNode::setSymbol(Symbol* s)
+{
+  mySymbol=s;
+}
+void ParameterNode::setTypeString(string t)
+{
+  myType=t;
+}
+string ParameterNode::getTypeString()
+{
+  return myType;
+}
+Symbol* ParameterNode::getSymbol()
+{
+  return mySymbol;
+}
 
 /* BLOCK NODE */
 void BlockNode::print() {
   cout << "<Block> --> " + sval << endl;
+  if (left) left->print();
+  if (right) right->print();
+}
+
+/* STMT BLOCK NODE */
+void StmtBlockNode::print() {
+  cout << "<StmtBlock> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }

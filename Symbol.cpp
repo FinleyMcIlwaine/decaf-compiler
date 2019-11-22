@@ -95,23 +95,11 @@ MethodSymbol* MethodSymbol::clear()
   return this;
 }
 
-string MethodSymbol::getTypeString()
-{
-  Type* t=types->getType(typePtr);
-  if (!t) return "";
-  string ts = t->getTypeString() + " <- ";
-  if (argList.size()==0) ts+="void";
-  else
-  {
-    for (int i=0; i<argList.size(); i++)
-    {
-      ts+=argList.at(i)->getTypeString()+" ";
-    }
-  }
-  return ts;
-}
-
 string MethodSymbol::getSymType()
+{
+  return SYM_TYPE;
+}
+string CtorSymbol::getSymType()
 {
   return SYM_TYPE;
 }

@@ -59,6 +59,7 @@ void yyerror(const char *);
 %type<pnode> parameterlist
 %type<pnode> parameter
 %type<pnode> block
+%type<pnode> stmtblock
 %type<pnode> localvardecs
 %type<pnode> stmts
 %type<pnode> localvardec
@@ -140,13 +141,15 @@ classdec: classstart classbody {
     withDimension(0)->
     withSymbolTable(((ClassStartNode*)$1)->getSymbolTable());
 
-  // TODO maybe check if already declared here??
+  // TODO if the table is marked for deletion maybe delete it here
   Symbol* classSym = root->lookup(cType->getTypeString());
   if (classSym) 
   {
     classSym->withTypePtr(types->addType(cType));
   }
   // TODO else error?
+
+  cur = root;
 }
 | classstart error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -166,9 +169,12 @@ classstart: CLASS ID {
   sym->withName($2->getString())->withLineNumber(@2.first_line);
 
   // Put it in the root table
-  root->insert(sym);
-  // TODO somehow mark the symbol table for deletion
-  // if this class symbol already exists.
+  int exists=root->insert(sym);
+  if (exists==-1)
+  {
+    // TODO somehow mark the symbol table for deletion
+    // if this class symbol already exists.
+  }
 
   // Then make the current symbol table the class' new symbol table
   cur=root->addChild(new SymbolTable()); 
@@ -677,18 +683,19 @@ constructordec: constructorstart parameterlist RPAREN block {
   $$=new ConstructorDecNode($1,$2,$4);
   $$->setVal("<ConstructorStart> <ParameterList> rparen <Block>");
 
-  Type* cType=new Type();
-  cType->withTypeString(((CtorStartNode*)$1)->getMethodId())->
+  cur = cur->getParent();
+  MethodType* mType=new MethodType();
+  vector<string> argList;
+  ((ParameterListNode*)$2)->buildArgTypeList(&argList);
+  ((MethodType*)(mType->withTypeString("void")->
     withDimension(0)->
-    withSymbolTable(((CtorStartNode*)$1)->getSymbolTable());
+    withSymbolTable(((CtorStartNode*)$1)->getSymbolTable())))->
+    withArgumentTypeList(argList);
 
-  // TODO maybe check if already declared here??
-  Symbol* classSym = root->lookup(cType->getTypeString());
-  if (classSym) 
-  {
-    classSym->withTypePtr(types->addType(cType));
-  }
-  // TODO else error?
+  // TODO check if marked for deletion and if so do not update
+  // the type ptr
+  CtorSymbol* ctorSym = (CtorSymbol*)(cur->lookup(((CtorStartNode*)$1)->getMethodId()));
+  ctorSym->withTypePtr(types->addType(mType));
 }
 | constructorstart RPAREN block {
   $$=new ConstructorDecNode($1,$3);
@@ -935,10 +942,89 @@ parameterlist: parameter {
 parameter: type ID {
   $$=new ParameterNode($1,$2);
   $$->setVal("<Type> identifier");
+
+  // Figure out the type
+  string t = ((TypeNode*)$1)->getTypeString();  // Type string
+  int d    = ((TypeNode*)$1)->getDimension();   // Dimension
+  int loc  = types->addType(t,d);  // Add to type table
+
+  // Create a symbol for the id
+  Symbol* sym=new Symbol();
+  sym->
+    withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  ((ParameterNode*)$$)->setSymbol(sym);
+  ((ParameterNode*)$$)->setTypeString(types->getType(loc)->getFullTypeString());
+
+  // Put it in the current table
+  cur->insert(sym);
 }
 | idbrack ID {
   $$=new ParameterNode($1,$2);
   $$->setVal("<IdBrack> identifier");
+  // Figure out the type
+  string t = ((IdBrackNode*)$1)->getId();          // Type string
+  int d    = ((IdBrackNode*)$1)->getDimension();   // Dimension
+  int loc  = types->addType(t,d);              // Add to type table
+
+  // Create a symbol for the id
+  Symbol* sym=new Symbol();
+  sym->
+    withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  ((ParameterNode*)$$)->setSymbol(sym);
+
+  // Put it in the current table
+  cur->insert(sym);
+}
+
+;
+
+stmtblock: LBRACE localvardecs stmts RBRACE {
+  $$=new StmtBlockNode($2,$3);
+  $$->setVal("lbrace <LocalVarDecs> <Stmts> rbrace");
+}
+| LBRACE error stmts RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new StmtBlockNode($3);
+  $$->setVal("lbrace <Error> <Stmts> rbrace");
+}
+| LBRACE localvardecs error RBRACE {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new StmtBlockNode($2);
+  $$->setVal("lbrace <LocalVarDecs> <Error> rbrace");
+}
+| LBRACE error error RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new StmtBlockNode();
+  $$->setVal("lbrace <Error> <Error> rbrace");
+}
+| LBRACE localvardecs RBRACE {
+  $$=new StmtBlockNode($2);
+  $$->setVal("lbrace <LocalVarDecs> rbrace");
+}
+| LBRACE stmts RBRACE {
+  $$=new StmtBlockNode($2);
+  $$->setVal("lbrace <Stmts> rbrace");
+}
+| LBRACE error RBRACE {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new StmtBlockNode();
+  $$->setVal("lbrace <Error> rbrace");
+}
+| LBRACE RBRACE {
+  $$=new StmtBlockNode();
+  $$->setVal("lbrace rbrace");
 }
 
 ;
@@ -1161,9 +1247,9 @@ stmt: SEMI {
   $$=new StmtNode();
   $$->setVal("return <Error>");
 }
-| block {
+| stmtblock {
   $$=new StmtNode($1);
-  $$->setVal("<Block>");
+  $$->setVal("<StmtBlock>");
 }
 
 ;

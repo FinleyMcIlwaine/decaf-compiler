@@ -5,9 +5,9 @@ class heyo
     hi[][] two;
     int[][][] three;
 
-    void whaddup(int a, int[] b)
+    whaddup(int a, int[] b)
     {
-        read();
+        int x;
     }
 }
 

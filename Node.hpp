@@ -10,10 +10,13 @@
 #define NODE_HPP
 #include<iostream>
 #include<string>
+#include <vector>
+#include "Symbol.hpp"
 class SymbolTable;
 using std::string;
 using std::endl;
 using std::cout;
+using std::vector;
 
 /** BASE NODE TYPE **/
 class Node {
@@ -197,6 +200,7 @@ class ParameterListNode : public Node
   public:
     ParameterListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
+    void buildArgTypeList(vector<string>*);
 };
 
 /** PARAMETER NODE TYPE **/
@@ -204,7 +208,14 @@ class ParameterNode : public Node
 {
   public:
     ParameterNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void setSymbol(Symbol*);
+    Symbol* getSymbol();
+    void setTypeString(string);
+    string getTypeString();
     void print();
+  private:
+    Symbol* mySymbol;
+    string myType;
 };
 
 /** BLOCK NODE TYPE **/
@@ -212,6 +223,14 @@ class BlockNode : public Node
 {
   public:
     BlockNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+};
+
+/** STMT BLOCK NODE TYPE **/
+class StmtBlockNode : public Node
+{
+  public:
+    StmtBlockNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
 
