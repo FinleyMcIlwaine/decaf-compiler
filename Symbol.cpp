@@ -16,13 +16,6 @@ Symbol::Symbol()
   this->clear();
 }
 
-Symbol::Symbol(Symbol& copied)
-{
-  name=copied.getName();
-  lineNumber=copied.getLineNumber();
-  typePtr=copied.getTypePtr();
-}
-
 Symbol* Symbol::clear()
 {
   name="";
@@ -59,26 +52,33 @@ int Symbol::getLineNumber()
   return lineNumber;
 }
 
-int Symbol::getTypePtr()
+Type* Symbol::getType()
 {
-  return typePtr;
+  return types->getType(typePtr);
 }
 
-string Symbol::getTypeString()
+string Symbol::getFullTypeString()
 {
-  Type* t=types->getType(typePtr);
+  Type* t=getType();
   if (!t) return "";
   return t->getFullTypeString();
 }
 
+string Symbol::getBaseTypeString()
+{
+  Type* t=getType();
+  if (!t) return "";
+  return t->getBaseTypeString();
+}
+
 string Symbol::getSymType()
 {
-  return SYM_TYPE;
+  return "var_type";
 }
 
 void Symbol::print()
 {
-  cout << name << " " << getTypeString() << endl;
+  cout << name << " " << getFullTypeString() << endl;
   types->printSymbolTable(typePtr);
 }
 
@@ -97,29 +97,35 @@ MethodSymbol* MethodSymbol::clear()
 
 string MethodSymbol::getSymType()
 {
-  return SYM_TYPE;
+  return "method_type";
 }
 string CtorSymbol::getSymType()
 {
-  return SYM_TYPE;
+  return "constructor_type";
 }
 
 void MethodSymbol::print()
 {
-  cout << name << " " << getSymType() << " " << getTypeString() << endl;
+  cout << name << " " << getSymType() << " " << getFullTypeString() << endl;
   types->printSymbolTable(typePtr);
+}
+
+int MethodSymbol::getNumArgs()
+{
+  MethodType* t=(MethodType*)getType();
+  if (!t) return -1;
+  return t->getNumArgs();
+}
+string MethodSymbol::getArgTypesString()
+{
+  MethodType* t=(MethodType*)getType();
+  if (!t) return "";
+  return t->getArgTypesString();
 }
 
 ClassSymbol::ClassSymbol() : Symbol()
 {
   this->clear();
-}
-
-ClassSymbol::ClassSymbol(Symbol& copied)
-{
-  name=copied.getName();
-  lineNumber=copied.getLineNumber();
-  typePtr=copied.getTypePtr();
 }
 
 ClassSymbol* ClassSymbol::clear()
@@ -135,11 +141,11 @@ string ClassSymbol::getDataType()
 
 string ClassSymbol::getSymType()
 {
-  return SYM_TYPE;
+  return "class_type";
 }
 
 void ClassSymbol::print()
 {
-  cout << name << " " << SYM_TYPE << endl;
+  cout << name << " class_type" << endl;
   types->printSymbolTable(typePtr);
 }

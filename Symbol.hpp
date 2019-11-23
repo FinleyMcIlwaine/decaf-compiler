@@ -1,6 +1,7 @@
 #ifndef SYMBOL_HPP
 #define SYMBOL_HPP
 class TypeTable;
+class Type;
 #include <string>
 #include <vector>
 #include <iostream>
@@ -22,15 +23,16 @@ class Symbol
     Symbol* withLineNumber(int ln);
     Symbol* withTypePtr(int tp);
     int getTypePtr();
+    Type* getType();
     virtual string getSymType();
-    virtual string getTypeString();
+    string getBaseTypeString();
+    string getFullTypeString();
     
     string getName();
     int getLineNumber();
     virtual void print();
 
   protected:
-    const string SYM_TYPE="var_type";
     string name;
     int lineNumber;
     int typePtr;
@@ -44,8 +46,9 @@ class MethodSymbol : public Symbol
     virtual MethodSymbol* clear();
     virtual string getSymType();
     virtual void print();
+    int getNumArgs();
+    string getArgTypesString();
   protected:
-    const string SYM_TYPE="method_type";
     int numArgs;
     vector<Symbol*> argList;
 };
@@ -54,8 +57,6 @@ class CtorSymbol : public MethodSymbol
 {
   public:
     virtual string getSymType();
-  private:
-    const string SYM_TYPE="constructor_type";
 };
 
 class ClassSymbol : public Symbol
@@ -68,8 +69,6 @@ class ClassSymbol : public Symbol
     virtual string getDataType();
     virtual string getSymType();
     virtual void print();
-  private:
-    const string SYM_TYPE="class_type";
 };
 #endif
 

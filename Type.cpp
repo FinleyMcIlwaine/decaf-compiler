@@ -8,7 +8,7 @@
 */
 #include "Type.hpp"
 
-string Type::getTypeString()
+string Type::getBaseTypeString()
 {
   return typeString;
 }
@@ -41,13 +41,30 @@ string MethodType::getFullTypeString()
   return s;
 }
 
-MethodType* MethodType::withArgumentTypeList(vector<string>& ts)
+MethodType* MethodType::withArgTypeList(vector<string>& ts)
 {
   argTypeStrs = ts;
   return this;
 }
   
-Type* Type::withTypeString(string str)
+int MethodType::getNumArgs()
+{
+  return argTypeStrs.size();
+}
+string MethodType::getArgTypesString()
+{
+  if (argTypeStrs.size()==0) return "void";
+  string s="";
+  for (int i=0; i<argTypeStrs.size(); i++)
+  {
+    string t=argTypeStrs.at(i);
+    s+=t;
+    if (i<argTypeStrs.size()-1) s+="x ";
+  }
+  return s;
+}
+
+Type* Type::withBaseTypeString(string str)
 {
   typeString=str;
   return this;

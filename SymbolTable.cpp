@@ -17,17 +17,7 @@ SymbolTable::SymbolTable(SymbolTable* p)
 }
 SymbolTable::~SymbolTable()
 {
-  for (auto& entry : table)
-  {
-    delete entry.second;
-  }
-  table.clear();
-  for(auto& c : children)
-  {
-    delete c;
-  }
-  children.clear();
-  printOrder.clear();
+  clear();
 }
 
 SymbolTable::SymbolTable()
@@ -37,10 +27,19 @@ SymbolTable::SymbolTable()
 
 SymbolTable* SymbolTable::clear()
 {
+  for (auto& entry : table)
+  {
+    for (auto& s : entry.second) delete s;
+    entry.second.clear();
+  }
   table.clear();
+  for(auto& c : children)
+  {
+    delete c;
+  }
+  children.clear();
   printOrder.clear();
   parent=nullptr;
-  children.clear();
   depth=-1;
   return this;
 }
@@ -53,27 +52,74 @@ SymbolTable* SymbolTable::withParent(SymbolTable* p)
   return this;
 }
 
-Symbol* SymbolTable::lookup(string name)
+vector<Symbol*> SymbolTable::lookup(string name)
 {
   try {
     return table.at(name);
   } catch (...) {
-    return nullptr;
+    return {}; // Empty vector
   }
 }
 
 int SymbolTable::insert(Symbol* s)
 {
   try {
-    Symbol* test = table.at(s->getName());
-    if (test->getSymType()==s->getSymType()) return -1;
-    // TODO HUGE PROBLEM, HOW TO CHAIN ENTRIES WITH SAME NAME!?!?!?!?!?!? ***************
-    table.emplace(s->getName(),s);
-    printOrder.push_back(s->getName());
+    vector<Symbol*> matches = table.at(s->getName());
+    // Assuming we still want to keep track of this symbol
+    // and print it
+    matches.push_back(s);
+    printOrder.push_back(s);
+    for (auto& symMatch : matches)
+    { 
+      if ((s->getSymType()=="method_type" || 
+            s->getSymType()=="constructor_type") && 
+          (symMatch->getSymType()==s->getSymType()))
+      {
+        MethodSymbol* mSym=(MethodSymbol*)s;
+        MethodSymbol* tSym=(MethodSymbol*)symMatch;
+
+        // Both are methods of some type. Need to have dif type/num of args.
+        // Cannot just have different return type.
+        if (mSym->getNumArgs()!=tSym->getNumArgs())
+        {
+          return 0;
+        }
+        // Have same num args, must be different types
+        else if (mSym->getArgTypesString()!=tSym->getArgTypesString())
+        {
+          return 0;
+        }
+        // Have same num and type of args, figure out which error this is.
+        else if (mSym->getBaseTypeString()!=tSym->getBaseTypeString())
+        {
+          // Means they differ only by return type
+          return -1;
+        }
+        else 
+        {
+          // Means they are the exact same signature
+          return -2;
+        }
+      }
+      // Both are not methods or constructors
+      else if (s->getSymType()=="class_type" ||
+          symMatch->getSymType()=="class_type")
+      {
+        // Means one of them is class type, cannot be masked
+        return -3;
+      }
+      // Add more violations here if they come up
+      else
+      {
+        return 0;
+      }
+    }
     return 0;
   } catch (...) {
-    table.emplace(s->getName(),s);
-    printOrder.push_back(s->getName());
+    // No collisions at given name, make new vector and emplace
+    vector<Symbol*> symVec = { s };
+    table.emplace(s->getName(), symVec);
+    printOrder.push_back(s);
     return 0;
   }
 }
@@ -113,14 +159,10 @@ int SymbolTable::getDepth()
 void SymbolTable::print(bool root)
 {
   int spaces=depth*2;
-  for (auto& name : printOrder)
+  for (auto& sym : printOrder)
   {
     for(int i=0; i<spaces; i++) cout << " ";
-    try {
-      table.at(name)->print();
-    } catch (...) {
-      cout << "Could not print symbol: " + name << endl;
-    }
+    sym->print();
     if (root) cout << endl;
   }
 }

@@ -18,10 +18,10 @@ using std::vector;
 class Type
 {
   public:
-    string getTypeString();
+    string getBaseTypeString();
     virtual string getFullTypeString();
     virtual ~Type() = default;
-    Type* withTypeString(string);
+    Type* withBaseTypeString(string);
     int getDimension();
     Type* withDimension(int);
     SymbolTable* getSymbolTable();
@@ -38,7 +38,9 @@ class MethodType : public Type
   public:
     virtual string getFullTypeString();
     void addArgType(string);
-    MethodType* withArgumentTypeList(vector<string>&);
+    MethodType* withArgTypeList(vector<string>&);
+    int getNumArgs();
+    string getArgTypesString();
 
   private:
     vector<string> argTypeStrs;

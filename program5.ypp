@@ -135,21 +135,7 @@ program: program classdec {
 classdec: classstart classbody {
   $$=new ClassDecNode($1,$2);
   $$->setVal("<ClassStart> <ClassBody>");
-
-  Type* cType=new Type();
-  cType->withTypeString(((ClassStartNode*)$1)->getClassId())->
-    withDimension(0)->
-    withSymbolTable(((ClassStartNode*)$1)->getSymbolTable());
-
-  // TODO if the table is marked for deletion maybe delete it here
-  Symbol* classSym = root->lookup(cType->getTypeString());
-  if (classSym) 
-  {
-    classSym->withTypePtr(types->addType(cType));
-  }
-  // TODO else error?
-
-  cur = root;
+  cur=root;
 }
 | classstart error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -164,23 +150,31 @@ classstart: CLASS ID {
   $$=new ClassStartNode($2);
   $$->setVal("class identifier");
 
+  // Create a symbol table for the class
+  SymbolTable* newSymTab=new SymbolTable();
+
+  // Create the type for the class
+  Type* newType=new Type();
+  newType->withSymbolTable(newSymTab);
+
+  // Get the type ptr
+  int loc=types->addType(newType);
+
   // Create a symbol for the class
   Symbol* sym=new ClassSymbol();
-  sym->withName($2->getString())->withLineNumber(@2.first_line);
+  sym->withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
 
   // Put it in the root table
-  int exists=root->insert(sym);
-  if (exists==-1)
+  int res=root->insert(sym);
+  if (res==-3)
   {
-    // TODO somehow mark the symbol table for deletion
-    // if this class symbol already exists.
+    // TODO Add error for duplicately defined class 
   }
 
   // Then make the current symbol table the class' new symbol table
-  cur=root->addChild(new SymbolTable()); 
-
-  ((ClassStartNode*)$$)->setClassId($2->getString());
-  ((ClassStartNode*)$$)->setSymbolTable(cur);
+  cur=root->addChild(newSymTab); 
 } 
 | CLASS error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -679,84 +673,113 @@ constructordecs: constructordecs constructordec {
 }
 ;
 
-constructordec: constructorstart parameterlist RPAREN block {
-  $$=new ConstructorDecNode($1,$2,$4);
-  $$->setVal("<ConstructorStart> <ParameterList> rparen <Block>");
-
-  cur = cur->getParent();
-  MethodType* mType=new MethodType();
-  vector<string> argList;
-  ((ParameterListNode*)$2)->buildArgTypeList(&argList);
-  ((MethodType*)(mType->withTypeString("void")->
-    withDimension(0)->
-    withSymbolTable(((CtorStartNode*)$1)->getSymbolTable())))->
-    withArgumentTypeList(argList);
-
-  // TODO check if marked for deletion and if so do not update
-  // the type ptr
-  CtorSymbol* ctorSym = (CtorSymbol*)(cur->lookup(((CtorStartNode*)$1)->getMethodId()));
-  ctorSym->withTypePtr(types->addType(mType));
-}
-| constructorstart RPAREN block {
-  $$=new ConstructorDecNode($1,$3);
-  $$->setVal("<ConstructorStart> rparen <Block>");
-
-  cur = cur->getParent();
-  MethodType* mType=new MethodType();
-  ((MethodType*)(mType->withTypeString("void")->
-    withDimension(0)->
-    withSymbolTable(((CtorStartNode*)$1)->getSymbolTable())));
-
-  // TODO check if marked for deletion and if so do not update
-  // the type ptr
-  CtorSymbol* ctorSym = (CtorSymbol*)(cur->lookup(((CtorStartNode*)$1)->getMethodId()));
-  ctorSym->withTypePtr(types->addType(mType));
-}
-| constructorstart error RPAREN block {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  $$=new ConstructorDecNode($1,$4);
-  $$->setVal("<ConstructorStart> <Error> rparen <Block>");
-}
-| constructorstart error block {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  $$=new ConstructorDecNode($1,$3);
-  $$->setVal("<ConstructorStart> <Error> <Block>");
-}
-| constructorstart parameterlist RPAREN error {
-  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
-  scanner.addError(*err);
+constructordec: constructorstart block {
   $$=new ConstructorDecNode($1,$2);
-  $$->setVal("<ConstructorStart> <ParameterList> rparen <Error>");
+  $$->setVal("<ConstructorStart> <Block>");
+
+  cur = cur->getParent();
+
+  // TODO check if marked for deletion and if so delete the table and
+  // its symbol in this table, could maybe just let the type reference
+  // sit in the type table?
 }
-| constructorstart error RPAREN error {
+| constructorstart error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
   $$=new ConstructorDecNode($1);
-  $$->setVal("<ConstructorStart> <Error> rparen <Error>");
+  $$->setVal("<ConstructorStart> <Error>");
 }
 
 ;
 
-constructorstart: ID LPAREN {
+constructorstart: ID LPAREN RPAREN {
   $$=new CtorStartNode($1);
-  $$->setVal("identifier lparen"); 
+  $$->setVal("identifier lparen rparen");
+
+  // Make a symbol table for this method
+  SymbolTable* newSymTab = new SymbolTable();
+
+  // Create the type for this thing, it has no args!
+  MethodType* t=new MethodType();
+  t->withBaseTypeString("void")->
+    withDimension(0)->
+    withSymbolTable(newSymTab);
+
+  int typePtr=types->addType(t);
 
   // Create a symbol for the ctor
   CtorSymbol* sym=new CtorSymbol();
-  sym->withName($1->getString())->withLineNumber(@1.first_line);
+  sym->
+    withName($1->getString())->
+    withLineNumber(@1.first_line)->
+    withTypePtr(typePtr);
 
   // Put it in the current table
   cur->insert(sym);
 
   // Then make the current symbol table the method's new symbol table
-  SymbolTable* newSymTab = new SymbolTable();
   cur=cur->addChild(newSymTab); 
+  //((CtorStartNode*)$$)->setMethodId($1->getString());
+  //((CtorStartNode*)$$)->setSymbolTable(cur);
+}
+| ID LPAREN parameterlist RPAREN {
+  $$=new CtorStartNode($1,$3);
+  $$->setVal("identifier lparen <ParameterList> rparen"); 
+
+  // Make a symbol table for it
+  SymbolTable* newSymTab = new SymbolTable();
+
+  // Get the parameter symbols
+  vector<Symbol*> symList;
+  ((ParameterListNode*)$3)->buildArgSymbolList(&symList);
+
+  // Get parameter strings, adding each symbol to it's new table
+  vector<string> argStrings;
+  for (auto& s : symList)
+  {
+    newSymTab->insert(s);
+    argStrings.push_back(s->getFullTypeString());
+  }
+
+  // Make a type for the thing
+  MethodType* t=new MethodType();
+  ((MethodType*)(t->withBaseTypeString("void")))->
+    withArgTypeList(argStrings);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the ctor
+  CtorSymbol* sym=new CtorSymbol();
+  sym->withName($1->getString())->
+    withLineNumber(@1.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  cur->insert(sym);
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
+
   ((CtorStartNode*)$$)->setMethodId($1->getString());
   ((CtorStartNode*)$$)->setSymbolTable(cur);
+}
+| ID LPAREN error RPAREN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new CtorStartNode($1);
+  $$->setVal("identifier lparen <Error> rparen"); 
+}
+| ID LPAREN error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new CtorStartNode($1);
+  $$->setVal("identifier lparen <Error>"); 
+}
+| ID LPAREN parameterlist error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new CtorStartNode($1,$3);
+  $$->setVal("identifier lparen <ParameterList> <Error>"); 
 }
 
 ;
@@ -967,10 +990,6 @@ parameter: type ID {
     withTypePtr(loc);
 
   ((ParameterNode*)$$)->setSymbol(sym);
-  ((ParameterNode*)$$)->setTypeString(types->getType(loc)->getFullTypeString());
-
-  // Put it in the current table
-  cur->insert(sym);
 }
 | idbrack ID {
   $$=new ParameterNode($1,$2);
@@ -988,10 +1007,6 @@ parameter: type ID {
     withTypePtr(loc);
 
   ((ParameterNode*)$$)->setSymbol(sym);
-  ((ParameterNode*)$$)->setTypeString(types->getType(loc)->getFullTypeString());
-
-  // Put it in the current table
-  cur->insert(sym);
 }
 
 ;

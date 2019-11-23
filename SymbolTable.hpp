@@ -25,7 +25,7 @@ class SymbolTable
     SymbolTable(SymbolTable* parent);
     SymbolTable* clear();
     SymbolTable* withParent(SymbolTable*);
-    Symbol* lookup(string);
+    vector<Symbol*> lookup(string);
     int insert(Symbol*);
     SymbolTable* addChild(SymbolTable*);
     vector<SymbolTable*> getChildren();
@@ -35,10 +35,10 @@ class SymbolTable
     SymbolTable* getParent();
  
   private:
-    unordered_map<string,Symbol*> table;
+    unordered_map<string,vector<Symbol*>> table;
     SymbolTable* parent;
     vector<SymbolTable*> children;
-    vector<string> printOrder;
+    vector<Symbol*> printOrder;
     int depth;
 };
 #endif

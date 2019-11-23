@@ -303,13 +303,13 @@ void ParameterListNode::print() {
   if (left) left->print();
   if (right) right->print();
 }
-void ParameterListNode::buildArgTypeList(vector<string>* args)
+void ParameterListNode::buildArgSymbolList(vector<Symbol*>* args)
 {
-  if (!right) args->push_back(((ParameterNode*)left)->getSymbol()->getTypeString());
+  if (!right) args->push_back(((ParameterNode*)left)->getSymbol());
   else
   {
-    ((ParameterListNode*)left)->buildArgTypeList(args);
-    args->push_back(((ParameterNode*)right)->getTypeString());
+    ((ParameterListNode*)left)->buildArgSymbolList(args);
+    args->push_back(((ParameterNode*)right)->getSymbol());
   }
 }
 
@@ -322,14 +322,6 @@ void ParameterNode::print() {
 void ParameterNode::setSymbol(Symbol* s)
 {
   mySymbol=s;
-}
-void ParameterNode::setTypeString(string t)
-{
-  myType=t;
-}
-string ParameterNode::getTypeString()
-{
-  return myType;
 }
 Symbol* ParameterNode::getSymbol()
 {

@@ -32,35 +32,13 @@ TypeTable* TypeTable::clear()
   return this;
 }
 
-int TypeTable::lookup(string typeStr, int dim)
-{
-  for (int i=0; i<table.size(); i++)
-  {
-    if (table.at(i)->getTypeString() == typeStr && 
-        table.at(i)->getDimension() == dim) 
-    {
-      return i;
-    }
-  }
-  return -1;
-}
-
 int TypeTable::addType(string ts, int d)
 {
-  int exist=lookup(ts,d);
-  if (exist==-1)
-  {
-    Type* t=new Type();
-    t->withTypeString(ts)->
-       withDimension(d)->
-       withSymbolTable(hasSymbolTable(t));
-    table.push_back(t);
-    return table.size()-1;
-  }
-  else
-  {
-    return exist;
-  }
+  Type* t=new Type();
+  t->withBaseTypeString(ts)->
+     withDimension(d);
+  table.push_back(t);
+  return table.size()-1;
 }
 
 int TypeTable::addType(Type* t)
@@ -75,21 +53,8 @@ Type* TypeTable::getType(int i)
   else return table.at(i);
 }
 
-SymbolTable* TypeTable::hasSymbolTable(Type* t)
-{
-  if (!t) return nullptr;
-  for(auto& tp : table)
-  {
-    if (t->getFullTypeString() == tp->getFullTypeString())
-    {
-      return tp->getSymbolTable();
-    }
-  }
-  return nullptr;
-}
-
 void TypeTable::printSymbolTable(int typeIndex)
 {
-  SymbolTable* st=hasSymbolTable(getType(typeIndex));
+  SymbolTable* st=getType(typeIndex)->getSymbolTable();
   if (st) st->print();
 }

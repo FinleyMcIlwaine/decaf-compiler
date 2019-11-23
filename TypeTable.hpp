@@ -22,7 +22,6 @@ class TypeTable
     TypeTable();
     ~TypeTable();
     TypeTable* clear();
-    int lookup(string,int);
     int addType(string, int);
     int addType(Type*);
     Type* getType(int);

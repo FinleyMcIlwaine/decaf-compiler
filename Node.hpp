@@ -200,7 +200,7 @@ class ParameterListNode : public Node
   public:
     ParameterListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
-    void buildArgTypeList(vector<string>*);
+    void buildArgSymbolList(vector<Symbol*>*);
 };
 
 /** PARAMETER NODE TYPE **/
@@ -210,12 +210,9 @@ class ParameterNode : public Node
     ParameterNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void setSymbol(Symbol*);
     Symbol* getSymbol();
-    void setTypeString(string);
-    string getTypeString();
     void print();
   private:
     Symbol* mySymbol;
-    string myType;
 };
 
 /** BLOCK NODE TYPE **/
