@@ -38,6 +38,28 @@ class Symbol
     int typePtr;
 };
 
+// I use this fake block symbol so blocks
+// are handled as "symbols" that have their
+// own symbol tables.
+class BlockSymbol : public Symbol
+{
+  public:
+    BlockSymbol();
+    BlockSymbol* clear();
+    BlockSymbol* withLineNumber(int ln);
+    BlockSymbol* withTypePtr(int tp);
+    int getTypePtr();
+    Type* getType();
+    
+    int getLineNumber();
+    void print();
+    virtual string getSymType();
+
+  protected:
+    int lineNumber;
+    int typePtr;
+};
+
 class MethodSymbol : public Symbol
 {
   public:

@@ -61,6 +61,7 @@ void yyerror(const char *);
 %type<pnode> parameter
 %type<pnode> block
 %type<pnode> stmtblock
+%type<pnode> stmtblockstart
 %type<pnode> localvardecs
 %type<pnode> stmts
 %type<pnode> localvardec
@@ -627,12 +628,10 @@ vardec: type ID SEMI {
   if (res==-3)
   {
     // TODO Error here about masking class type
-    cout << "Symbol '" << sym->getName() << "' cannot have class ID." << endl;
   }
   else if (res==-4)
   {
     // TODO Error here about var redefinition
-    cout << "Redefinition of symbol '" << sym->getName() << "'." << endl;
   }
 }
 | idbrack error SEMI {
@@ -1197,47 +1196,74 @@ parameter: type ID {
 
 ;
 
-stmtblock: LBRACE localvardecs stmts RBRACE {
-  $$=new StmtBlockNode($2,$3);
-  $$->setVal("lbrace <LocalVarDecs> <Stmts> rbrace");
+stmtblock: stmtblockstart localvardecs stmts RBRACE {
+  $$=new StmtBlockNode($1,$2,$3);
+  $$->setVal("<StmtBlockStart> <LocalVarDecs> <Stmts> rbrace");
 }
-| LBRACE error stmts RBRACE {
+| stmtblockstart error stmts RBRACE {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
-  $$=new StmtBlockNode($3);
-  $$->setVal("lbrace <Error> <Stmts> rbrace");
+  $$=new StmtBlockNode($1,$3);
+  $$->setVal("<StmtBlockStart> <Error> <Stmts> rbrace");
 }
-| LBRACE localvardecs error RBRACE {
+| stmtblockstart localvardecs error RBRACE {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
-  $$=new StmtBlockNode($2);
-  $$->setVal("lbrace <LocalVarDecs> <Error> rbrace");
+  $$=new StmtBlockNode($1,$2);
+  $$->setVal("<StmtBlockStart> <LocalVarDecs> <Error> rbrace");
 }
-| LBRACE error error RBRACE {
+| stmtblockstart error error RBRACE {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
-  $$=new StmtBlockNode();
-  $$->setVal("lbrace <Error> <Error> rbrace");
+  $$=new StmtBlockNode($1);
+  $$->setVal("<StmtBlockStart> <Error> <Error> rbrace");
 }
-| LBRACE localvardecs RBRACE {
-  $$=new StmtBlockNode($2);
-  $$->setVal("lbrace <LocalVarDecs> rbrace");
+| stmtblockstart localvardecs RBRACE {
+  $$=new StmtBlockNode($1,$2);
+  $$->setVal("<StmtBlockStart> <LocalVarDecs> rbrace");
 }
-| LBRACE stmts RBRACE {
-  $$=new StmtBlockNode($2);
-  $$->setVal("lbrace <Stmts> rbrace");
+| stmtblockstart stmts RBRACE {
+  $$=new StmtBlockNode($1,$2);
+  $$->setVal("<StmtBlockStart> <Stmts> rbrace");
 }
-| LBRACE error RBRACE {
+| stmtblockstart error RBRACE {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
-  $$=new StmtBlockNode();
-  $$->setVal("lbrace <Error> rbrace");
+  $$=new StmtBlockNode($1);
+  $$->setVal("<StmtBlockStart> <Error> rbrace");
 }
-| LBRACE RBRACE {
-  $$=new StmtBlockNode();
-  $$->setVal("lbrace rbrace");
+| stmtblockstart RBRACE {
+  $$=new StmtBlockNode($1);
+  $$->setVal("<StmtBlockStart> rbrace");
+}
+
+;
+
+stmtblockstart: LBRACE {
+  $$=new StmtBlockStartNode();
+  $$->setVal("lbrace");
+
+  // Make a sym tab
+  SymbolTable* newSymTab=new SymbolTable();
+
+  // Make a type for the thing
+  Type* t=new Type();
+  t->withSymbolTable(newSymTab);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the block
+  BlockSymbol* sym=new BlockSymbol();
+  sym->withTypePtr(loc);
+
+  // Put it in the current table don't need to check for insertion
+  // because what the heck its a block c'mon
+  cur->insert(sym);
+
+  // Then make the current symbol table the block's new symbol table
+  cur=cur->addChild(newSymTab);
 }
 
 ;
@@ -1307,6 +1333,29 @@ localvardecs: localvardecs localvardec {
 localvardec: type ID SEMI {
   $$=new LocalVarDecNode($1,$2);
   $$->setVal("<Type> identifier semi");
+
+  // Figure out the type
+  string t = ((TypeNode*)$1)->getTypeString();  // Type string
+  int d    = ((TypeNode*)$1)->getDimension();   // Dimension
+  int loc  = types->addType(t,d);  // Add to type table
+
+  // Create a symbol for the id
+  Symbol* sym=new Symbol();
+  sym->
+    withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-3)
+  {
+    // TODO Error here about id matching class name
+  }
+  else if (res==-4)
+  {
+    // TODO Error here about var redefinition
+  }
 }
 | type error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -1323,6 +1372,29 @@ localvardec: type ID SEMI {
 | idbrack ID SEMI {
   $$=new LocalVarDecNode($1,$2);
   $$->setVal("<IdBrack> identifier semi");
+
+  // Figure out the type
+  string t = ((IdBrackNode*)$1)->getId();          // Type string
+  int d    = ((IdBrackNode*)$1)->getDimension();   // Dimension
+  int loc  = types->addType(t,d);              // Add to type table
+
+  // Create a symbol for the id
+  Symbol* sym=new Symbol();
+  sym->
+    withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-3)
+  {
+    // TODO Error here about masking class type
+  }
+  else if (res==-4)
+  {
+    // TODO Error here about var redefinition
+  }
 }
 | idbrack error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -1463,6 +1535,9 @@ stmt: SEMI {
 | stmtblock {
   $$=new StmtNode($1);
   $$->setVal("<StmtBlock>");
+
+  // Reset sym tab
+  cur = cur->getParent();
 }
 
 ;

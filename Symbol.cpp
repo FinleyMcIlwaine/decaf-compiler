@@ -82,6 +82,56 @@ void Symbol::print()
   types->printSymbolTable(typePtr);
 }
 
+/* BLOCK SYMBOL DEFINITIONS */
+BlockSymbol::BlockSymbol()
+{
+  this->clear();
+}
+
+BlockSymbol* BlockSymbol::clear()
+{
+  lineNumber=-1;
+  typePtr=-1;
+  return this;
+}
+
+BlockSymbol* BlockSymbol::withLineNumber(int ln)
+{
+  lineNumber=ln;
+  return this;
+}
+
+BlockSymbol* BlockSymbol::withTypePtr(int ptr)
+{
+  typePtr=ptr;
+  return this;
+}
+
+int BlockSymbol::getLineNumber()
+{
+  return lineNumber;
+}
+
+int BlockSymbol::getTypePtr()
+{
+  return typePtr;
+}
+
+Type* BlockSymbol::getType()
+{
+  return types->getType(typePtr);
+}
+
+string BlockSymbol::getSymType()
+{
+  return "block_type";
+}
+
+void BlockSymbol::print()
+{
+  types->printSymbolTable(typePtr);
+}
+
 MethodSymbol::MethodSymbol() : Symbol()
 {
   this->clear();

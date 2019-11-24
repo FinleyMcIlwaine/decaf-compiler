@@ -63,6 +63,13 @@ vector<Symbol*> SymbolTable::lookup(string name)
 
 int SymbolTable::insert(Symbol* s)
 {
+  // If it's a block get the heck out of here
+  if (s->getSymType()=="block_type")
+  {
+    printOrder.push_back(s);
+    return 0;
+  }
+
   try {
     vector<Symbol*> matches = table.at(s->getName());
     // Assuming we still want to keep track of this symbol
@@ -168,7 +175,10 @@ void SymbolTable::print(bool root)
   int spaces=depth*2;
   for (auto& sym : printOrder)
   {
-    for(int i=0; i<spaces; i++) cout << " ";
+    if (sym->getSymType()!="block_type")
+    {
+      for(int i=0; i<spaces; i++) cout << " ";
+    }
     sym->print();
     if (root) cout << endl;
   }

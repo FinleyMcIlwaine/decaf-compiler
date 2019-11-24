@@ -156,8 +156,6 @@ class CtorStartNode : public Node
     SymbolTable* methodTable;
 };
 
-
-
 /** CONSTRUCTOR DEC NODE TYPE **/
 class ConstructorDecNode : public Node
 {
@@ -242,9 +240,22 @@ class BlockNode : public Node
 class StmtBlockNode : public Node
 {
   public:
-    StmtBlockNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    StmtBlockNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    void print();
+    void setMiddle(Node *mi);
+    Node* getMiddle();
+  private:
+    Node *middle;
+};
+
+/** STMT BLOCK START NODE TYPE **/
+class StmtBlockStartNode : public Node
+{
+  public:
+    StmtBlockStartNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
+
 
 /** LOCAL VAR DECS NODE TYPE **/
 class LocalVarDecsNode : public Node

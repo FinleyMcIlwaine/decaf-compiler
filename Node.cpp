@@ -366,8 +366,20 @@ void BlockNode::print() {
 }
 
 /* STMT BLOCK NODE */
+StmtBlockNode::StmtBlockNode(Node *lf, Node *mi, Node *rt) 
+  : Node(lf,rt) {
+  middle=mi;
+}
 void StmtBlockNode::print() {
   cout << "<StmtBlock> --> " + sval << endl;
+  if (left) left->print();
+  if (middle) middle->print();
+  if (right) right->print();
+}
+
+/* STMT BLOCK START NODE */
+void StmtBlockStartNode::print() {
+  cout << "<StmtBlockStart> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
 }

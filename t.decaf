@@ -1,5 +1,6 @@
 class heyo 
 {
+    int 87id?;
     int zero;
     int[] one;
     hi[][] two;
@@ -18,7 +19,23 @@ class yo
     int kewl;
     int yo;
     int[][][] haha_yo(int yuhyuh) { 
-    
+        int local;
+        int[] local_fella;
+        haha[][] do_it;
+        {
+            int inside_block;
+            int[] whoa_wow;
+            {
+                int[][] another_block;
+                {
+                    int and_another;
+                }
+            }
+        }
+
     }
-    void myDude(int arg1, int[] arg2, int arg_3, myType[][] anotha_one) { }
+
+    void myDude(int arg1, int[] arg2, int arg_3, myType[][] anotha_one) { 
+        hey[] we_did_it;
+    }
 }
