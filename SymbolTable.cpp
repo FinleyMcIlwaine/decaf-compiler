@@ -102,11 +102,18 @@ int SymbolTable::insert(Symbol* s)
         }
       }
       // Both are not methods or constructors
-      else if (s->getSymType()=="class_type" ||
-          symMatch->getSymType()=="class_type")
+      else if ((s->getSymType()=="class_type" &&
+            symMatch->getSymType()!="constructor_type") ||
+          (symMatch->getSymType()=="class_type" && 
+            s->getSymType()!="constructor_type"))
       {
-        // Means one of them is class type, cannot be masked
+        // Means one of them is class type, cannot be masked (except by ctor)
         return -3;
+      }
+      else if (s->getSymType()=="var_type" && symMatch->getSymType()=="var_type")
+      {
+        // Means they are two variables with the same name
+        return -4;
       }
       // Add more violations here if they come up
       else

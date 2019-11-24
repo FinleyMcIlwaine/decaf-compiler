@@ -194,6 +194,21 @@ class MethodDecNode : public Node
 
 };
 
+/** METHOD START NODE TYPE **/
+class MethodStartNode : public Node
+{
+  public:
+    MethodStartNode(Node *lf=0, Node *sec=0, Node* trd=0,  Node *rt=0);
+    void print();
+    void setSecond(Node* sec);
+    void setThird(Node* trd);
+    Node* getSecond();
+    Node* getThird();
+  private:
+    Node* second;
+    Node* third;
+};
+
 /** PARAMETER LIST NODE TYPE **/
 class ParameterListNode : public Node
 {

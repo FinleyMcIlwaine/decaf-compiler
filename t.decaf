@@ -5,7 +5,7 @@ class heyo
     hi[][] two;
     int[][][] three;
 
-    whaddup(int a, int[] b)
+    int[] whaddup(int a, int[] b)
     {
         int x;
     }
@@ -16,6 +16,9 @@ class yo
     int dis;
     int[] is;
     int kewl;
-
-    yo() { }
+    int yo;
+    int[][][] haha_yo(int yuhyuh) { 
+    
+    }
+    void myDude(int arg1, int[] arg2, int arg_3, myType[][] anotha_one) { }
 }

@@ -56,6 +56,7 @@ void yyerror(const char *);
 %type<pnode> constructordec
 %type<pnode> constructorstart
 %type<pnode> methoddec
+%type<pnode> methodstart
 %type<pnode> parameterlist
 %type<pnode> parameter
 %type<pnode> block
@@ -583,7 +584,15 @@ vardec: type ID SEMI {
     withTypePtr(loc);
 
   // Put it in the current table
-  cur->insert(sym);
+  int res=cur->insert(sym);
+  if (res==-3)
+  {
+    // TODO Error here about id matching class name
+  }
+  else if (res==-4)
+  {
+    // TODO Error here about var redefinition
+  }
 }
 | type error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -614,7 +623,17 @@ vardec: type ID SEMI {
     withTypePtr(loc);
 
   // Put it in the current table
-  cur->insert(sym);
+  int res=cur->insert(sym);
+  if (res==-3)
+  {
+    // TODO Error here about masking class type
+    cout << "Symbol '" << sym->getName() << "' cannot have class ID." << endl;
+  }
+  else if (res==-4)
+  {
+    // TODO Error here about var redefinition
+    cout << "Redefinition of symbol '" << sym->getName() << "'." << endl;
+  }
 }
 | idbrack error SEMI {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -678,10 +697,6 @@ constructordec: constructorstart block {
   $$->setVal("<ConstructorStart> <Block>");
 
   cur = cur->getParent();
-
-  // TODO check if marked for deletion and if so delete the table and
-  // its symbol in this table, could maybe just let the type reference
-  // sit in the type table?
 }
 | constructorstart error {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -715,12 +730,14 @@ constructorstart: ID LPAREN RPAREN {
     withTypePtr(typePtr);
 
   // Put it in the current table
-  cur->insert(sym);
+  int res=cur->insert(sym);
+  if (res==-2)
+  {
+    // TODO error here about redeclaration of ctor method
+  }
 
   // Then make the current symbol table the method's new symbol table
-  cur=cur->addChild(newSymTab); 
-  //((CtorStartNode*)$$)->setMethodId($1->getString());
-  //((CtorStartNode*)$$)->setSymbolTable(cur);
+  cur=cur->addChild(newSymTab);
 }
 | ID LPAREN parameterlist RPAREN {
   $$=new CtorStartNode($1,$3);
@@ -744,7 +761,8 @@ constructorstart: ID LPAREN RPAREN {
   // Make a type for the thing
   MethodType* t=new MethodType();
   ((MethodType*)(t->withBaseTypeString("void")))->
-    withArgTypeList(argStrings);
+    withArgTypeList(argStrings)->
+    withSymbolTable(newSymTab);
 
   int loc=types->addType(t);
 
@@ -755,13 +773,14 @@ constructorstart: ID LPAREN RPAREN {
     withTypePtr(loc);
 
   // Put it in the current table
-  cur->insert(sym);
+  int res=cur->insert(sym);
+  if (res==-2)
+  {
+    // TODO error here about redeclaration of ctor method
+  }
 
   // Then make the current symbol table the method's new symbol table
   cur=cur->addChild(newSymTab);
-
-  ((CtorStartNode*)$$)->setMethodId($1->getString());
-  ((CtorStartNode*)$$)->setSymbolTable(cur);
 }
 | ID LPAREN error RPAREN {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
@@ -801,151 +820,318 @@ methoddecs: methoddecs methoddec {
 
 ;
 
-methoddec: type ID LPAREN parameterlist RPAREN block {
-  $$=new MethodDecNode($1,$2,$4,$6);
-  $$->setVal("<Type> identifier lparen <ParameterList> rparen <Block>");
-}
-| type error LPAREN parameterlist RPAREN block {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1,$4,$6);
-  $$->setVal("<Type> <Error> lparen <ParameterList> rparen <Block>");
-}
-| type error LPAREN error RPAREN block {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1,$6);
-  $$->setVal("<Type> <Error> lparen <Error> rparen <Block>");
-}
-| type error LPAREN error RPAREN error {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
-  scanner.addError(*err);
-  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1);
-  $$->setVal("<Type> <Error> lparen <Error> rparen <Error>");
-}
-| type ID LPAREN parameterlist error block {
-  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1,$4,$6);
-  $$->setVal("<Type> identifier lparen <ParameterList> <Error> <Block>");
-}
-| type ID LPAREN error RPAREN block {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$6);
-  $$->setVal("<Type> identifier lparen <Error> rparen <Block>");
-}
-| type ID LPAREN parameterlist RPAREN error {
-  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$4);
-  $$->setVal("<Type> identifier lparen <ParameterList> rparen <Error>");
-}
-| type ID LPAREN error RPAREN error {
-  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
-  scanner.addError(*err);
-  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
-  scanner.addError(*err);
+methoddec: methodstart block {
   $$=new MethodDecNode($1,$2);
-  $$->setVal("<Type> identifier lparen <Error> rparen <Error>");
+  $$->setVal("<MethodStart> <Block>");
+
+  cur = cur->getParent();
 }
-| type ID LPAREN RPAREN block {
-  $$=new MethodDecNode($1,$2,$5);
-  $$->setVal("<Type> identifier lparen rparen <Block>");
-}
-| type ID LPAREN error block {
-  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+| error block {
+  err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$5);
-  $$->setVal("<Type> identifier lparen <Error> <Block>");
+  $$=new MethodDecNode($2);
+  $$->setVal("<Error> <Block>");
 }
-| type ID error block {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$4);
-  $$->setVal("<Type> identifier <Error> <Block>");
+
+;
+
+methodstart: type ID LPAREN parameterlist RPAREN {
+  $$=new MethodStartNode($1,$2,$4);
+  $$->setVal("<Type> identifier lparen <ParameterList> rparen");
+
+  // Make a symbol table for it
+  SymbolTable* newSymTab = new SymbolTable();
+
+  // Get the parameter symbols
+  vector<Symbol*> symList;
+  ((ParameterListNode*)$4)->buildArgSymbolList(&symList);
+
+  // Get parameter strings, adding each symbol to it's new table
+  vector<string> argStrings;
+  for (auto& s : symList)
+  {
+    newSymTab->insert(s);
+    argStrings.push_back(s->getFullTypeString());
+  }
+
+  // Figure out the type
+  string ts = ((TypeNode*)$1)->getTypeString();  // Type string
+  int d    = ((TypeNode*)$1)->getDimension();   // Dimension
+
+  // Make a type for the thing
+  MethodType* t=new MethodType();
+  ((MethodType*)(t->withBaseTypeString(ts))->
+   withDimension(d))->
+    withArgTypeList(argStrings)->
+    withSymbolTable(newSymTab);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the method
+  MethodSymbol* sym=new MethodSymbol();
+  sym->withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-1)
+  {
+    // TODO error about only differing from other method by return type
+  }
+  else if (res==-2)
+  {
+    // TODO error about same signature as other method
+  }
+  else if (res==-3)
+  {
+    // TODO error about sharing ID with class type
+  }
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
 }
-| VOID ID LPAREN parameterlist RPAREN block {
-  $$=new MethodDecNode($2,$4,$6);
-  $$->setVal("VOID identifier lparen <ParameterList> rparen <Block>");
-}
-| VOID ID LPAREN RPAREN block {
-  $$=new MethodDecNode($2,$5);
-  $$->setVal("VOID identifier lparen rparen <Block>");
-}
-| VOID error LPAREN parameterlist RPAREN block {
+| type error LPAREN parameterlist RPAREN {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($4,$6);
-  $$->setVal("void <Error> lparen <ParameterList> rparen <Block>");
+  $$=new MethodStartNode($1,$4);
+  $$->setVal("<Type> <Error> lparen <ParameterList> rparen");
 }
-| VOID ID error parameterlist RPAREN block {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+| type error LPAREN error RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($2,$4,$6);
-  $$->setVal("void identifier <Error> <ParameterList> rparen <Block>");
-}
-| VOID ID LPAREN error RPAREN block {
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($2,$6);
-  $$->setVal("void identifier lparen <Error> rparen <Block>");
+  $$=new MethodStartNode($1);
+  $$->setVal("<Type> <Error> lparen <ParameterList> rparen");
 }
-| VOID ID LPAREN parameterlist error block {
+| type ID LPAREN parameterlist error {
   err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($2,$4,$6);
-  $$->setVal("void identifier lparen <ParameterList> <Error> <Block>");
+  $$=new MethodStartNode($1,$2,$3);
+  $$->setVal("<Type> identifier lparen <ParameterList> error");
 }
-| VOID ID LPAREN parameterlist RPAREN error {
-  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($2,$4);
-  $$->setVal("void identifier lparen <ParameterList> rparen <Error>");
-}
-| VOID error LPAREN error RPAREN error {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
+| type ID LPAREN error RPAREN {
   err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
-  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode();
-  $$->setVal("void <Error> lparen <Error> rparen <Error>");
+  $$=new MethodStartNode($1,$2);
+  $$->setVal("<Type> identifier lparen <Error> rparen");
 }
-| idbrack ID LPAREN parameterlist RPAREN block {
-  $$=new MethodDecNode($1,$2,$4,$6);
-  $$->setVal("<IdBrack> identifier lparen <ParameterList> rparen <Block>");
-}
-| idbrack error LPAREN parameterlist RPAREN block {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  $$=new MethodDecNode($1,$4,$6);
-  $$->setVal("<IdBrack> <Error> lparen <ParameterList> rparen <Block>");
-}
-| idbrack ID LPAREN error RPAREN block {
+| type ID LPAREN error error {
   err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$6);
-  $$->setVal("<IdBrack> identifier lparen <Error> rparen <Block>");
-}
-| idbrack ID LPAREN parameterlist error block {
   err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$4,$6);
-  $$->setVal("<IdBrack> identifier lparen <ParameterList> <Error> <Block>");
+  $$=new MethodStartNode($1,$2);
+  $$->setVal("<Type> identifier lparen <Error> <Error>");
 }
-| idbrack ID LPAREN parameterlist RPAREN error {
-  err->withColNumber(@6.first_column)->withLineNumber(@6.first_line);
+| type ID LPAREN RPAREN {
+  $$=new MethodStartNode($1,$2);
+  $$->setVal("<Type> identifier lparen rparen");
+
+  // Make a symbol table for it
+  SymbolTable* newSymTab = new SymbolTable();
+
+  // Figure out the type
+  string ts = ((TypeNode*)$1)->getTypeString();  // Type string
+  int d    = ((TypeNode*)$1)->getDimension();   // Dimension
+
+  // Make a type for the thing
+  MethodType* t=new MethodType();
+  ((MethodType*)(t->withBaseTypeString(ts))->withDimension(d))->
+    withSymbolTable(newSymTab);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the method
+  MethodSymbol* sym=new MethodSymbol();
+  sym->withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-1)
+  {
+    // TODO error about only differing from other method by return type
+  }
+  else if (res==-2)
+  {
+    // TODO error about same signature as other method
+  }
+  else if (res==-3)
+  {
+    // TODO error about sharing ID with class type
+  }
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
+}
+| type ID LPAREN error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
   scanner.addError(*err);
-  $$=new MethodDecNode($1,$2,$4);
-  $$->setVal("<IdBrack> identifier lparen <ParameterList> rparen <Error>");
+  $$=new MethodStartNode($1,$2);
+  $$->setVal("<Type> identifier lparen <Error>");
+}
+| type ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($1,$2);
+  $$->setVal("<Type> identifier <Error>");
+}
+| VOID ID LPAREN parameterlist RPAREN {
+  $$=new MethodStartNode($2,$4);
+  $$->setVal("void identifier lparen <ParameterList> rparen");
+
+  // Make a symbol table for it
+  SymbolTable* newSymTab = new SymbolTable();
+
+  // Get the parameter symbols
+  vector<Symbol*> symList;
+  ((ParameterListNode*)$4)->buildArgSymbolList(&symList);
+
+  // Get parameter strings, adding each symbol to it's new table
+  vector<string> argStrings;
+  for (auto& s : symList)
+  {
+    newSymTab->insert(s);
+    argStrings.push_back(s->getFullTypeString());
+  }
+
+  MethodType* t=new MethodType();
+  ((MethodType*)(t->withBaseTypeString("void")))->
+    withArgTypeList(argStrings)->
+    withSymbolTable(newSymTab);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the method
+  MethodSymbol* sym=new MethodSymbol();
+  sym->withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-1)
+  {
+    // TODO error about only differing from other method by return type
+  }
+  else if (res==-2)
+  {
+    // TODO error about same signature as other method
+  }
+  else if (res==-3)
+  {
+    // TODO error about sharing ID with class type
+  }
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
+}
+| VOID error LPAREN parameterlist RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($4);
+  $$->setVal("void <Error> lparen <ParameterList> rparen");
+}
+| VOID ID error parameterlist RPAREN {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($2,$4);
+  $$->setVal("void identifier <Error> <ParameterList> rparen");
+}
+| VOID ID LPAREN error RPAREN {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($2);
+  $$->setVal("void identifier lparen <Error> rparen");
+}
+| VOID ID LPAREN parameterlist error {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($2,$4);
+  $$->setVal("void identifier lparen <ParameterList> <Error>");
+}
+| VOID error LPAREN error RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode();
+  $$->setVal("void <Error> lparen <Error> rparen");
+}
+| VOID ID LPAREN RPAREN {
+  $$=new MethodStartNode($2);
+  $$->setVal("void identifier lparen rparen");
+
+  // Make a symbol table for it
+  SymbolTable* newSymTab = new SymbolTable();
+
+  // Make a type for the thing
+  MethodType* t=new MethodType();
+  t->withBaseTypeString("void")->
+    withSymbolTable(newSymTab);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the method
+  MethodSymbol* sym=new MethodSymbol();
+  sym->withName($2->getString())->
+    withLineNumber(@2.first_line)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-1)
+  {
+    // TODO error about only differing from other method by return type
+  }
+  else if (res==-2)
+  {
+    // TODO error about same signature as other method
+  }
+  else if (res==-3)
+  {
+    // TODO error about sharing ID with class type
+  }
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
+}
+| VOID ID LPAREN error {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($2);
+  $$->setVal("void identifier lparen <Error>");
+}
+| VOID ID error {
+  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($2);
+  $$->setVal("void identifier <Error>");
+}
+| idbrack ID LPAREN parameterlist RPAREN {
+  $$=new MethodStartNode($1,$2,$4);
+  $$->setVal("<IdBrack> identifier lparen <ParameterList> rparen");
+}
+| idbrack error LPAREN parameterlist RPAREN {
+  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($1,$4);
+  $$->setVal("<IdBrack> <Error> lparen <ParameterList> rparen");
+}
+| idbrack ID LPAREN error RPAREN {
+  err->withColNumber(@4.first_column)->withLineNumber(@4.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($1,$2);
+  $$->setVal("<IdBrack> identifier lparen <Error> rparen");
+}
+| idbrack ID LPAREN parameterlist error {
+  err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
+  scanner.addError(*err);
+  $$=new MethodStartNode($1,$2,$4);
+  $$->setVal("<IdBrack> identifier lparen <ParameterList> <Error>");
 }
 
 ;

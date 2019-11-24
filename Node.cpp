@@ -297,6 +297,36 @@ Node* MethodDecNode::getThird()
   return third;
 }
 
+/* METHOD DEC NODE DEFINITIONS */
+MethodStartNode::MethodStartNode(Node *lf, Node *sec, Node* trd, Node *rt) 
+  : Node(lf,rt) {
+  second=sec;
+  third=trd;
+}
+void MethodStartNode::print() {
+  cout << "<MethodStart> --> " + sval << endl;
+  if (left) left->print();
+  if (second) second->print();
+  if (third) third->print();
+  if (right) right->print();
+}
+void MethodStartNode::setSecond(Node* sec)
+{ 
+  second = sec;
+}
+Node* MethodStartNode::getSecond()
+{
+  return second;
+}
+void MethodStartNode::setThird(Node* trd)
+{ 
+  third = trd;
+}
+Node* MethodStartNode::getThird()
+{
+  return third;
+}
+
 /* PARAMETER LIST NODE */
 void ParameterListNode::print() {
   cout << "<ParameterList> --> " + sval << endl;
