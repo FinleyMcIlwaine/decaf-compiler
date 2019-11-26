@@ -27,6 +27,7 @@ extern SymbolTable* cur;
 extern TypeTable* types;
 
 Error* err=new Error();
+TypeError* terr=new TypeError();
 
 #define yylex() scanner.yylex()
 #define YYERROR_VERBOSE 1
@@ -166,6 +167,7 @@ classstart: CLASS ID {
   Symbol* sym=new ClassSymbol();
   sym->withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the root table
@@ -173,6 +175,11 @@ classstart: CLASS ID {
   if (res==-3)
   {
     // TODO Add error for duplicately defined class 
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("Class cannot be defined twice.");
+    scanner.addError(*terr);
   }
 
   // Then make the current symbol table the class' new symbol table
@@ -582,6 +589,7 @@ vardec: type ID SEMI {
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -621,6 +629,7 @@ vardec: type ID SEMI {
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -628,6 +637,7 @@ vardec: type ID SEMI {
   if (res==-3)
   {
     // TODO Error here about masking class type
+    
   }
   else if (res==-4)
   {
@@ -726,6 +736,7 @@ constructorstart: ID LPAREN RPAREN {
   sym->
     withName($1->getString())->
     withLineNumber(@1.first_line)->
+    withColNumber(@1.first_column)->
     withTypePtr(typePtr);
 
   // Put it in the current table
@@ -769,6 +780,7 @@ constructorstart: ID LPAREN RPAREN {
   CtorSymbol* sym=new CtorSymbol();
   sym->withName($1->getString())->
     withLineNumber(@1.first_line)->
+    withColNumber(@1.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -870,6 +882,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   MethodSymbol* sym=new MethodSymbol();
   sym->withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -946,6 +959,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   MethodSymbol* sym=new MethodSymbol();
   sym->withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -1008,6 +1022,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   MethodSymbol* sym=new MethodSymbol();
   sym->withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -1078,6 +1093,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   MethodSymbol* sym=new MethodSymbol();
   sym->withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -1172,6 +1188,7 @@ parameter: type ID {
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   ((ParameterNode*)$$)->setSymbol(sym);
@@ -1189,6 +1206,7 @@ parameter: type ID {
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   ((ParameterNode*)$$)->setSymbol(sym);
@@ -1344,6 +1362,7 @@ localvardec: type ID SEMI {
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table
@@ -1383,6 +1402,7 @@ localvardec: type ID SEMI {
   sym->
     withName($2->getString())->
     withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
     withTypePtr(loc);
 
   // Put it in the current table

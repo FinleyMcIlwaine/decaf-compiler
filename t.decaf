@@ -1,6 +1,6 @@
 class heyo 
 {
-    int 87id?;
+    int 87h;
     int zero;
     int[] one;
     hi[][] two;
@@ -9,6 +9,16 @@ class heyo
     int[] whaddup(int a, int[] b)
     {
         int x;
+        if ( y == 3 )
+        {
+            int if;
+            int haha;
+            {
+                in_block_type[] in_block;
+            }
+        } else {
+            int elsei;
+        }
     }
 }
 

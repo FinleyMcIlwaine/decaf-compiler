@@ -6,6 +6,7 @@
  *
  * Definition of MyScanner class member functions
 */
+
 #include "Node.hpp"
 #include "program5.tab.hpp"
 #include "MyScanner.hpp"
@@ -51,7 +52,22 @@ void MyScanner::printErrors()
   if (errors.size()==0) return;
   for(Error &err : errors)
   {
-    if (err.getErrLine()=="")
+    if (err.getErrLine()=="" && lines.size()!=0)
+    {
+      err.withErrLine(lines.at(err.getLine()-1));
+    }
+    err.print();
+  }
+  errors.clear();
+}
+
+// Prints all type errors stored in the errors array.
+void MyScanner::printTypeErrors()
+{
+  if (typeErrors.size()==0) return;
+  for(Error &err : typeErrors)
+  {
+    if (err.getErrLine()=="" && lines.size()!=0)
     {
       err.withErrLine(lines.at(err.getLine()-1));
     }
@@ -74,3 +90,19 @@ void MyScanner::addError(Error err)
   }
   errors.push_back(err);
 }
+
+// Adds an error to the errors array, but only if an error
+// has not already been added for that specific column and
+// line combination.
+void MyScanner::addTypeError(TypeError err)
+{
+  // Do not double-warn for same error spot
+  bool dup = false;
+  for(TypeError &e : typeErrors)
+  {
+    dup = (err.getLine()==e.getLine() && err.getColumn()==e.getColumn());
+    if (dup) return;
+  }
+  typeErrors.push_back(err);
+}
+

@@ -43,14 +43,18 @@ int main(int argc, char **argv)
   // Print syntax errors
   scanner.printErrors();
 
-  // Print syntax tree
-  if(tree) tree->print();
-  else cout << "Parse error at end of input." << endl;
+  // Type checking right here probably
+
+  // Don't print syntax tree for this assignment
+  // if (tree) tree->print();
+  
+  // Still print if there's no tree
+  if(!tree) cout << "Parse error at end of input." << endl;
   cout << endl;
 
   // Print the symbol tables
-  root->print(true);
-  cout << endl;
+  if (root) root->print(true);
+  else cout << "No root symbol table created!" << endl;
 
   return 0;
 }

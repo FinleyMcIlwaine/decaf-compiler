@@ -1,11 +1,15 @@
-void fb(){;;}
+class haha {
 
-void names()
-{
+    void fb(){;;}
 
-    goo a;
 
-    a.main();
-    a.c.a=a.boo(5);
-    return ;
+    void names()
+    {
+
+        goo a;
+
+        a.main();
+        a.c.a=a.boo(5);
+        return ;
+    }
 }

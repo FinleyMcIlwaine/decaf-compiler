@@ -35,4 +35,9 @@ class Error
     string errLine;
     string description;
 };
+
+class TypeError : public Error
+{
+
+};
 #endif

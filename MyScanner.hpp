@@ -28,10 +28,13 @@ class MyScanner : public yyFlexLexer
     int getLineNum();
     void read(char*);
     void printErrors();
+    void printTypeErrors();
     void printError();
     void addError(Error);
+    void addTypeError(TypeError);
   private:
     vector<Error> errors;
+    vector<TypeError> typeErrors;
     string line;
     vector<string> lines;
     int columnNumber;

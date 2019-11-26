@@ -1,3 +1,13 @@
+/*
+ * Error.hpp
+ * Finley McIlwaine
+ * Nov. 26, 2019
+ * COSC4785, Program 5
+ *
+ * Declaration of Symbol class
+*/
+
+
 #ifndef SYMBOL_HPP
 #define SYMBOL_HPP
 class TypeTable;
@@ -21,6 +31,7 @@ class Symbol
     virtual Symbol* clear();
     Symbol* withName(string name);
     Symbol* withLineNumber(int ln);
+    Symbol* withColNumber(int col);
     Symbol* withTypePtr(int tp);
     int getTypePtr();
     Type* getType();
@@ -35,6 +46,7 @@ class Symbol
   protected:
     string name;
     int lineNumber;
+    int columnNumber;
     int typePtr;
 };
 

@@ -36,6 +36,12 @@ Symbol* Symbol::withLineNumber(int n)
   return this;
 }
 
+Symbol* Symbol::withColNumber(int col)
+{
+  columnNumber=col;
+  return this;
+}
+
 Symbol* Symbol::withTypePtr(int tp)
 {
   typePtr=tp;
@@ -100,6 +106,7 @@ BlockSymbol* BlockSymbol::withLineNumber(int ln)
   lineNumber=ln;
   return this;
 }
+
 
 BlockSymbol* BlockSymbol::withTypePtr(int ptr)
 {
