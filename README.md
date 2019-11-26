@@ -1,3 +1,3 @@
 # flex-bison-decaf-parser
 ## By Finley McIlwaine
-A compiler project that uses the flex lexical analyzer and bison parser to build a parse tree of the world-renowned Decaf language.
+A full-featured compiler front-end for the world-renowned language "Decaf". Built using the Flex lexical scanner generator and Bison parser generator.
