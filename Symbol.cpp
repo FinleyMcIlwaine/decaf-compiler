@@ -1,8 +1,8 @@
 /*
  * Symbol.cpp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Definition of Symbol class member functions
  */
@@ -88,7 +88,24 @@ void Symbol::print()
   types->printSymbolTable(typePtr);
 }
 
-/* BLOCK SYMBOL DEFINITIONS */
+void Symbol::setValue(int v)
+{
+  intValue=v;
+}
+void Symbol::setValue(string v)
+{
+  refValue=v;
+}
+
+int Symbol::getIntValue()
+{
+  return intValue;
+}
+string Symbol::getRefValue()
+{
+  return refValue;
+}
+
 BlockSymbol::BlockSymbol()
 {
   this->clear();

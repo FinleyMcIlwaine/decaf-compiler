@@ -1,8 +1,8 @@
 /*
  * SymbolTable.hpp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Declaration of the Symbol Table class
 */
@@ -21,7 +21,7 @@ class SymbolTable
 {
   public:
     SymbolTable();
-    ~SymbolTable();
+    virtual ~SymbolTable();
     SymbolTable(SymbolTable* parent);
     SymbolTable* clear();
     SymbolTable* withParent(SymbolTable*);
@@ -33,12 +33,40 @@ class SymbolTable
     int getDepth();
     void print(bool root=false);
     SymbolTable* getParent();
+    virtual string getTableType();
+    string getEncapsulatingClassName();
  
-  private:
+  protected:
     unordered_map<string,vector<Symbol*>> table;
     SymbolTable* parent;
     vector<SymbolTable*> children;
     vector<Symbol*> printOrder;
     int depth;
+};
+
+class ClassTable : public SymbolTable
+{
+  public:
+    virtual string getTableType();
+    string getClassName();
+    void setClassName(string);
+  private:
+    string className;
+};
+
+class MethodTable : public SymbolTable
+{
+  public:
+    virtual string getTableType();
+    string getMethodName();
+    void setMethodName(string);
+  private:
+    string methodName;
+};
+
+class BlockTable : public SymbolTable
+{
+  public:
+    virtual string getTableType();
 };
 #endif

@@ -1,8 +1,8 @@
 /*
- * Error.hpp
+ * Symbol.hpp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Declaration of Symbol class
 */
@@ -38,6 +38,10 @@ class Symbol
     virtual string getSymType();
     string getBaseTypeString();
     string getFullTypeString();
+    void setValue(int);
+    void setValue(string);
+    int getIntValue();
+    string getRefValue();
     
     string getName();
     int getLineNumber();
@@ -47,6 +51,8 @@ class Symbol
     string name;
     int lineNumber;
     int columnNumber;
+    int intValue;
+    string refValue;
     int typePtr;
 };
 

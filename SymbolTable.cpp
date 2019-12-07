@@ -1,8 +1,8 @@
 /*
  * SymbolTable.cpp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Definition of Symbol Table class member functions
  */
@@ -54,6 +54,11 @@ SymbolTable* SymbolTable::withParent(SymbolTable* p)
 
 vector<Symbol*> SymbolTable::lookup(string name)
 {
+  // Needs to be very beefed up to handle things 
+  // like x.f(y) and so on. Should return some
+  // value indicating whether it is an l-value or
+  // and r-value
+  // Will take care of this on next assignment
   try {
     return table.at(name);
   } catch (...) {
@@ -182,4 +187,56 @@ void SymbolTable::print(bool root)
     sym->print();
     if (root) cout << endl;
   }
+}
+
+string SymbolTable::getEncapsulatingClassName()
+{
+  if (getParent()->getParent()==nullptr)
+  {
+    return ((ClassTable*) this)->getClassName();
+  }
+  else if (getParent()==nullptr)
+  {
+    return "";
+  }
+  else
+  {
+    return getParent()->getEncapsulatingClassName();
+  }
+}
+
+string SymbolTable::getTableType()
+{
+  return "generic";
+}
+
+string ClassTable::getTableType()
+{
+  return "class";
+}
+string ClassTable::getClassName()
+{
+  return className;
+}
+void ClassTable::setClassName(string cn)
+{
+  className=cn;
+}
+
+string MethodTable::getTableType()
+{
+  return "method";
+}
+string MethodTable::getMethodName()
+{
+  return methodName;
+}
+void MethodTable::setMethodName(string mn)
+{
+  methodName=mn;
+}
+
+string BlockTable::getTableType()
+{
+  return "block";
 }

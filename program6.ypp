@@ -1,8 +1,8 @@
 /*
- * program5.ypp
+ * program6.ypp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Bison grammar input file
 */
@@ -28,6 +28,7 @@ extern TypeTable* types;
 
 Error* err=new Error();
 TypeError* terr=new TypeError();
+string mainClass = "";
 
 #define yylex() scanner.yylex()
 #define YYERROR_VERBOSE 1
@@ -95,6 +96,7 @@ void yyerror(const char *);
 %token<pnode> THIS
 %token<pnode> INT
 %token<pnode> NEW
+%token<pnode> MAIN
 %token<pnode> COMMA
 %token<pnode> NUMBER
 %token<pnode> ID
@@ -154,8 +156,8 @@ classstart: CLASS ID {
   $$->setVal("class identifier");
 
   // Create a symbol table for the class
-  SymbolTable* newSymTab=new SymbolTable();
-
+  ClassTable* newSymTab=new ClassTable();
+  newSymTab->setClassName($2->getString());
   // Create the type for the class
   Type* newType=new Type();
   newType->withSymbolTable(newSymTab);
@@ -178,8 +180,8 @@ classstart: CLASS ID {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("Class cannot be defined twice.");
-    scanner.addError(*terr);
+      withDesc("Class '" + $2->getString() + "' has already been defined.");
+    scanner.addTypeError(*terr);
   }
 
   // Then make the current symbol table the class' new symbol table
@@ -592,6 +594,10 @@ vardec: type ID SEMI {
     withColNumber(@2.first_column)->
     withTypePtr(loc);
 
+  // Initialize it with zero if zero dimension int, else null
+  if (d==0 && t=="int") sym->setValue(0);
+  else sym->setValue("null");
+
   // Put it in the current table
   int res=cur->insert(sym);
   if (res==-3)
@@ -631,6 +637,9 @@ vardec: type ID SEMI {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+
+  // Initialize it with null
+  sym->setValue("null");
 
   // Put it in the current table
   int res=cur->insert(sym);
@@ -721,7 +730,8 @@ constructorstart: ID LPAREN RPAREN {
   $$->setVal("identifier lparen rparen");
 
   // Make a symbol table for this method
-  SymbolTable* newSymTab = new SymbolTable();
+  MethodTable* newSymTab = new MethodTable();
+  newSymTab->setMethodName($2->getString());
 
   // Create the type for this thing, it has no args!
   MethodType* t=new MethodType();
@@ -754,7 +764,8 @@ constructorstart: ID LPAREN RPAREN {
   $$->setVal("identifier lparen <ParameterList> rparen"); 
 
   // Make a symbol table for it
-  SymbolTable* newSymTab = new SymbolTable();
+  MethodTable* newSymTab = new MethodTable();
+  newSymTab->setMethodName($2->getString());
 
   // Get the parameter symbols
   vector<Symbol*> symList;
@@ -851,7 +862,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   $$->setVal("<Type> identifier lparen <ParameterList> rparen");
 
   // Make a symbol table for it
-  SymbolTable* newSymTab = new SymbolTable();
+  MethodTable* newSymTab = new MethodTable();
+  newSymTab->setMethodName($2->getString());
 
   // Get the parameter symbols
   vector<Symbol*> symList;
@@ -942,7 +954,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   $$->setVal("<Type> identifier lparen rparen");
 
   // Make a symbol table for it
-  SymbolTable* newSymTab = new SymbolTable();
+  MethodTable* newSymTab = new MethodTable();
+  newSymTab->setMethodName($2->getString());
 
   // Figure out the type
   string ts = ((TypeNode*)$1)->getTypeString();  // Type string
@@ -997,7 +1010,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   $$->setVal("void identifier lparen <ParameterList> rparen");
 
   // Make a symbol table for it
-  SymbolTable* newSymTab = new SymbolTable();
+  MethodTable* newSymTab = new MethodTable();
+  newSymTab->setMethodName($2->getString());
 
   // Get the parameter symbols
   vector<Symbol*> symList;
@@ -1080,7 +1094,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   $$->setVal("void identifier lparen rparen");
 
   // Make a symbol table for it
-  SymbolTable* newSymTab = new SymbolTable();
+  MethodTable* newSymTab = new MethodTable();
+  newSymTab->setMethodName($2->getString());
 
   // Make a type for the thing
   MethodType* t=new MethodType();
@@ -1148,6 +1163,104 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   $$=new MethodStartNode($1,$2,$4);
   $$->setVal("<IdBrack> identifier lparen <ParameterList> <Error>");
 }
+| VOID MAIN LPAREN RPAREN {
+  if (mainClass != "") {
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("'main' method already implemented in class '"+mainClass+"'.");
+    scanner.addTypeError(*terr);
+  }
+  else
+  {
+    mainClass=cur->getEncapsulatingClassName();
+  }
+  $$=new MethodStartNode();
+
+  // Make a symbol table for it
+  SymbolTable* newSymTab = new MethodTable();
+
+  // Make a type for the thing
+  MethodType* t=new MethodType();
+  t->withBaseTypeString("void")->
+    withSymbolTable(newSymTab);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the method
+  MethodSymbol* sym=new MethodSymbol();
+  sym->withName("main")->
+    withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-1)
+  {
+    // TODO error about only differing from other method by return type
+  }
+  else if (res==-2)
+  {
+    // TODO error about same signature as other method
+  }
+  else if (res==-3)
+  {
+    // TODO error about sharing ID with class type
+  }
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
+}
+| INT MAIN LPAREN RPAREN {
+  if (mainClass != "") {
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("'main' method already implemented in class '"+mainClass+"'.");
+    scanner.addTypeError(*terr);
+  }
+  else
+  {
+    mainClass=cur->getEncapsulatingClassName();
+  }
+  $$=new MethodStartNode();
+
+  // Make a symbol table for it
+  SymbolTable* newSymTab = new MethodTable();
+
+  // Make a type for the thing
+  MethodType* t=new MethodType();
+  ((MethodType*)(t->withBaseTypeString("int"))->withDimension(0))->
+    withSymbolTable(newSymTab);
+
+  int loc=types->addType(t);
+
+  // Create a symbol for the method
+  MethodSymbol* sym=new MethodSymbol();
+  sym->withName("main")->
+    withLineNumber(@2.first_line)->
+    withColNumber(@2.first_column)->
+    withTypePtr(loc);
+
+  // Put it in the current table
+  int res=cur->insert(sym);
+  if (res==-1)
+  {
+    // TODO error about only differing from other method by return type
+  }
+  else if (res==-2)
+  {
+    // TODO error about same signature as other method
+  }
+  else if (res==-3)
+  {
+    // TODO error about sharing ID with class type
+  }
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
+}
 
 ;
 
@@ -1191,6 +1304,9 @@ parameter: type ID {
     withColNumber(@2.first_column)->
     withTypePtr(loc);
 
+  if (d==0 && t=="int") sym->setValue(0);
+  else sym->setValue("null");
+
   ((ParameterNode*)$$)->setSymbol(sym);
 }
 | idbrack ID {
@@ -1208,6 +1324,8 @@ parameter: type ID {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+
+  sym->setValue("null");
 
   ((ParameterNode*)$$)->setSymbol(sym);
 }
@@ -1264,7 +1382,7 @@ stmtblockstart: LBRACE {
   $$->setVal("lbrace");
 
   // Make a sym tab
-  SymbolTable* newSymTab=new SymbolTable();
+  SymbolTable* newSymTab=new BlockTable();
 
   // Make a type for the thing
   Type* t=new Type();
@@ -1365,6 +1483,10 @@ localvardec: type ID SEMI {
     withColNumber(@2.first_column)->
     withTypePtr(loc);
 
+  // Initialize it
+  if (d==0 && t=="int") sym->setValue(0);
+  else sym->setValue("null");
+
   // Put it in the current table
   int res=cur->insert(sym);
   if (res==-3)
@@ -1404,6 +1526,9 @@ localvardec: type ID SEMI {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+
+  // Initialize it
+  sym->setValue("null");
 
   // Put it in the current table
   int res=cur->insert(sym);

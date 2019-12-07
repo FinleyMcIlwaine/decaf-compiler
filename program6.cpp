@@ -1,13 +1,13 @@
 /*
- * program5.cpp
+ * program6.cpp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Main file
 */
 #include "Node.hpp"
-#include "program5.tab.hpp"
+#include "program6.tab.hpp"
 #include "MyScanner.hpp"
 #include "Symbol.hpp"
 #include "SymbolTable.hpp"
@@ -43,11 +43,12 @@ int main(int argc, char **argv)
   // Print syntax errors
   scanner.printErrors();
 
-  // Type checking right here probably
-
-  // Don't print syntax tree for this assignment
-  // if (tree) tree->print();
+  // Type checking goes here
   
+
+  // Print type errors
+  scanner.printTypeErrors();
+
   // Still print if there's no tree
   if(!tree) cout << "Parse error at end of input." << endl;
   cout << endl;

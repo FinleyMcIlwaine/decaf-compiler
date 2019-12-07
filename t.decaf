@@ -1,51 +1,27 @@
-class heyo 
-{
-    int 87h;
-    int zero;
-    int[] one;
-    hi[][] two;
-    int[][][] three;
+class mainClass {
+    int x;
+    int y;
+    int m;
+    mainClass(int arg1, int[] arg2) {
+        int inside;
+        int constructor;
+    }
 
-    int[] whaddup(int a, int[] b)
-    {
-        int x;
-        if ( y == 3 )
-        {
-            int if;
-            int haha;
-            {
-                in_block_type[] in_block;
-            }
-        } else {
-            int elsei;
-        }
+    int main() {
+        int this_is_main;
+        int[] haha;
+        haha = 3;
     }
 }
 
-class yo
-{
-    int dis;
-    int[] is;
-    int kewl;
-    int yo;
-    int[][][] haha_yo(int yuhyuh) { 
-        int local;
-        int[] local_fella;
-        haha[][] do_it;
-        {
-            int inside_block;
-            int[] whoa_wow;
-            {
-                int[][] another_block;
-                {
-                    int and_another;
-                }
-            }
-        }
+class notMain {
+    int a;
+    int[] b;
+    int[][] c;
 
-    }
-
-    void myDude(int arg1, int[] arg2, int arg_3, myType[][] anotha_one) { 
-        hey[] we_did_it;
+    void main() {
+        int uhOh;
+        int twoMains;
+        a.this.f(y);
     }
 }

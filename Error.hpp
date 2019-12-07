@@ -1,8 +1,8 @@
 /*
  * Error.hpp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Declaration of the Error class
 */

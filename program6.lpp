@@ -1,9 +1,9 @@
 %{
 /*
- * program5.lpp
+ * program6.lpp
  * Finley McIlwaine
- * Nov. 26, 2019
- * COSC4785, Program 5
+ * Dec. 17, 2019
+ * COSC4785, Program 6
  *
  * Flex input file
 */
@@ -11,7 +11,7 @@
 #include<iostream>
 #include "MyScanner.hpp"
 #include "Node.hpp"
-#include "program5.tab.hpp"
+#include "program6.tab.hpp"
 
 using std::string;
 using std::cout;
@@ -23,7 +23,7 @@ string errLine;
 int errCol;
 %}
 
-%option outfile="program5_lex.cpp"
+%option outfile="program6_lex.cpp"
 %option yylineno
 %option noyywrap
 %option yyclass="MyScanner"
@@ -138,6 +138,10 @@ int errCol;
 "new" {
   read(yytext);
   return NEW;
+}
+"main" {
+  read(yytext);
+  return MAIN;
 }
 "," {
   read(yytext);
