@@ -35,7 +35,8 @@ class SymbolTable
     SymbolTable* getParent();
     virtual string getTableType();
     string getEncapsulatingClassName();
- 
+    Symbol* getEncapsulatingClassSymbol();
+
   protected:
     unordered_map<string,vector<Symbol*>> table;
     SymbolTable* parent;
@@ -48,9 +49,12 @@ class ClassTable : public SymbolTable
 {
   public:
     virtual string getTableType();
+    Symbol* getClassSymbol();
+    void setClassSymbol(Symbol*);
     string getClassName();
     void setClassName(string);
   private:
+    Symbol* mySymbol;
     string className;
 };
 

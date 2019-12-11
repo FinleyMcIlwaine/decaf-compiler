@@ -36,6 +36,11 @@ class Node {
     Node* getLeft();
     Node* getRight();
     virtual void print();
+    virtual void typeCheck();
+    void setType(Type*);
+    void setPotentialTypes(vector<Type*>);
+    vector<Type*> getPotentialTypes();
+    virtual Type* getType();
   protected:
     int yyline;
     int yycol;
@@ -45,6 +50,8 @@ class Node {
     int nextCol;
     int nextLine;
     Node *left, *right;
+    Type* myType;
+    vector<Type*> myPotentialTypes;
 };
 
 /** PROGRAM NODE TYPE **/

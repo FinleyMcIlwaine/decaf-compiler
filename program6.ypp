@@ -172,6 +172,9 @@ classstart: CLASS ID {
     withColNumber(@2.first_column)->
     withTypePtr(loc);
 
+  // Track the class symbol of the table
+  newSymTab->setClassSymbol(sym);
+
   // Put it in the root table
   int res=root->insert(sym);
   if (res==-3)
@@ -735,7 +738,7 @@ constructorstart: ID LPAREN RPAREN {
 
   // Create the type for this thing, it has no args!
   MethodType* t=new MethodType();
-  t->withBaseTypeString("void")->
+  t->withBaseTypeString("")->
     withDimension(0)->
     withSymbolTable(newSymTab);
 
@@ -1690,24 +1693,53 @@ stmt: SEMI {
 name: THIS {
   $$=new NameNode();
   $$->setVal("this");
+  Symbol* thisSym = cur->getEncapsulatingClassSymbol();
+  if (thisSym)
+  {
+    $$->setType(thisSym->getType());
+  }
 }
 | ID %prec IF {
   $$=new NameNode($1);
   $$->setVal("identifier");
+  vector<Symbol*> symbolsWithName = cur->lookup($1->getString());
+  if (symbolsWithName.size()==0)
+  {
+    terr->
+      withColNumber(@1.first_column)->
+      withLineNumber(@1.first_line)->
+      withDesc("identifier '"+$1->getString()+"' does not exist at current scope.");
+    scanner.addTypeError(*terr);
+  } else if (symbolsWithName.size()==1) {
+    $$->setType(symbolsWithName.at(0)->getType());
+  } else {
+    vector<Type*> pts;
+    for (int i=0; i<symbolsWithName.size(); i++)
+    {
+      pts.push_back(symbolsWithName.at(i)->getType());
+    }
+    $$->setPotentialTypes(pts);
+  }
 }
 | name DOT ID {
   $$=new NameNode($1,$3);
   $$->setVal("<Name> dot identifier");
+  // TODO Make sure the name has a reference type, then
+  // look up the ID in its associated symbol table, type is
+  // the t
 }
 | name DOT error {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
   $$=new NameNode($1);
   $$->setVal("<Name> dot <Error>");
+  yyerrok;
 }
 | name bracketexp {
   $$=new NameNode($1,$2);
   $$->setVal("<Name> <BracketExp>");
+  // TODO make sure the name is a reference type, with at least 1
+  // dimension. Then, type gets the type of name (-1 dimension)
 }
 
 ;

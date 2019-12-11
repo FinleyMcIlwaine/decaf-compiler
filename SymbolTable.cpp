@@ -54,14 +54,13 @@ SymbolTable* SymbolTable::withParent(SymbolTable* p)
 
 vector<Symbol*> SymbolTable::lookup(string name)
 {
-  // Needs to be very beefed up to handle things 
-  // like x.f(y) and so on. Should return some
-  // value indicating whether it is an l-value or
-  // and r-value
-  // Will take care of this on next assignment
   try {
     return table.at(name);
   } catch (...) {
+    if (getParent())
+    {
+      return getParent()->lookup(name);
+    }
     return {}; // Empty vector
   }
 }
@@ -205,9 +204,34 @@ string SymbolTable::getEncapsulatingClassName()
   }
 }
 
+Symbol* SymbolTable::getEncapsulatingClassSymbol()
+{
+  if (getParent()->getParent()==nullptr)
+  {
+    return ((ClassTable*) this)->getClassSymbol();
+  }
+  else if (getParent()==nullptr)
+  {
+    return nullptr;
+  }
+  else
+  {
+    return getParent()->getEncapsulatingClassSymbol();
+  }
+}
+
 string SymbolTable::getTableType()
 {
   return "generic";
+}
+
+void ClassTable::setClassSymbol(Symbol* s)
+{
+  mySymbol=s;
+}
+Symbol* ClassTable::getClassSymbol()
+{
+  return mySymbol;
 }
 
 string ClassTable::getTableType()

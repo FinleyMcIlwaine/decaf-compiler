@@ -94,6 +94,29 @@ void Node::print()
   if (right) left->print();
 }
 
+void Node::typeCheck()
+{
+  // TODO Need anything here? Probably not
+}
+
+void Node::setType(Type* t)
+{
+  myType=t;
+}
+void Node::setPotentialTypes(vector<Type*> pts)
+{
+  myPotentialTypes=pts;
+}
+
+Type* Node::getType()
+{
+  return myType;
+}
+vector<Type*> Node::getPotentialTypes()
+{
+  return myPotentialTypes;
+}
+
 /* PROGRAM NODE DEFINITIONS */
 void ProgramNode::print() {
   cout << "<Program> --> " + sval << endl;
