@@ -45,6 +45,7 @@ class Symbol
     
     string getName();
     int getLineNumber();
+    int getColNumber();
     virtual void print();
 
   protected:

@@ -110,3 +110,12 @@ void MyScanner::addTypeCheck(Node* n)
 {
   typeChecks.push_back(n);
 }
+
+void MyScanner::doTypeChecks()
+{
+  for (auto& n : typeChecks)
+  {
+    TypeError* te = n->typeCheck();
+    if (te) addTypeError(*te);
+  }
+}

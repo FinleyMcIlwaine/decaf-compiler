@@ -57,6 +57,10 @@ int Symbol::getLineNumber()
 {
   return lineNumber;
 }
+int Symbol::getColNumber()
+{
+  return columnNumber;
+}
 
 Type* Symbol::getType()
 {

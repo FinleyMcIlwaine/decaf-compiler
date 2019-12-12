@@ -12,11 +12,14 @@
 #include<string>
 #include <vector>
 #include "Symbol.hpp"
-class SymbolTable;
+#include "Type.hpp"
+#include "SymbolTable.hpp"
+#include "Error.hpp"
 using std::string;
 using std::endl;
 using std::cout;
 using std::vector;
+extern SymbolTable* root;
 
 /** BASE NODE TYPE **/
 class Node {
@@ -36,7 +39,7 @@ class Node {
     Node* getLeft();
     Node* getRight();
     virtual void print();
-    virtual void typeCheck();
+    virtual TypeError* typeCheck();
     void setType(Type*);
     void setPotentialTypes(vector<Type*>);
     vector<Type*> getPotentialTypes();
@@ -118,6 +121,7 @@ class VarDecNode : public Node
     Node* getMiddle();
     void setVarSymbol(Symbol*);
     Symbol* getVarSymbol();
+    virtual TypeError* typeCheck();
   private:
     Node *middle;
     Symbol* myVarSym;

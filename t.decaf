@@ -2,9 +2,14 @@ class mainClass {
     int x;
     int y;
     int x;
+    notType oopsie;
+
     mainClass(int arg1, int[] arg2) {
         int inside;
         int constructor;
+    }
+    mainClass(int lol, int[] sameTypes) {
+        notMain hahaUhOh;
     }
 
     int main() {
@@ -22,8 +27,10 @@ class notMain {
     void main() {
         int uhOh;
         int twoMains;
-        a.this.f(y);
-        a[5] = b;
-        b[3];
     }
+}
+
+class notType {
+    int thereIsATypeNow;
+    notMain haha;
 }

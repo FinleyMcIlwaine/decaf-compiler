@@ -34,6 +34,8 @@ class MyScanner : public yyFlexLexer
     void addError(Error);
     void addTypeError(TypeError);
     void addTypeCheck(Node*);
+    void doTypeChecks();
+
   private:
     vector<Error> errors;
     vector<TypeError> typeErrors;

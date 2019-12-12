@@ -94,11 +94,6 @@ void Node::print()
   if (right) left->print();
 }
 
-void Node::typeCheck()
-{
-  // TODO Need anything here? Probably not
-}
-
 void Node::setType(Type* t)
 {
   myType=t;
@@ -124,6 +119,12 @@ void Node::setSymbolTable(SymbolTable* st)
 SymbolTable* Node::getSymbolTable()
 {
   return mySymTab;
+}
+
+TypeError* Node::typeCheck()
+{
+  cout << "Base Node type check called? What'd you do?" << endl;
+  return nullptr;
 }
 
 /* PROGRAM NODE DEFINITIONS */
@@ -206,6 +207,21 @@ void VarDecNode::setMiddle(Node *mi)
 Node* VarDecNode::getMiddle()
 {
   return middle;
+}
+TypeError* VarDecNode::typeCheck()
+{
+  // How to look this up?
+  vector<Symbol*> myTypeSym = root->lookup(myVarSym->getType()->getBaseTypeString());
+  if (myTypeSym.size()==0)
+  {
+    TypeError* te = new TypeError();
+    te->
+      withColNumber(myVarSym->getColNumber())->
+      withLineNumber(myVarSym->getLineNumber())->
+      withDesc("error: identifier '"+myVarSym->getType()->getBaseTypeString()+"' does not name a type.");
+    return te;
+  }
+  return nullptr;
 }
 
 void VarDecNode::setVarSymbol(Symbol* vs)

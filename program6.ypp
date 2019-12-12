@@ -610,6 +610,7 @@ vardec: type ID SEMI {
   int res=cur->insert(sym);
   if (res==-3)
   {
+    // Class mask
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
@@ -618,13 +619,14 @@ vardec: type ID SEMI {
   }
   else if (res==-4)
   {
+    // Var Redef
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
       withDesc("error: identifier '" + $2->getString() + "' already exists locally.");
     scanner.addTypeError(*terr);
   }
-  else if(!cur->getDeleteOnResolve())
+  else if(!cur->getDeleteOnResolve() && t != "int")
   {
     $$->setSymbolTable(cur);
     ((VarDecNode*)$$)->setVarSymbol(sym);
@@ -667,12 +669,27 @@ vardec: type ID SEMI {
   int res=cur->insert(sym);
   if (res==-3)
   {
-    // TODO Error here about masking class type
-    
+    // Error here about masking class type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
   }
   else if (res==-4)
   {
-    // TODO Error here about var redefinition
+    // Error here about var redefinition
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' already exists locally.");
+    scanner.addTypeError(*terr);
+  }
+  else if(!cur->getDeleteOnResolve())
+  {
+    $$->setSymbolTable(cur);
+    ((VarDecNode*)$$)->setVarSymbol(sym);
+    scanner.addTypeCheck($$);
   }
 }
 | idbrack error SEMI {
@@ -803,7 +820,7 @@ constructorstart: ID LPAREN RPAREN {
 
   // Make a type for the thing
   MethodType* t=new MethodType();
-  ((MethodType*)(t->withBaseTypeString("void")))->
+  ((MethodType*)(t->withBaseTypeString("null")))->
     withArgTypeList(argStrings)->
     withSymbolTable(newSymTab);
 
@@ -816,13 +833,31 @@ constructorstart: ID LPAREN RPAREN {
     withColNumber(@1.first_column)->
     withTypePtr(loc);
 
-  // Put it in the current table
-  int res=cur->insert(sym);
-  if (res==-2)
+  // Put it in the current table if its valid
+  if ($2->getString()!=cur->getEncapsulatingClassName())
   {
-    // TODO error here about redeclaration of ctor method
+    // Does not match class name
+    terr->
+      withColNumber(@1.first_column)->
+      withLineNumber(@1.first_line)->
+      withDesc("error: method '" + $1->getString() + "' cannot have 'null' return type.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
-
+  else 
+  {
+    int res=cur->insert(sym);
+    if (res==-2)
+    {
+      // Constructor with same type has already been defined
+      terr->
+        withColNumber(@1.first_column)->
+        withLineNumber(@1.first_line)->
+        withDesc("error: constructor with same type for class '" + $1->getString() + "' has already been defined.");
+      scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
+  }
   // Then make the current symbol table the method's new symbol table
   cur=cur->addChild(newSymTab);
 }
@@ -1819,7 +1854,6 @@ name: THIS {
     }
   }
 }
-
 
 ;
 

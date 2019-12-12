@@ -43,8 +43,8 @@ int main(int argc, char **argv)
   // Print syntax errors
   scanner.printErrors();
 
-  // Type checking goes here
-  
+  // Type check
+  scanner.doTypeChecks();
 
   // Print type errors
   scanner.printTypeErrors();
