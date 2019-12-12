@@ -774,7 +774,7 @@ constructorstart: ID LPAREN RPAREN {
 
   // Create the type for this thing, it has no args!
   MethodType* t=new MethodType();
-  t->withBaseTypeString("")->
+  t->withBaseTypeString("null")->
     withDimension(0)->
     withSymbolTable(newSymTab);
 
@@ -789,12 +789,30 @@ constructorstart: ID LPAREN RPAREN {
     withTypePtr(typePtr);
 
   // Put it in the current table
-  int res=cur->insert(sym);
-  if (res==-2)
+  if ($2->getString()!=cur->getEncapsulatingClassName())
   {
-    // TODO error here about redeclaration of ctor method
+    // Does not match class name
+    terr->
+      withColNumber(@1.first_column)->
+      withLineNumber(@1.first_line)->
+      withDesc("error: method '" + $1->getString() + "' cannot have 'null' return type.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
-
+  else 
+  {
+    int res=cur->insert(sym);
+    if (res==-2)
+    {
+      // Constructor with same type has already been defined
+      terr->
+        withColNumber(@1.first_column)->
+        withLineNumber(@1.first_line)->
+        withDesc("error: constructor with same type for class '" + $1->getString() + "' has already been defined.");
+      scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
+  }
   // Then make the current symbol table the method's new symbol table
   cur=cur->addChild(newSymTab);
 }

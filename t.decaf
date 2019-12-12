@@ -8,8 +8,11 @@ class mainClass {
         int inside;
         int constructor;
     }
-    mainClass(int lol, int[] sameTypes) {
+    mainClass() {
         notMain hahaUhOh;
+    }
+    mainClass() {
+        int eek;
     }
 
     int main() {

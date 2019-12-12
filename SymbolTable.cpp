@@ -80,6 +80,7 @@ int SymbolTable::insert(Symbol* s)
     // and print it
 //    matches.push_back(s);
 //    printOrder.push_back(s);
+    int okay=0;
     for (auto& symMatch : matches)
     { 
       if ((s->getSymType()=="method_type" || 
@@ -93,29 +94,25 @@ int SymbolTable::insert(Symbol* s)
         // Cannot just have different return type.
         if (mSym->getNumArgs()!=tSym->getNumArgs())
         {
-          matches.push_back(s);
-          printOrder.push_back(s);
-          return 0;
+          // okay
         }
         // Have same num args, must be different types
         else if (mSym->getArgTypesString()!=tSym->getArgTypesString())
         {
-          matches.push_back(s);
-          printOrder.push_back(s);
-          return 0;
+          // okay
         }
         // Have same num and type of args, figure out which error this is.
         else if (mSym->getBaseTypeString()!=tSym->getBaseTypeString())
         {
           // Means they differ only by return type
-          delete s;
-          return -1;
+          okay = -1;
+          break;
         }
         else 
         {
           // Means they are the exact same signature
-          delete s;
-          return -2;
+          okay = -2;
+          break;
         }
       }
       // Both are not methods or constructors
@@ -125,27 +122,28 @@ int SymbolTable::insert(Symbol* s)
             s->getSymType()!="constructor_type"))
       {
         // Means one of them is class type, cannot be masked (except by ctor)
-        delete s;
-        return -3;
+        okay = -3;
+        break;
       }
       else if (s->getSymType()=="var_type" && symMatch->getSymType()=="var_type")
       {
         // Means they are two variables with the same name
-        delete s;
-        return -4;
+        okay = -4;
+        break;
       }
       // Add more violations here if they come up
-      else
-      {
-        matches.push_back(s);
-        printOrder.push_back(s);
-        return 0;
-      }
     }
-    matches.push_back(s);
-    printOrder.push_back(s);
-
-    return 0;
+    if (okay==0)
+    {
+      table[s->getName()].push_back(s);
+      printOrder.push_back(s);
+      return 0;
+    }
+    else 
+    {
+      delete s;
+      return okay;
+    }
   } catch (...) {
     // No collisions at given name, make new vector and emplace
     vector<Symbol*> symVec = { s };

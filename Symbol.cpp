@@ -70,7 +70,7 @@ Type* Symbol::getType()
 string Symbol::getFullTypeString()
 {
   Type* t=getType();
-  if (!t) return "";
+  if (!t) return "null";
   return t->getFullTypeString();
 }
 

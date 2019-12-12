@@ -31,7 +31,7 @@ string MethodType::getFullTypeString()
     s+="[]";
   }
   s += " <-";
-  if (argTypeStrs.size()==0) return s+" void";
+  if (argTypeStrs.size()==0) return s+" null";
   for (int i=0; i<argTypeStrs.size(); i++)
   {
     string t=argTypeStrs.at(i);
@@ -53,7 +53,7 @@ int MethodType::getNumArgs()
 }
 string MethodType::getArgTypesString()
 {
-  if (argTypeStrs.size()==0) return "void";
+  if (argTypeStrs.size()==0) return "null";
   string s="";
   for (int i=0; i<argTypeStrs.size(); i++)
   {
