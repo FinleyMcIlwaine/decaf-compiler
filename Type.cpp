@@ -91,3 +91,17 @@ Type* Type::withSymbolTable(SymbolTable* tab)
   myTable=tab;
   return this;
 }
+
+string Type::getTypeType()
+{
+  return "type";
+}
+
+string MethodType::getTypeType()
+{
+  return "method_type";
+}
+vector<string> MethodType::getArgTypeList()
+{
+  return argTypeStrs;
+}

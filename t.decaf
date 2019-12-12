@@ -23,5 +23,7 @@ class notMain {
         int uhOh;
         int twoMains;
         a.this.f(y);
+        a[5] = b;
+        b[3];
     }
 }

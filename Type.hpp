@@ -26,6 +26,7 @@ class Type
     Type* withDimension(int);
     SymbolTable* getSymbolTable();
     Type* withSymbolTable(SymbolTable*);
+    virtual string getTypeType();
  
   protected:
     SymbolTable* myTable;
@@ -39,8 +40,10 @@ class MethodType : public Type
     virtual string getFullTypeString();
     void addArgType(string);
     MethodType* withArgTypeList(vector<string>&);
+    vector<string> getArgTypeList();
     int getNumArgs();
     string getArgTypesString();
+    virtual string getTypeType();
 
   private:
     vector<string> argTypeStrs;
