@@ -1,7 +1,7 @@
 class mainClass {
     int x;
     int y;
-    int m;
+    int x;
     mainClass(int arg1, int[] arg2) {
         int inside;
         int constructor;

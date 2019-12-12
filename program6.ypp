@@ -183,6 +183,8 @@ classstart: CLASS ID {
   int res=root->insert(sym);
   if (res==-3)
   {
+    // A class with this identifier has already been defined, error and mark
+    // the symbol table for deletion and pretend the next block of code never happened.
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
@@ -608,11 +610,25 @@ vardec: type ID SEMI {
   int res=cur->insert(sym);
   if (res==-3)
   {
-    // TODO Error here about id matching class name
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
   }
   else if (res==-4)
   {
-    // TODO Error here about var redefinition
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' already exists locally.");
+    scanner.addTypeError(*terr);
+  }
+  else if(!cur->getDeleteOnResolve())
+  {
+    $$->setSymbolTable(cur);
+    ((VarDecNode*)$$)->setVarSymbol(sym);
+    scanner.addTypeCheck($$);
   }
 }
 | type error SEMI {

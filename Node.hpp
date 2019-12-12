@@ -41,6 +41,8 @@ class Node {
     void setPotentialTypes(vector<Type*>);
     vector<Type*> getPotentialTypes();
     virtual Type* getType();
+    void setSymbolTable(SymbolTable*);
+    SymbolTable* getSymbolTable();
   protected:
     int yyline;
     int yycol;
@@ -52,6 +54,7 @@ class Node {
     Node *left, *right;
     Type* myType;
     vector<Type*> myPotentialTypes;
+    SymbolTable* mySymTab;
 };
 
 /** PROGRAM NODE TYPE **/
@@ -113,8 +116,11 @@ class VarDecNode : public Node
     void print();
     void setMiddle(Node *mi);
     Node* getMiddle();
+    void setVarSymbol(Symbol*);
+    Symbol* getVarSymbol();
   private:
     Node *middle;
+    Symbol* myVarSym;
 };
 
 /** TYPE NODE TYPE **/

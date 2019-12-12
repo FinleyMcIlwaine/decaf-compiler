@@ -11,6 +11,7 @@
 #if !defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
 #endif
+class Node;
 #include "Error.hpp"
 #include<string>
 #include<vector>
@@ -32,9 +33,11 @@ class MyScanner : public yyFlexLexer
     void printError();
     void addError(Error);
     void addTypeError(TypeError);
+    void addTypeCheck(Node*);
   private:
     vector<Error> errors;
     vector<TypeError> typeErrors;
+    vector<Node*> typeChecks;
     string line;
     vector<string> lines;
     int columnNumber;

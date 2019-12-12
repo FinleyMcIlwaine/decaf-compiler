@@ -117,6 +117,15 @@ vector<Type*> Node::getPotentialTypes()
   return myPotentialTypes;
 }
 
+void Node::setSymbolTable(SymbolTable* st)
+{
+  mySymTab=st;
+}
+SymbolTable* Node::getSymbolTable()
+{
+  return mySymTab;
+}
+
 /* PROGRAM NODE DEFINITIONS */
 void ProgramNode::print() {
   cout << "<Program> --> " + sval << endl;
@@ -197,6 +206,15 @@ void VarDecNode::setMiddle(Node *mi)
 Node* VarDecNode::getMiddle()
 {
   return middle;
+}
+
+void VarDecNode::setVarSymbol(Symbol* vs)
+{
+  myVarSym=vs;
+}
+Symbol* VarDecNode::getVarSymbol()
+{
+  return myVarSym;
 }
 
 /* TYPE NODE DEFINITIONS */

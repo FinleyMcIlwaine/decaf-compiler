@@ -106,3 +106,7 @@ void MyScanner::addTypeError(TypeError err)
   typeErrors.push_back(err);
 }
 
+void MyScanner::addTypeCheck(Node* n)
+{
+  typeChecks.push_back(n);
+}
