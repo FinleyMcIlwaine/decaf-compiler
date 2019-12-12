@@ -1,0 +1,15 @@
+class haha {
+    int x;
+    int y;
+    int z;
+    haha(int con, int[] struct) {
+        int lol;
+    }
+}
+
+class haha {
+    int will;
+    int this_;
+    int be;
+    int here;
+}

@@ -140,6 +140,10 @@ program: program classdec {
 classdec: classstart classbody {
   $$=new ClassDecNode($1,$2);
   $$->setVal("<ClassStart> <ClassBody>");
+  if (cur->getDeleteOnResolve())
+  {
+    delete cur;
+  }
   cur=root;
 }
 | classstart error {
@@ -179,14 +183,13 @@ classstart: CLASS ID {
   int res=root->insert(sym);
   if (res==-3)
   {
-    // TODO Add error for duplicately defined class 
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
       withDesc("error: class '" + $2->getString() + "' has already been defined.");
     scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
-
   // Then make the current symbol table the class' new symbol table
   cur=root->addChild(newSymTab); 
 } 
@@ -1708,7 +1711,7 @@ name: THIS {
     terr->
       withColNumber(@1.first_column)->
       withLineNumber(@1.first_line)->
-      withDesc("error: identifier '"+$1->getString()+"' does not exist at current scope.");
+      withDesc("error: identifier '"+$1->getString()+"' does not exist in current scope.");
     scanner.addTypeError(*terr);
   } else if (symbolsWithName.size()==1) {
     $$->setType(symbolsWithName.at(0)->getType());

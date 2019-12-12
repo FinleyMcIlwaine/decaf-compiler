@@ -78,8 +78,8 @@ int SymbolTable::insert(Symbol* s)
     vector<Symbol*> matches = table.at(s->getName());
     // Assuming we still want to keep track of this symbol
     // and print it
-    matches.push_back(s);
-    printOrder.push_back(s);
+//    matches.push_back(s);
+//    printOrder.push_back(s);
     for (auto& symMatch : matches)
     { 
       if ((s->getSymType()=="method_type" || 
@@ -93,22 +93,28 @@ int SymbolTable::insert(Symbol* s)
         // Cannot just have different return type.
         if (mSym->getNumArgs()!=tSym->getNumArgs())
         {
+          matches.push_back(s);
+          printOrder.push_back(s);
           return 0;
         }
         // Have same num args, must be different types
         else if (mSym->getArgTypesString()!=tSym->getArgTypesString())
         {
+          matches.push_back(s);
+          printOrder.push_back(s);
           return 0;
         }
         // Have same num and type of args, figure out which error this is.
         else if (mSym->getBaseTypeString()!=tSym->getBaseTypeString())
         {
           // Means they differ only by return type
+          delete s;
           return -1;
         }
         else 
         {
           // Means they are the exact same signature
+          delete s;
           return -2;
         }
       }
@@ -119,19 +125,26 @@ int SymbolTable::insert(Symbol* s)
             s->getSymType()!="constructor_type"))
       {
         // Means one of them is class type, cannot be masked (except by ctor)
+        delete s;
         return -3;
       }
       else if (s->getSymType()=="var_type" && symMatch->getSymType()=="var_type")
       {
         // Means they are two variables with the same name
+        delete s;
         return -4;
       }
       // Add more violations here if they come up
       else
       {
+        matches.push_back(s);
+        printOrder.push_back(s);
         return 0;
       }
     }
+    matches.push_back(s);
+    printOrder.push_back(s);
+
     return 0;
   } catch (...) {
     // No collisions at given name, make new vector and emplace
@@ -218,6 +231,15 @@ Symbol* SymbolTable::getEncapsulatingClassSymbol()
   {
     return getParent()->getEncapsulatingClassSymbol();
   }
+}
+
+void SymbolTable::setDeleteOnResolve(bool d)
+{
+  deleteOnResolve=d;
+}
+bool SymbolTable::getDeleteOnResolve()
+{
+  return deleteOnResolve;
 }
 
 string SymbolTable::getTableType()

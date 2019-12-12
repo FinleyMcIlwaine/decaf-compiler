@@ -36,6 +36,8 @@ class SymbolTable
     virtual string getTableType();
     string getEncapsulatingClassName();
     Symbol* getEncapsulatingClassSymbol();
+    void setDeleteOnResolve(bool);
+    bool getDeleteOnResolve();
 
   protected:
     unordered_map<string,vector<Symbol*>> table;
@@ -43,6 +45,7 @@ class SymbolTable
     vector<SymbolTable*> children;
     vector<Symbol*> printOrder;
     int depth;
+    bool deleteOnResolve;
 };
 
 class ClassTable : public SymbolTable

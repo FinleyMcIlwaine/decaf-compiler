@@ -27,7 +27,7 @@ class Symbol
   public:
     Symbol();
     Symbol(Symbol& copied);
-    virtual ~Symbol() = default;
+    virtual ~Symbol()=default;
     virtual Symbol* clear();
     Symbol* withName(string name);
     Symbol* withLineNumber(int ln);

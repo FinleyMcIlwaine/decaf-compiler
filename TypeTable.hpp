@@ -27,6 +27,7 @@ class TypeTable
     Type* getType(int);
     SymbolTable* hasSymbolTable(Type*);
     void printSymbolTable(int typeIndex);
+    void deleteType(int);
  
   private:
     vector<Type*> table;
