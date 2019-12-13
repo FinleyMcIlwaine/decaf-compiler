@@ -184,18 +184,29 @@ int SymbolTable::getDepth()
 {
   return depth;
 }
+void SymbolTable::kill()
+{
+  dead=true;
+}
+bool SymbolTable::isDead()
+{
+  return dead;
+}
 
 void SymbolTable::print(bool root)
 {
   int spaces=depth*2;
   for (auto& sym : printOrder)
   {
-    if (sym->getSymType()!="block_type")
+    if (!sym->isDead())
     {
-      for(int i=0; i<spaces; i++) cout << " ";
+      if (sym->getSymType()!="block_type")
+      {
+        for(int i=0; i<spaces; i++) cout << " ";
+      }
+      sym->print();
+      if (root) cout << endl;
     }
-    sym->print();
-    if (root) cout << endl;
   }
 }
 

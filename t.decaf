@@ -7,6 +7,7 @@ class mainClass {
     mainClass(int arg1, int[] arg2) {
         int inside;
         int constructor;
+        oopsie = 5;
     }
     mainClass() {
         notMain hahaUhOh;
@@ -34,6 +35,5 @@ class notMain {
 }
 
 class notType {
-    int thereIsATypeNow;
-    notMain haha;
+    int itsATypeNowHehe;
 }

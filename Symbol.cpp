@@ -66,6 +66,14 @@ Type* Symbol::getType()
 {
   return types->getType(typePtr);
 }
+void Symbol::kill()
+{
+  dead=true;
+}
+bool Symbol::isDead()
+{
+  return dead;
+}
 
 string Symbol::getFullTypeString()
 {

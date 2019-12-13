@@ -976,15 +976,40 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   int res=cur->insert(sym);
   if (res==-1)
   {
-    // TODO error about only differing from other method by return type
+    // error about only differing from other method by return type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+     scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-2)
   {
-    // TODO error about same signature as other method
+    // error about same signature as other method
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-3)
   {
-    // TODO error about sharing ID with class type
+    // error about sharing ID with class type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
+  }
+  else if(!cur->getDeleteOnResolve())
+  {
+    $$->setSymbolTable(cur);
+    ((MethodStartNode*)$$)->setMethodSymbol(sym);
+    ((MethodStartNode*)$$)->setMethodTable(newSymTab);
+    scanner.addTypeCheck($$);
   }
 
   // Then make the current symbol table the method's new symbol table
@@ -1054,15 +1079,40 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   int res=cur->insert(sym);
   if (res==-1)
   {
-    // TODO error about only differing from other method by return type
+    // error about only differing from other method by return type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+     scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-2)
   {
-    // TODO error about same signature as other method
+    // error about same signature as other method
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-3)
   {
-    // TODO error about sharing ID with class type
+    // error about sharing ID with class type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
+  }
+  else if(!cur->getDeleteOnResolve())
+  {
+    $$->setSymbolTable(cur);
+    ((MethodStartNode*)$$)->setMethodSymbol(sym);
+    ((MethodStartNode*)$$)->setMethodTable(newSymTab);
+    scanner.addTypeCheck($$);
   }
 
   // Then make the current symbol table the method's new symbol table
@@ -1118,15 +1168,40 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   int res=cur->insert(sym);
   if (res==-1)
   {
-    // TODO error about only differing from other method by return type
+    // error about only differing from other method by return type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+     scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-2)
   {
-    // TODO error about same signature as other method
+    // error about same signature as other method
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-3)
   {
-    // TODO error about sharing ID with class type
+    // error about sharing ID with class type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
+  }
+  else if(!cur->getDeleteOnResolve())
+  {
+    $$->setSymbolTable(cur);
+    ((MethodStartNode*)$$)->setMethodSymbol(sym);
+    ((MethodStartNode*)$$)->setMethodTable(newSymTab);
+    scanner.addTypeCheck($$);
   }
 
   // Then make the current symbol table the method's new symbol table
@@ -1190,15 +1265,40 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   int res=cur->insert(sym);
   if (res==-1)
   {
-    // TODO error about only differing from other method by return type
+    // error about only differing from other method by return type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+     scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-2)
   {
-    // TODO error about same signature as other method
+    // error about same signature as other method
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else if (res==-3)
   {
-    // TODO error about sharing ID with class type
+    // error about sharing ID with class type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
+  }
+  else if(!cur->getDeleteOnResolve())
+  {
+    $$->setSymbolTable(cur);
+    ((MethodStartNode*)$$)->setMethodSymbol(sym);
+    ((MethodStartNode*)$$)->setMethodTable(newSymTab);
+    scanner.addTypeCheck($$);
   }
 
   // Then make the current symbol table the method's new symbol table
@@ -1269,36 +1369,55 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withColNumber(@2.first_column)->
     withTypePtr(loc);
 
-  // Put it in the current table
-  int res=cur->insert(sym);
-  if (res==-1)
-  {
-    // TODO error about only differing from other method by return type
-  }
-  else if (res==-2)
-  {
-    // TODO error about same signature as other method
-  }
-  else if (res==-3)
-  {
-    // TODO error about sharing ID with class type
-  }
-
-  // Then make the current symbol table the method's new symbol table
-  cur=cur->addChild(newSymTab);
-}
-| INT MAIN LPAREN RPAREN {
   if (mainClass != "") {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
       withDesc("error: 'main' method already implemented in class '"+mainClass+"'.");
     scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
   else
   {
     mainClass=cur->getEncapsulatingClassName();
+    // Put it in the current table
+    int res=cur->insert(sym);
+    if (res==-1)
+    {
+      // error about only differing from other method by return type
+      terr->
+        withColNumber(@2.first_column)->
+        withLineNumber(@2.first_line)->
+        withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+       scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
+    else if (res==-2)
+    {
+      // error about same signature as other method
+      terr->
+        withColNumber(@2.first_column)->
+        withLineNumber(@2.first_line)->
+        withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+      scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
+    else if (res==-3)
+    {
+      // error about sharing ID with class type
+      terr->
+        withColNumber(@2.first_column)->
+        withLineNumber(@2.first_line)->
+        withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
   }
+
+  // Then make the current symbol table the method's new symbol table
+  cur=cur->addChild(newSymTab);
+}
+| INT MAIN LPAREN RPAREN {
   $$=new MethodStartNode();
 
   // Make a symbol table for it
@@ -1318,19 +1437,49 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withColNumber(@2.first_column)->
     withTypePtr(loc);
 
-  // Put it in the current table
-  int res=cur->insert(sym);
-  if (res==-1)
-  {
-    // TODO error about only differing from other method by return type
+  if (mainClass != "") {
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: 'main' method already implemented in class '"+mainClass+"'.");
+    scanner.addTypeError(*terr);
+    newSymTab->setDeleteOnResolve(true);
   }
-  else if (res==-2)
+  else
   {
-    // TODO error about same signature as other method
-  }
-  else if (res==-3)
-  {
-    // TODO error about sharing ID with class type
+    mainClass=cur->getEncapsulatingClassName();
+    // Put it in the current table
+    int res=cur->insert(sym);
+    if (res==-1)
+    {
+      // error about only differing from other method by return type
+      terr->
+        withColNumber(@2.first_column)->
+        withLineNumber(@2.first_line)->
+        withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+       scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
+    else if (res==-2)
+    {
+      // error about same signature as other method
+      terr->
+        withColNumber(@2.first_column)->
+        withLineNumber(@2.first_line)->
+        withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+      scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
+    else if (res==-3)
+    {
+      // error about sharing ID with class type
+      terr->
+        withColNumber(@2.first_column)->
+        withLineNumber(@2.first_line)->
+        withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      scanner.addTypeError(*terr);
+      newSymTab->setDeleteOnResolve(true);
+    }
   }
 
   // Then make the current symbol table the method's new symbol table

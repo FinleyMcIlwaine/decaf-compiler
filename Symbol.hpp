@@ -47,6 +47,8 @@ class Symbol
     int getLineNumber();
     int getColNumber();
     virtual void print();
+    void kill();
+    bool isDead();
 
   protected:
     string name;
@@ -55,6 +57,7 @@ class Symbol
     int intValue;
     string refValue;
     int typePtr;
+    bool dead;
 };
 
 // I use this fake block symbol so blocks

@@ -219,6 +219,7 @@ TypeError* VarDecNode::typeCheck()
       withColNumber(myVarSym->getColNumber())->
       withLineNumber(myVarSym->getLineNumber())->
       withDesc("error: identifier '"+myVarSym->getType()->getBaseTypeString()+"' does not name a type.");
+    myVarSym->kill();
     return te;
   }
   return nullptr;
@@ -382,6 +383,39 @@ void MethodStartNode::setThird(Node* trd)
 Node* MethodStartNode::getThird()
 {
   return third;
+}
+TypeError* MethodStartNode::typeCheck()
+{
+  vector<Symbol*> myTypeSym = root->lookup(methodSymbol->getType()->getBaseTypeString());
+  if (myTypeSym.size()==0)
+  {
+    // Should delete the method table and all that good stuff
+    TypeError* te = new TypeError();
+    te->
+      withColNumber(methodSymbol->getColNumber())->
+      withLineNumber(methodSymbol->getLineNumber())->
+      withDesc("error: identifier '"+methodSymbol->getType()->getBaseTypeString()+"' does not name a type.");
+    methodTable->kill();
+    methodSymbol->kill();
+    return te;
+  }
+  return nullptr;
+}
+Symbol* MethodStartNode::getMethodSymbol()
+{
+  return methodSymbol;
+}
+SymbolTable* MethodStartNode::getMethodTable()
+{
+  return methodTable;
+}
+void MethodStartNode::setMethodSymbol(Symbol* s)
+{
+  methodSymbol=s;
+}
+void MethodStartNode::setMethodTable(SymbolTable* st)
+{
+  methodTable=st;
 }
 
 /* PARAMETER LIST NODE */

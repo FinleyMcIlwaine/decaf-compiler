@@ -38,6 +38,8 @@ class SymbolTable
     Symbol* getEncapsulatingClassSymbol();
     void setDeleteOnResolve(bool);
     bool getDeleteOnResolve();
+    void kill();
+    bool isDead();
 
   protected:
     unordered_map<string,vector<Symbol*>> table;
@@ -46,6 +48,7 @@ class SymbolTable
     vector<Symbol*> printOrder;
     int depth;
     bool deleteOnResolve;
+    bool dead;
 };
 
 class ClassTable : public SymbolTable

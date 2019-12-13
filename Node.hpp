@@ -219,7 +219,14 @@ class MethodStartNode : public Node
     void setThird(Node* trd);
     Node* getSecond();
     Node* getThird();
+    virtual TypeError* typeCheck();
+    void setMethodSymbol(Symbol*);
+    void setMethodTable(SymbolTable*);
+    Symbol* getMethodSymbol();
+    SymbolTable* getMethodTable();
   private:
+    Symbol* methodSymbol;
+    SymbolTable* methodTable;
     Node* second;
     Node* third;
 };
