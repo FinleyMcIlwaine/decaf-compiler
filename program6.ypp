@@ -1767,11 +1767,27 @@ localvardec: type ID SEMI {
   int res=cur->insert(sym);
   if (res==-3)
   {
-    // TODO Error here about masking class type
+    // Error here about masking class type
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
   }
   else if (res==-4)
   {
-    // TODO Error here about var redefinition
+    // Error here about var redefinition
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' already exists locally.");
+    scanner.addTypeError(*terr);
+  }
+  else if(!cur->getDeleteOnResolve())
+  {
+    $$->setMySymbolTable(cur);
+    ((VarDecNode*)$$)->setVarSymbol(sym);
+    scanner.addTypeCheck($$);
   }
 }
 | idbrack error SEMI {

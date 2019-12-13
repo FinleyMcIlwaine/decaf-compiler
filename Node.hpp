@@ -116,7 +116,7 @@ class VarDecNode : public Node
 {
   public:
     VarDecNode(Node *lf=0, Node *mi=0, Node *rt=0);
-    void print();
+    virtual void print();
     void setMiddle(Node *mi);
     Node* getMiddle();
     void setVarSymbol(Symbol*);
@@ -301,11 +301,11 @@ class LocalVarDecsNode : public Node
 };
 
 /** LOCAL VAR DEC NODE TYPE **/
-class LocalVarDecNode : public Node
+class LocalVarDecNode : public VarDecNode
 {
   public:
-    LocalVarDecNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
+    LocalVarDecNode(Node *lf=0, Node *rt=0) : VarDecNode(lf,rt) {}
+    virtual void print();
 };
 
 /** STMTS NODE TYPE **/
