@@ -1724,11 +1724,27 @@ localvardec: type ID SEMI {
   int res=cur->insert(sym);
   if (res==-3)
   {
-    // TODO Error here about id matching class name
+    // Class mask
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+    scanner.addTypeError(*terr);
   }
   else if (res==-4)
   {
-    // TODO Error here about var redefinition
+    // Var Redef
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: identifier '" + $2->getString() + "' already exists locally.");
+    scanner.addTypeError(*terr);
+  }
+  else if(!cur->getDeleteOnResolve() && t != "int")
+  {
+    $$->setMySymbolTable(cur);
+    ((LocalVarDecNode*)$$)->setVarSymbol(sym);
+    scanner.addTypeCheck($$);
   }
 }
 | type error SEMI {
@@ -1786,7 +1802,7 @@ localvardec: type ID SEMI {
   else if(!cur->getDeleteOnResolve())
   {
     $$->setMySymbolTable(cur);
-    ((VarDecNode*)$$)->setVarSymbol(sym);
+    ((LocalVarDecNode*)$$)->setVarSymbol(sym);
     scanner.addTypeCheck($$);
   }
 }
