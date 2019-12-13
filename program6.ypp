@@ -628,7 +628,7 @@ vardec: type ID SEMI {
   }
   else if(!cur->getDeleteOnResolve() && t != "int")
   {
-    $$->setSymbolTable(cur);
+    $$->setMySymbolTable(cur);
     ((VarDecNode*)$$)->setVarSymbol(sym);
     scanner.addTypeCheck($$);
   }
@@ -687,7 +687,7 @@ vardec: type ID SEMI {
   }
   else if(!cur->getDeleteOnResolve())
   {
-    $$->setSymbolTable(cur);
+    $$->setMySymbolTable(cur);
     ((VarDecNode*)$$)->setVarSymbol(sym);
     scanner.addTypeCheck($$);
   }
@@ -875,6 +875,13 @@ constructorstart: ID LPAREN RPAREN {
       scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
+    else
+    {
+      ((CtorStartNode*)$$)->setMethodSymbol(sym);
+      ((CtorStartNode*)$$)->setMethodTable(newSymTab);
+      ((CtorStartNode*)$$)->setParameterListNode($3);
+      scanner.addTypeCheck($$);
+    }
   }
   // Then make the current symbol table the method's new symbol table
   cur=cur->addChild(newSymTab);
@@ -935,6 +942,7 @@ methoddec: methodstart block {
 methodstart: type ID LPAREN parameterlist RPAREN {
   $$=new MethodStartNode($1,$2,$4);
   $$->setVal("<Type> identifier lparen <ParameterList> rparen");
+  ((MethodStartNode*)$$)->setParameterListNode($4);
 
   // Make a symbol table for it
   MethodTable* newSymTab = new MethodTable();
@@ -959,7 +967,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   // Make a type for the thing
   MethodType* t=new MethodType();
   ((MethodType*)(t->withBaseTypeString(ts))->
-   withDimension(d))->
+    withDimension(d))->
     withArgTypeList(argStrings)->
     withSymbolTable(newSymTab);
 
@@ -1006,7 +1014,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   }
   else if(!cur->getDeleteOnResolve())
   {
-    $$->setSymbolTable(cur);
+    $$->setMySymbolTable(cur);
     ((MethodStartNode*)$$)->setMethodSymbol(sym);
     ((MethodStartNode*)$$)->setMethodTable(newSymTab);
     scanner.addTypeCheck($$);
@@ -1109,7 +1117,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   }
   else if(!cur->getDeleteOnResolve())
   {
-    $$->setSymbolTable(cur);
+    $$->setMySymbolTable(cur);
     ((MethodStartNode*)$$)->setMethodSymbol(sym);
     ((MethodStartNode*)$$)->setMethodTable(newSymTab);
     scanner.addTypeCheck($$);
@@ -1133,6 +1141,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
 | VOID ID LPAREN parameterlist RPAREN {
   $$=new MethodStartNode($2,$4);
   $$->setVal("void identifier lparen <ParameterList> rparen");
+  ((MethodStartNode*)$$)->setParameterListNode($4);
 
   // Make a symbol table for it
   MethodTable* newSymTab = new MethodTable();
@@ -1198,7 +1207,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   }
   else if(!cur->getDeleteOnResolve())
   {
-    $$->setSymbolTable(cur);
+    $$->setMySymbolTable(cur);
     ((MethodStartNode*)$$)->setMethodSymbol(sym);
     ((MethodStartNode*)$$)->setMethodTable(newSymTab);
     scanner.addTypeCheck($$);
@@ -1295,7 +1304,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   }
   else if(!cur->getDeleteOnResolve())
   {
-    $$->setSymbolTable(cur);
+    $$->setMySymbolTable(cur);
     ((MethodStartNode*)$$)->setMethodSymbol(sym);
     ((MethodStartNode*)$$)->setMethodTable(newSymTab);
     scanner.addTypeCheck($$);

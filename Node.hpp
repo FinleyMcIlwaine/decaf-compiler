@@ -44,8 +44,8 @@ class Node {
     void setPotentialTypes(vector<Type*>);
     vector<Type*> getPotentialTypes();
     virtual Type* getType();
-    void setSymbolTable(SymbolTable*);
-    SymbolTable* getSymbolTable();
+    void setMySymbolTable(SymbolTable*);
+    SymbolTable* getMySymbolTable();
   protected:
     int yyline;
     int yycol;
@@ -158,6 +158,15 @@ class ConstructorDecsNode : public Node
     void print();
 };
 
+/** PARAMETER LIST NODE TYPE **/
+class ParameterListNode : public Node
+{
+  public:
+    ParameterListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    void print();
+    void buildArgSymbolList(vector<Symbol*>*);
+};
+
 /** CONSTRUCTOR START NODE TYPE **/
 class CtorStartNode : public Node
 {
@@ -167,8 +176,15 @@ class CtorStartNode : public Node
     string getMethodId();
     void setMethodId(string);
     SymbolTable* getSymbolTable();
-    void setSymbolTable(SymbolTable*);
+    void setMethodTable(SymbolTable*);
+    void setParameterListNode(Node*);
+    ParameterListNode* getParameterListNode();
+    virtual TypeError* typeCheck();
+    void setMethodSymbol(Symbol*);
+
   protected:
+    Symbol* methodSymbol;
+    ParameterListNode* myParameters;
     string methodId;
     SymbolTable* methodTable;
 };
@@ -224,20 +240,15 @@ class MethodStartNode : public Node
     void setMethodTable(SymbolTable*);
     Symbol* getMethodSymbol();
     SymbolTable* getMethodTable();
+    void setParameterListNode(Node*);
+    ParameterListNode* getParameterListNode();
+
   private:
+    ParameterListNode* myParameters;
     Symbol* methodSymbol;
     SymbolTable* methodTable;
     Node* second;
     Node* third;
-};
-
-/** PARAMETER LIST NODE TYPE **/
-class ParameterListNode : public Node
-{
-  public:
-    ParameterListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
-    void print();
-    void buildArgSymbolList(vector<Symbol*>*);
 };
 
 /** PARAMETER NODE TYPE **/

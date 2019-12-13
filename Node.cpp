@@ -112,11 +112,11 @@ vector<Type*> Node::getPotentialTypes()
   return myPotentialTypes;
 }
 
-void Node::setSymbolTable(SymbolTable* st)
+void Node::setMySymbolTable(SymbolTable* st)
 {
   mySymTab=st;
 }
-SymbolTable* Node::getSymbolTable()
+SymbolTable* Node::getMySymbolTable()
 {
   return mySymTab;
 }
@@ -309,13 +309,46 @@ void CtorStartNode::setMethodId(string id)
 {
   methodId=id;
 }
-SymbolTable* CtorStartNode::getSymbolTable()
+TypeError* CtorStartNode::typeCheck()
 {
-  return methodTable;
+  if (myParameters)
+  {
+    vector<Symbol*> paramSyms;
+    myParameters->buildArgSymbolList(&paramSyms);
+    for (auto& p : paramSyms)
+    {
+      if (p->getType()->getBaseTypeString()=="int") continue;
+      vector<Symbol*> typeSym = root->lookup(p->getType()->getBaseTypeString());
+      if (typeSym.size()==0)
+      {
+        TypeError* te = new TypeError();
+        te->
+          withColNumber(p->getColNumber())->
+          withLineNumber(p->getLineNumber())->
+          withDesc("error: identifier '"+p->getType()->getBaseTypeString()+"' does not name a type.");
+        methodTable->kill();
+        methodSymbol->kill();
+        return te;
+      }
+    }
+  }
+  return nullptr;
 }
-void CtorStartNode::setSymbolTable(SymbolTable* st)
+void CtorStartNode::setParameterListNode(Node* pln)
+{
+  myParameters=(ParameterListNode*) pln;
+}
+ParameterListNode* CtorStartNode::getParameterListNode()
+{
+  return myParameters;
+}
+void CtorStartNode::setMethodTable(SymbolTable* st)
 {
   methodTable=st;
+}
+void CtorStartNode::setMethodSymbol(Symbol* s)
+{
+  methodSymbol=s;
 }
 
 /* METHODDECS NODE DEFINITIONS */
@@ -387,7 +420,8 @@ Node* MethodStartNode::getThird()
 TypeError* MethodStartNode::typeCheck()
 {
   vector<Symbol*> myTypeSym = root->lookup(methodSymbol->getType()->getBaseTypeString());
-  if (myTypeSym.size()==0)
+
+  if (myTypeSym.size()==0 && methodSymbol->getType()->getBaseTypeString() != "int")
   {
     // Should delete the method table and all that good stuff
     TypeError* te = new TypeError();
@@ -398,6 +432,27 @@ TypeError* MethodStartNode::typeCheck()
     methodTable->kill();
     methodSymbol->kill();
     return te;
+  }
+
+  if (myParameters)
+  {
+    vector<Symbol*> paramSyms;
+    myParameters->buildArgSymbolList(&paramSyms);
+    for (auto& p : paramSyms)
+    {
+      vector<Symbol*> typeSym = root->lookup(p->getType()->getBaseTypeString());
+      if (typeSym.size()==0 && p->getType()->getBaseTypeString() != "int")
+      {
+        TypeError* te = new TypeError();
+        te->
+          withColNumber(p->getColNumber())->
+          withLineNumber(p->getLineNumber())->
+          withDesc("error: identifier '"+p->getType()->getBaseTypeString()+"' does not name a type.");
+        methodTable->kill();
+        methodSymbol->kill();
+        return te;
+      }
+    }
   }
   return nullptr;
 }
@@ -416,6 +471,14 @@ void MethodStartNode::setMethodSymbol(Symbol* s)
 void MethodStartNode::setMethodTable(SymbolTable* st)
 {
   methodTable=st;
+}
+void MethodStartNode::setParameterListNode(Node* pln)
+{
+  myParameters=(ParameterListNode*) pln;
+}
+ParameterListNode* MethodStartNode::getParameterListNode()
+{
+  return myParameters;
 }
 
 /* PARAMETER LIST NODE */
