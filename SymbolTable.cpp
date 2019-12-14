@@ -55,6 +55,22 @@ SymbolTable* SymbolTable::withParent(SymbolTable* p)
 vector<Symbol*> SymbolTable::lookup(string name)
 {
   try {
+    vector<Symbol*> syms = table.at(name);
+    int i=0;
+    // Remove dead symbols
+    while (i<syms.size())
+    {
+      if (syms.at(i)->isDead())
+      {
+        syms.erase(syms.begin()+i);
+      }
+      else
+      {
+        i++;
+      }
+    }
+    table[name]=syms;
+
     return table.at(name);
   } catch (...) {
     if (getParent())
@@ -76,10 +92,6 @@ int SymbolTable::insert(Symbol* s)
 
   try {
     vector<Symbol*> matches = table.at(s->getName());
-    // Assuming we still want to keep track of this symbol
-    // and print it
-//    matches.push_back(s);
-//    printOrder.push_back(s);
     int okay=0;
     for (auto& symMatch : matches)
     { 

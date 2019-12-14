@@ -1963,14 +1963,15 @@ name: THIS {
 }
 | ID %prec IF {
   $$=new NameNode($1);
-  $$->setVal("identifier");
+  $$->setVal($1->getString());
   vector<Symbol*> symbolsWithName = cur->lookup($1->getString());
   if (symbolsWithName.size()==0)
   {
     terr->
       withColNumber(@1.first_column)->
       withLineNumber(@1.first_line)->
-      withDesc("error: identifier '"+$1->getString()+"' does not exist in current scope.");
+      withDesc("error: identifier '"+$1->getString()+
+          "' does not exist in current scope.");
     scanner.addTypeError(*terr);
   } else if (symbolsWithName.size()==1) {
     $$->setType(symbolsWithName.at(0)->getType());
@@ -1985,10 +1986,109 @@ name: THIS {
 }
 | name DOT ID {
   $$=new NameNode($1,$3);
-  $$->setVal("<Name> dot identifier");
-  // TODO Make sure the name has a reference type, then
+  $$->setVal($1->getString()+"."+$3->getString());
+  // Make sure the name has a reference type, then
   // look up the ID in its associated symbol table, type is
-  // the t
+  // the type of that member
+  Type* nameType=$1->getType();
+  if (nameType)
+  {
+    // check if name type is a class type with dim >= 1
+    vector<Symbol*> typeSyms = root->lookup(nameType->getBaseTypeString());
+    if (typeSyms.size()<1)
+    {
+      // Error about type not being a class with members
+      terr->
+        withColNumber(@1.first_column)->
+        withLineNumber(@1.first_line)->
+        withDesc("error: type '"+nameType->getBaseTypeString()+
+            "' does not have accessible members.");
+      scanner.addTypeError(*terr);
+    }
+    else
+    {
+      vector<Symbol*> potSyms = typeSyms.at(0)->
+        getType()->getSymbolTable()->lookup($3->getString());
+      if (potSyms.size()==0)
+      {
+        // Error about not having member
+        terr->
+          withColNumber(@1.first_column)->
+          withLineNumber(@1.first_line)->
+          withDesc("error: member '"+$3->getString()+
+              "' does not exist for type '"+typeSyms.at(0)->getType()->
+              getBaseTypeString()+"'.");
+        scanner.addTypeError(*terr);
+      }
+      else if (potSyms.size()==1)
+      {
+        // The member only has one potential type
+        $$->setType(potSyms.at(0)->getType());
+      }
+      else
+      {
+        // Multiple potential types for this thing
+        vector<Type*> pts;
+        for (int i=0; i<potSyms.size(); i++)
+        {
+          pts.push_back(potSyms.at(i)->getType());
+        }
+        $$->setPotentialTypes(pts);
+      }
+    }
+  }
+  else
+  {
+    vector<Type*> potNameTypes = $1->getPotentialTypes();
+    // Look for ref type with dim >= 1 in pot types,
+    // if exists, make that the name's type, otherwise
+    // error
+    bool typed=false;
+    for (auto& t : potNameTypes)
+    {
+      vector<Symbol*> typeSyms = root->lookup(t->getBaseTypeString());
+      if (typeSyms.size()==1)
+      {
+        vector<Symbol*> potSyms = typeSyms.at(0)->
+          getType()->getSymbolTable()->lookup($3->getString());
+        if (potSyms.size()==0)
+        {
+          // Error about not having member
+          terr->
+            withColNumber(@1.first_column)->
+            withLineNumber(@1.first_line)->
+            withDesc("error: member '"+$3->getString()+
+                "' does not exist for type '"+typeSyms.at(0)->getType()->
+                getBaseTypeString()+"'.");
+          scanner.addTypeError(*terr);
+        }
+        else if (potSyms.size()==1)
+        {
+          // The member only has one potential type
+          $$->setType(potSyms.at(0)->getType());
+        }
+        else
+        {
+          // Multiple potential types for this thing
+          vector<Type*> pts;
+          for (int i=0; i<potSyms.size(); i++)
+          {
+            pts.push_back(potSyms.at(i)->getType());
+          }
+          $$->setPotentialTypes(pts);
+        }
+      }
+    }
+    if (!typed)
+    {
+      terr->
+        withColNumber(@1.first_column)->
+        withLineNumber(@1.first_line)->
+        withDesc("error: identifier '"+$1->getString()+
+            "' does not have accessible members.");
+      scanner.addTypeError(*terr);
+    }
+  } 
 }
 | name DOT error {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
@@ -1999,11 +2099,11 @@ name: THIS {
 }
 | name bracketexp {
   $$=new NameNode($1,$2);
-  $$->setVal("<Name> <BracketExp>");
+  $$->setVal($1->getString());
   Type* nameType=$1->getType();
   if (nameType)
   {
-    // TODO check if name type is a ref type with dim >= 1
+    // check if name type is a ref type with dim >= 1
     if (nameType->getDimension()<1)
     {
       terr->
@@ -2030,7 +2130,7 @@ name: THIS {
   else
   {
     vector<Type*> potNameTypes = $1->getPotentialTypes();
-    // TODO Look for ref type with dim >= 1 in pot types,
+    // Look for ref type with dim >= 1 in pot types,
     // if exists, make that the name's type, otherwise
     // error
     bool typed=false;
@@ -2057,7 +2157,7 @@ name: THIS {
       terr->
         withColNumber(@1.first_column)->
         withLineNumber(@1.first_line)->
-        withDesc("error: identifier '"+$1->getString()+"' does not exist at current scope.");
+        withDesc("error: identifier '"+$1->getString()+"' cannot be indexed.");
       scanner.addTypeError(*terr);
     }
   }
@@ -2132,18 +2232,34 @@ conditionalstmt: IF LPAREN exp RPAREN stmt %prec IF {
 exp: name {
   $$=new ExpNode($1);
   $$->setVal("<Name>");
+  Type* t=$1->getType();
+  vector<Type*> pts=$1->getPotentialTypes();
+  if (t)
+  {
+    $$->setType(t);
+  }
+  else if (pts)
+  {
+    $$->setPotentialTypes(pts);
+  }
 }
 | NUMBER {
   $$=new ExpNode($1);
   $$->setVal("number");
+  Type* t=new Type();
+  t->withBaseTypeString("int")->
+    withDimension(0);
+  $$->setType(t);
 }
 | NULLT {
   $$=new ExpNode();
   $$->setVal("null");
+  // This thing does not have a type
 }
 | name LPAREN arglist RPAREN {
   $$=new ExpNode($1,$3);
   $$->setVal("<Name> lparen <ArgList> rparen");
+  // TODO Gotta make sure the call is valid, cannot be a constructor
 }
 | name LPAREN error RPAREN {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
@@ -2154,6 +2270,7 @@ exp: name {
 | READ LPAREN RPAREN {
   $$=new ExpNode();
   $$->setVal("read lparen rparen");
+  // TODO Just integer type
 }
 | READ error RPAREN {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -2170,10 +2287,12 @@ exp: name {
 | newexp {
   $$=new ExpNode($1);
   $$->setVal("<NewExp>");
+  // TODO Just the type of the newexp itself
 }
 | PLUS exp %prec UNARYOP {
   $$=new ExpNode($2);
   $$->setVal("plus <Exp>");
+  // TODO Expression needs integer type
 }
 | PLUS error %prec UNARYOP {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
