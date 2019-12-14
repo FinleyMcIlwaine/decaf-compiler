@@ -3,10 +3,6 @@ class mainClass {
     int[] y;
     notType oopsie;
 
-    mainClass(int arg1) {
-        int inside;
-        int constructor;
-    }
     mainClass() {
         notMain hahaUhOh;
     }
@@ -21,7 +17,10 @@ class mainClass {
     }
     int thisMethod(int isOverloaded)
     {
-        int hahahaha;
+        int x;
+        int z;
+        x = y == z;
+        x = mainClass + z;
     }
 
     int main() {
@@ -29,10 +28,8 @@ class mainClass {
         int[] haha;
         haha = 3;
         this_is_main = new notType();
-        this_is_main = new fuckingBullshitMethod();
-        this_is_main = thisMethod();
-        this_is_main = thisMethod(x);
-        //this_is_main = thisMethod(new mainClass(x);
+        this_is_main = thisMethod(thisMethod(new mainClass()));
+        this_is_main = thisMethod(read());
     }
 }
 

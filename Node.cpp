@@ -858,7 +858,22 @@ TypeError* ExpNode::typeCheck()
   TypeError* terr = nullptr;
   if (checkType=="name")
   {
+    if (!left->checked)
+    {
+      terr=left->typeCheck();
+      if (terr) return terr;
+    }
+    if (!left->getType())
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: invalid reference to ambiguous type.");
+      return terr;
+    }
     this->setType(left->getType());
+    return nullptr;
   }
   if (checkType=="name_arglist")
   {
@@ -932,23 +947,126 @@ TypeError* ExpNode::typeCheck()
           }
           if (i==ts.size()-1)
           {
-            Type* t = new Type();
-            t->withBaseTypeString(left->getString())->
-              withDimension(0);
-            this->setType(t);
+            Type* nt = new Type();
+            nt->withBaseTypeString(t->getBaseTypeString())->
+              withDimension(t->getDimension());
+            this->setType(nt);
             return nullptr;
           }
         }
         if (ts.size()==0)
         {
-          Type* t = new Type();
-          t->withBaseTypeString(left->getString())->
-            withDimension(0);
-          this->setType(t);
+          Type* nt = new Type();
+          nt->withBaseTypeString(t->getBaseTypeString())->
+            withDimension(t->getDimension());
+          this->setType(nt);
           return nullptr;
         }
       }
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: supplied method arguments do not match existing types.");
+      return terr;
     }
+  }
+  else if (checkType=="newexp")
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+    this->setType(left->getType());
+    return nullptr;
+  }
+  else if (checkType=="unary")
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+    Type* t=left->getType();
+    if (t->getBaseTypeString()=="int" && t->getDimension()==0)
+    {
+      this->setType(t);
+      return nullptr;
+    }
+    terr=new TypeError();
+    terr->
+      withColNumber(col)->
+      withLineNumber(line)->
+      withDesc("error: required type 'int', found type '"+
+          t->getFullTypeString()+"'.");
+    return terr;
+  }
+  else if (checkType=="eq")
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+    terr=middle->typeCheck();
+    if (terr) return terr;
+    if ((left->getType()->getBaseTypeString()=="int" &&
+        left->getType()->getDimension()==0) &&
+        (middle->getType()->getBaseTypeString()!="int" ||
+         middle->getType()->getDimension()!=0))
+    {
+      terr = new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: cannot compare types '"+
+            left->getType()->getFullTypeString()+"' and '"+
+            middle->getType()->getFullTypeString()+"'.");
+      return terr;
+    }
+    if ((middle->getType()->getBaseTypeString()=="int" &&
+        middle->getType()->getDimension()==0) &&
+        (left->getType()->getBaseTypeString()!="int" ||
+         left->getType()->getDimension()!=0))
+    {
+      terr = new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: cannot compare types '"+
+            left->getType()->getFullTypeString()+"' and '"+
+            middle->getType()->getFullTypeString()+"'.");
+      return terr;
+    }
+    Type* nt = new Type();
+    nt->withBaseTypeString("int")->
+      withDimension(0);
+    this->setType(nt);
+    return nullptr;
+  }
+  else if (checkType=="arithmetic")
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+    terr=middle->typeCheck();
+    if (terr) return terr;
+    if ((left->getType()->getBaseTypeString()!="int" ||
+        middle->getType()->getBaseTypeString()!="int") ||
+        (left->getType()->getDimension()!=0 ||
+         middle->getType()->getDimension()!=0))
+    {
+      terr = new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: requires operand types 'int' and 'int', found types '"+
+            left->getType()->getFullTypeString()+"' and '"+
+            middle->getType()->getFullTypeString()+"'.");
+      return terr;
+    }
+    Type* nt = new Type();
+    nt->withBaseTypeString("int")->
+      withDimension(0);
+    this->setType(nt);
+    return nullptr;
+  }
+  else if (checkType=="simple")
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+    this->setType(left->getType());
   }
   return terr;
 }

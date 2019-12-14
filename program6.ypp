@@ -2143,12 +2143,28 @@ exp: name {
 | newexp {
   $$=new ExpNode($1);
   $$->setVal("<NewExp>");
-  // TODO Just the type of the newexp itself
+  // Just the type of the newexp itself
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="newexp";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | PLUS exp %prec UNARYOP {
   $$=new ExpNode($2);
   $$->setVal("plus <Exp>");
-  // TODO Expression needs integer type
+  // Expression needs integer type
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="unary";
+    $$->setMySymbolTable(cur);
+    $$->line=@2.first_line;
+    $$->col=@2.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | PLUS error %prec UNARYOP {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -2159,6 +2175,15 @@ exp: name {
 | MINUS exp %prec UNARYOP {
   $$=new ExpNode($2);
   $$->setVal("minus <Exp>");
+  // Expression needs integer type
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="unary";
+    $$->setMySymbolTable(cur);
+    $$->line=@2.first_line;
+    $$->col=@2.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | MINUS error %prec UNARYOP {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -2169,6 +2194,15 @@ exp: name {
 | NOT exp %prec UNARYOP {
   $$=new ExpNode($2);
   $$->setVal("not <Exp>");
+  // Expression needs integer type
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="unary";
+    $$->setMySymbolTable(cur);
+    $$->line=@2.first_line;
+    $$->col=@2.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | NOT error %prec UNARYOP {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -2179,6 +2213,14 @@ exp: name {
 | exp EQ exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> eq <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="eq";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error EQ exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2189,6 +2231,14 @@ exp: name {
 | exp NE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> ne <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="eq";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error NE exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2199,6 +2249,14 @@ exp: name {
 | exp LE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> le <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error LE exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2209,6 +2267,14 @@ exp: name {
 | exp GE exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> ge <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error GE exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2219,6 +2285,14 @@ exp: name {
 | exp LT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> lt <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error LT exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2229,6 +2303,14 @@ exp: name {
 | exp GT exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> gt <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error GT exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2239,6 +2321,14 @@ exp: name {
 | exp PLUS exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> plus <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error PLUS exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2249,6 +2339,14 @@ exp: name {
 | exp MINUS exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> minus <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error MINUS exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2259,6 +2357,14 @@ exp: name {
 | exp OR exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> or <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error OR exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2269,6 +2375,14 @@ exp: name {
 | exp TIMES exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> times <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error TIMES exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2279,6 +2393,14 @@ exp: name {
 | exp DIV exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> div <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error DIV exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2289,6 +2411,14 @@ exp: name {
 | exp MOD exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> mod <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error MOD exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2299,6 +2429,14 @@ exp: name {
 | exp AND exp {
   $$=new ExpNode($1,$3);
   $$->setVal("<Exp> and <Exp>");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="arithmetic";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error AND exp {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -2309,6 +2447,14 @@ exp: name {
 | LPAREN exp RPAREN {
   $$=new ExpNode($2);
   $$->setVal("lparen <Exp> rparen");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="simple";
+    $$->setMySymbolTable(cur);
+    $$->line=@2.first_line;
+    $$->col=@2.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | LPAREN error RPAREN {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
