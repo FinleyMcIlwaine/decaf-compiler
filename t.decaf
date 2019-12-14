@@ -1,6 +1,7 @@
 class mainClass {
     int x;
     int[] y;
+    int[][][][] array;
     notType oopsie;
 
     mainClass() {
@@ -14,6 +15,7 @@ class mainClass {
     int thisMethod(mainClass mArg)
     {
         int isDumb;
+        array=new int[10][5][4];
     }
     int thisMethod(int isOverloaded)
     {

@@ -5,7 +5,7 @@
  * COSC4785, Program 6
  *
  * Definition of all node class member functions
-*/
+ */
 #include "Node.hpp"
 
 /* BASE NODE DEFINITIONS */
@@ -267,7 +267,7 @@ void SimpleTypeNode::print() {
 }
 int SimpleTypeNode::getDimension()
 {
-  return -1;
+  return 0;
 }
 
 /* CONSTRUCTORDECS NODE DEFINITIONS */
@@ -280,8 +280,8 @@ void ConstructorDecsNode::print() {
 /* CONSTRUCTOR DEC NODE DEFINITIONS */
 ConstructorDecNode::ConstructorDecNode(Node *lf, Node *mi, Node *rt) 
   : Node(lf,rt) {
-  middle=mi;
-}
+    middle=mi;
+  }
 void ConstructorDecNode::print() {
   cout << "<ConstructorDec> --> " + sval << endl;
   if (left) left->print();
@@ -328,7 +328,8 @@ TypeError* CtorStartNode::typeCheck()
         te->
           withColNumber(p->getColNumber())->
           withLineNumber(p->getLineNumber())->
-          withDesc("error: identifier '"+p->getType()->getBaseTypeString()+"' does not name a type.");
+          withDesc("error: identifier '"+p->getType()->getBaseTypeString()+
+              "' does not name a type.");
         methodTable->kill();
         methodSymbol->kill();
         return te;
@@ -364,9 +365,9 @@ void MethodDecsNode::print() {
 /* METHOD DEC NODE DEFINITIONS */
 MethodDecNode::MethodDecNode(Node *lf, Node *sec, Node* trd, Node *rt) 
   : Node(lf,rt) {
-  second=sec;
-  third=trd;
-}
+    second=sec;
+    third=trd;
+  }
 void MethodDecNode::print() {
   cout << "<MethodDec> --> " + sval << endl;
   if (left) left->print();
@@ -394,9 +395,9 @@ Node* MethodDecNode::getThird()
 /* METHOD DEC NODE DEFINITIONS */
 MethodStartNode::MethodStartNode(Node *lf, Node *sec, Node* trd, Node *rt) 
   : Node(lf,rt) {
-  second=sec;
-  third=trd;
-}
+    second=sec;
+    third=trd;
+  }
 void MethodStartNode::print() {
   cout << "<MethodStart> --> " + sval << endl;
   if (left) left->print();
@@ -423,16 +424,19 @@ Node* MethodStartNode::getThird()
 TypeError* MethodStartNode::typeCheck()
 {
   this->checked=true;
-  vector<Symbol*> myTypeSym = root->lookup(methodSymbol->getType()->getBaseTypeString());
+  vector<Symbol*> myTypeSym = root->lookup(methodSymbol->
+      getType()->getBaseTypeString());
 
-  if (myTypeSym.size()==0 && methodSymbol->getType()->getBaseTypeString() != "int")
+  if (myTypeSym.size()==0 && methodSymbol->getType()->
+      getBaseTypeString() != "int")
   {
     // Should delete the method table and all that good stuff
     TypeError* te = new TypeError();
     te->
       withColNumber(methodSymbol->getColNumber())->
       withLineNumber(methodSymbol->getLineNumber())->
-      withDesc("error: identifier '"+methodSymbol->getType()->getBaseTypeString()+"' does not name a type.");
+      withDesc("error: identifier '"+methodSymbol->getType()->
+          getBaseTypeString()+"' does not name a type.");
     methodTable->kill();
     methodSymbol->kill();
     return te;
@@ -444,14 +448,16 @@ TypeError* MethodStartNode::typeCheck()
     myParameters->buildArgSymbolList(&paramSyms);
     for (auto& p : paramSyms)
     {
-      vector<Symbol*> typeSym = root->lookup(p->getType()->getBaseTypeString());
+      vector<Symbol*> typeSym = root->lookup(p->getType()->
+          getBaseTypeString());
       if (typeSym.size()==0 && p->getType()->getBaseTypeString() != "int")
       {
         TypeError* te = new TypeError();
         te->
           withColNumber(p->getColNumber())->
           withLineNumber(p->getLineNumber())->
-          withDesc("error: identifier '"+p->getType()->getBaseTypeString()+"' does not name a type.");
+          withDesc("error: identifier '"+p->getType()->getBaseTypeString()+
+              "' does not name a type.");
         methodTable->kill();
         methodSymbol->kill();
         return te;
@@ -526,8 +532,8 @@ void BlockNode::print() {
 /* STMT BLOCK NODE */
 StmtBlockNode::StmtBlockNode(Node *lf, Node *mi, Node *rt) 
   : Node(lf,rt) {
-  middle=mi;
-}
+    middle=mi;
+  }
 void StmtBlockNode::print() {
   cout << "<StmtBlock> --> " + sval << endl;
   if (left) left->print();
@@ -810,8 +816,8 @@ void ArgListNode::buildArgTypeList(vector<Type*>* ts)
 /* CONDITIONAL STMT NODE DEFINITIONS */
 ConditionalStmtNode::ConditionalStmtNode(Node *lf, Node *mi, Node *rt) 
   : Node(lf,rt) {
-  middle=mi;
-}
+    middle=mi;
+  }
 void ConditionalStmtNode::print() {
   cout << "<ConditionalStmt> --> " + sval << endl;
   if (left) left->print();
@@ -1003,7 +1009,7 @@ TypeError* ExpNode::typeCheck()
     terr=middle->typeCheck();
     if (terr) return terr;
     if ((left->getType()->getBaseTypeString()=="int" &&
-        left->getType()->getDimension()==0) &&
+          left->getType()->getDimension()==0) &&
         (middle->getType()->getBaseTypeString()!="int" ||
          middle->getType()->getDimension()!=0))
     {
@@ -1017,7 +1023,7 @@ TypeError* ExpNode::typeCheck()
       return terr;
     }
     if ((middle->getType()->getBaseTypeString()=="int" &&
-        middle->getType()->getDimension()==0) &&
+          middle->getType()->getDimension()==0) &&
         (left->getType()->getBaseTypeString()!="int" ||
          left->getType()->getDimension()!=0))
     {
@@ -1043,7 +1049,7 @@ TypeError* ExpNode::typeCheck()
     terr=middle->typeCheck();
     if (terr) return terr;
     if ((left->getType()->getBaseTypeString()!="int" ||
-        middle->getType()->getBaseTypeString()!="int") ||
+          middle->getType()->getBaseTypeString()!="int") ||
         (left->getType()->getDimension()!=0 ||
          middle->getType()->getDimension()!=0))
     {
@@ -1102,8 +1108,8 @@ TypeError* NewExpNode::typeCheck()
         withColNumber(col)->
         withLineNumber(line)->
         withDesc("error: identifier '"+left->getString()+
-          "' does not name a constructable type.");
-        return terr;
+            "' does not name a constructable type.");
+      return terr;
     }
     // Validate args
     vector<CtorType*> pTypes=((ClassSymbol*)ct.at(0))->getCtorTypes();
@@ -1149,6 +1155,73 @@ TypeError* NewExpNode::typeCheck()
       withColNumber(col)->
       withLineNumber(line)->
       withDesc("error: a constructor with matching type does not exist.");
+    return terr;
+  }
+  else if (checkType=="st_bexp_bracks")
+  {
+    terr=middle->typeCheck();
+    if (terr) return terr;
+    Type* nt=new Type();
+    nt->withBaseTypeString(left->getString())->
+      withDimension(((BracketExpsNode*)middle)->
+        getDimension()+1);
+    this->setType(nt);
+    return nullptr;
+  }
+  else if (checkType=="st_bexp")
+  {
+    terr=middle->typeCheck();
+    if (terr) return terr;
+    Type* nt=new Type();
+    nt->withBaseTypeString(left->getString())->
+      withDimension(((BracketExpsNode*)middle)->
+        getDimension());
+    this->setType(nt);
+    return nullptr;
+  }
+  else if (checkType=="id_bexp_bracks")
+  {
+    vector<Symbol*> ct = root->lookup(left->getString());
+    if (ct.size()==0)
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: identifier '"+left->getString()+
+            "' does not name a type.");
+      return terr;
+    }
+    terr=middle->typeCheck();
+    if (terr) return terr;
+    Type* nt=new Type();
+    nt->withBaseTypeString(left->getString())->
+      withDimension(((BracketExpsNode*)middle)->
+          getDimension()+1);
+    this->setType(nt);
+    return nullptr;
+  }
+  else if (checkType=="id_bexp")
+  {
+    vector<Symbol*> ct = root->lookup(left->getString());
+    if (ct.size()==0)
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: identifier '"+left->getString()+
+            "' does not name a type.");
+      return terr;
+    }
+    terr=middle->typeCheck();
+    if (terr) return terr;
+    Type* nt=new Type();
+    nt->withBaseTypeString(left->getString())->
+      withDimension(((BracketExpsNode*)middle)->
+          getDimension());
+    this->setType(nt);
+    return nullptr;
   }
   return terr;
 }
@@ -1208,11 +1281,53 @@ void BracketExpNode::print()
   if (left) left->print();
   if (right) right->print();
 }
+
+TypeError* BracketExpNode::typeCheck()
+{
+  TypeError* terr=nullptr;
+  if (left)
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+    if (left->getType()->getBaseTypeString()!="int" ||
+        left->getType()->getDimension()!=0)
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: indexing operation requires type 'int', found type"+
+            left->getType()->getFullTypeString()+"'.");
+      return terr;
+    }
+    return nullptr;
+  }
+  terr=new TypeError();
+  terr->
+    withColNumber(col)->
+    withLineNumber(line)->
+    withDesc("error: indexing operation requires operand of type 'int'.");
+  return terr;
+}
+
 void BracketExpsNode::print()
 {
   cout << "<BracketExps> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
+}
+TypeError* BracketExpsNode::typeCheck()
+{
+  TypeError* terr=nullptr;
+  terr=left->typeCheck();
+  if (terr) return terr;
+  if (right) terr=right->typeCheck();
+  return terr;
+}
+int BracketExpsNode::getDimension()
+{
+  if (!right) return 1;
+  else return 1 + ((BracketExpsNode*)left)->getDimension();
 }
 
 /* NUMBER NODE DEFINITIONS */

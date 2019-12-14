@@ -444,6 +444,7 @@ class MultibracketNode : public Node
 class BracketExpNode : public Node
 {
   public:
+    virtual TypeError* typeCheck();
     BracketExpNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };
@@ -451,6 +452,8 @@ class BracketExpNode : public Node
 class BracketExpsNode : public Node
 {
   public:
+    virtual TypeError* typeCheck();
+    int getDimension();
     BracketExpsNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };

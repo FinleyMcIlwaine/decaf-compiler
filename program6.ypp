@@ -2474,7 +2474,7 @@ exp: name {
 newexp: NEW ID LPAREN arglist RPAREN {
   $$=new NewExpNode($2,$4);
   $$->setVal("new identifier lparen <ArgList> rparen");
-  // TODO Gotta make sure the call is valid
+  // Gotta make sure the call is valid
   if (!cur->getDeleteOnResolve())
   {
     $$->checkType="id_arglist";
