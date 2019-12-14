@@ -27,6 +27,7 @@ class Type
     SymbolTable* getSymbolTable();
     Type* withSymbolTable(SymbolTable*);
     virtual string getTypeType();
+    int equals(Type*);
  
   protected:
     SymbolTable* myTable;
@@ -45,8 +46,14 @@ class MethodType : public Type
     string getArgTypesString();
     virtual string getTypeType();
 
-  private:
+  protected:
     vector<string> argTypeStrs;
+};
+
+class CtorType : public MethodType
+{
+  public:
+    virtual string getTypeType();
 };
 
 #endif

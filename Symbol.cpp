@@ -235,3 +235,12 @@ void ClassSymbol::print()
   cout << name << " class_type" << endl;
   types->printSymbolTable(typePtr);
 }
+void ClassSymbol::addCtorType(CtorType* ct)
+{
+  ctorTypes.push_back(ct);
+}
+vector<CtorType*> ClassSymbol::getCtorTypes()
+{
+  return ctorTypes;
+}
+

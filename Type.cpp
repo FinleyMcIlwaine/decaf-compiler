@@ -105,3 +105,22 @@ vector<string> MethodType::getArgTypeList()
 {
   return argTypeStrs;
 }
+
+string CtorType::getTypeType()
+{
+  return "ctor_type";
+}
+
+int Type::equals(Type* t)
+{
+  if (this->getBaseTypeString()==t->getBaseTypeString() &&
+      this->getDimension()==t->getDimension())
+  {
+    return 0;
+  }
+  if (this->getBaseTypeString()!=t->getBaseTypeString())
+  {
+    return -1;
+  }
+  return -2;
+}

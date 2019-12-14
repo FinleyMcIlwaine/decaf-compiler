@@ -61,7 +61,7 @@ void Node::setVal(const double d)
 
 void Node::reset()
 {
-  yyline=yycol=nextLine=nextCol=1;
+  line=col=nextLine=nextCol=1;
   sval.clear();
 }
 
@@ -123,6 +123,7 @@ SymbolTable* Node::getMySymbolTable()
 
 TypeError* Node::typeCheck()
 {
+  this->checked=true;
   cout << "Base Node type check called? What'd you do?" << endl;
   return nullptr;
 }
@@ -210,6 +211,7 @@ Node* VarDecNode::getMiddle()
 }
 TypeError* VarDecNode::typeCheck()
 {
+  this->checked=true;
   // How to look this up?
   vector<Symbol*> myTypeSym = root->lookup(myVarSym->getType()->getBaseTypeString());
   if (myTypeSym.size()==0)
@@ -311,6 +313,7 @@ void CtorStartNode::setMethodId(string id)
 }
 TypeError* CtorStartNode::typeCheck()
 {
+  this->checked=true;
   if (myParameters)
   {
     vector<Symbol*> paramSyms;
@@ -419,6 +422,7 @@ Node* MethodStartNode::getThird()
 }
 TypeError* MethodStartNode::typeCheck()
 {
+  this->checked=true;
   vector<Symbol*> myTypeSym = root->lookup(methodSymbol->getType()->getBaseTypeString());
 
   if (myTypeSym.size()==0 && methodSymbol->getType()->getBaseTypeString() != "int")
@@ -573,12 +577,234 @@ void NameNode::print()
   if (left) left->print();
   if (right) right->print();
 }
+TypeError* NameNode::typeCheck()
+{
+  this->checked=true;
+  TypeError* terr=nullptr;
+  if (checkType=="identifier")
+  {
+    vector<Symbol*> symbolsWithName = mySymTab->lookup(identifier);
+    if (symbolsWithName.size()==0)
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: identifier '"+identifier+
+            "' does not exist in current scope.");
+    } else if (symbolsWithName.size()==1) {
+      this->setType(symbolsWithName.at(0)->getType());
+    } else {
+      vector<Type*> pts;
+      for (int i=0; i<symbolsWithName.size(); i++)
+      {
+        pts.push_back(symbolsWithName.at(i)->getType());
+      }
+      this->setPotentialTypes(pts);
+    }
+  }
+  else if (checkType=="ref_dot")
+  {
+    Type* nameType=left->getType();
+    if (nameType)
+    {
+      // check if name type is a class type
+      vector<Symbol*> typeSyms = root->lookup(nameType->getBaseTypeString());
+      if (typeSyms.size()<1)
+      {
+        // Error about type not being a class with members
+        terr=new TypeError();
+        terr->
+          withColNumber(col)->
+          withLineNumber(line)->
+          withDesc("error: type '"+nameType->getBaseTypeString()+
+              "' does not have accessible members.");
+      }
+      else
+      {
+        vector<Symbol*> potSyms = typeSyms.at(0)->
+          getType()->getSymbolTable()->lookup(right->getString());
+        if (potSyms.size()==0)
+        {
+          // Error about not having member
+          terr = new TypeError();
+          terr->
+            withColNumber(col)->
+            withLineNumber(line)->
+            withDesc("error: member '"+right->getString()+
+                "' does not exist for type '"+
+                typeSyms.at(0)->getType()->
+                getBaseTypeString()+"'.");
+        }
+        else if (potSyms.size()==1)
+        {
+          // The member only has one potential type
+          this->setType(potSyms.at(0)->getType());
+        }
+        else
+        {
+          // Multiple potential types for this thing
+          vector<Type*> pts;
+          for (int i=0; i<potSyms.size(); i++)
+          {
+            pts.push_back(potSyms.at(i)->getType());
+          }
+          this->setPotentialTypes(pts);
+        }
+      }
+    }
+    else
+    {
+      vector<Type*> potNameTypes = left->getPotentialTypes();
+      // Look for ref type with dim >= 1 in pot types,
+      // if exists, make that the name's type, otherwise
+      // error
+      bool typed=false;
+      for (auto& t : potNameTypes)
+      {
+        vector<Symbol*> typeSyms = root->lookup(t->getBaseTypeString());
+        if (typeSyms.size()==1)
+        {
+          vector<Symbol*> potSyms = typeSyms.at(0)->
+            getType()->getSymbolTable()->lookup(right->getString());
+          if (potSyms.size()==0)
+          {
+            // Error about not having member
+            terr = new TypeError();
+            terr->
+              withColNumber(col)->
+              withLineNumber(line)->
+              withDesc("error: member '"+right->getString()+
+                  "' does not exist for type '"+typeSyms.at(0)->getType()->
+                  getBaseTypeString()+"'.");
+          }
+          else if (potSyms.size()==1)
+          {
+            // The member only has one potential type
+            this->setType(potSyms.at(0)->getType());
+          }
+          else
+          {
+            // Multiple potential types for this thing
+            vector<Type*> pts;
+            for (int i=0; i<potSyms.size(); i++)
+            {
+              pts.push_back(potSyms.at(i)->getType());
+            }
+            this->setPotentialTypes(pts);
+          }
+        }
+      }
+      if (!typed)
+      {
+        terr = new TypeError();
+        terr->
+          withColNumber(col)->
+          withLineNumber(line)->
+          withDesc("error: identifier '"+left->getString()+
+              "' does not have accessible members.");
+      }
+    } 
+  }
+  else if (checkType=="bexp")
+  {
+    Type* nameType=left->getType();
+    if (nameType)
+    {
+      // check if name type is a ref type with dim >= 1
+      if (nameType->getDimension()<1)
+      {
+        terr=new TypeError();
+        terr->
+          withColNumber(col)->
+          withLineNumber(line)->
+          withDesc("error: invalid indexing operation on zero-dimension type.");
+      }
+      else
+      {
+        Type* newType = new Type();
+        newType->withBaseTypeString(nameType->getBaseTypeString())->
+          withDimension(nameType->getDimension()-1)->
+          withSymbolTable(nameType->getSymbolTable());
+        // check if derived class here    
+        if (nameType->getTypeType()=="method_type")
+        {
+          vector<string> args=((MethodType*)nameType)->getArgTypeList();
+          ((MethodType*) newType)->withArgTypeList(args);
+        }
+        this->setType(newType);
+      }
+    }
+    else
+    {
+      vector<Type*> potNameTypes = left->getPotentialTypes();
+      // Look for ref type with dim >= 1 in pot types,
+      // if exists, make that the name's type, otherwise
+      // error
+      bool typed=false;
+      for (auto& t : potNameTypes)
+      {
+        if (t->getDimension()>0)
+        {
+          Type* newType = new Type();
+          newType->withBaseTypeString(nameType->getBaseTypeString())->
+            withDimension(nameType->getDimension()-1)->
+            withSymbolTable(nameType->getSymbolTable());
+          // check if derived class here    
+          if (nameType->getTypeType()=="method_type")
+          {
+            vector<string> args=((MethodType*)nameType)->getArgTypeList();
+            ((MethodType*) newType)->withArgTypeList(args);
+          }
+          this->setType(newType);
+          typed=true;
+        }
+      }
+      if (!typed)
+      {
+        terr=new TypeError();
+        terr->
+          withColNumber(col)->
+          withLineNumber(line)->
+          withDesc("error: identifier '"+left->getString()+"' cannot be indexed.");
+      }
+    }
+  }
+  return terr;
+}
 
 /* ARG LIST NODE DEFINITIONS */
 void ArgListNode::print() {
   cout << "<ArgList> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
+}
+
+TypeError* ArgListNode::typeCheck()
+{
+  TypeError* terr=nullptr;
+  if (right)
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+    terr=right->typeCheck();
+  }
+  else if (left)
+  {
+    terr=left->typeCheck();
+    if (terr) return terr;
+  }
+  return terr;
+}
+void ArgListNode::buildArgTypeList(vector<Type*>* ts)
+{
+  if (!right && !left) return;
+  if (!right) ts->push_back(left->getType());
+  else
+  {
+    ((ArgListNode*)left)->buildArgTypeList(ts);
+    ts->push_back(right->getType());
+  }
 }
 
 /* CONDITIONAL STMT NODE DEFINITIONS */
@@ -626,8 +852,106 @@ Node* ExpNode::getMiddle()
 {
   return middle;
 }
-
-
+TypeError* ExpNode::typeCheck()
+{
+  this->checked=true;
+  TypeError* terr = nullptr;
+  if (checkType=="name")
+  {
+    this->setType(left->getType());
+  }
+  if (checkType=="name_arglist")
+  {
+    if (left->getType())
+    {
+      MethodType* mType=(MethodType*)(left->getType());
+      if (mType->getTypeType()=="ctor_type" || mType->getTypeType()=="type")
+      {
+        terr=new TypeError();
+        terr->
+          withColNumber(col)->
+          withLineNumber(line)->
+          withDesc("error: type '"+mType->getBaseTypeString()+
+              "' is not of method type.");
+      }
+      else 
+      {
+        // Validate args
+        terr=middle->typeCheck();
+        if (terr) return terr;
+        vector<Type*> ts;
+        ((ArgListNode*)middle)->buildArgTypeList(&ts);
+        if (ts.size() != mType->getArgTypeList().size())
+        {
+          int numArgs = mType->getArgTypeList().size();
+          string strArgs=std::to_string(numArgs);
+          terr=new TypeError();
+          terr->
+            withColNumber(col)->
+            withLineNumber(line)->
+            withDesc("error: method requires "+strArgs+
+                " arguments.");
+          return terr;
+        }
+        for (int i=0; i<ts.size(); i++)
+        {
+          if (ts.at(i)->getFullTypeString() !=
+              mType->getArgTypeList().at(i))
+          {
+            terr=new TypeError();
+            terr->
+              withColNumber(col)->
+              withLineNumber(line)->
+              withDesc("error: expected type '"+mType->getArgTypeList().at(i)+
+                  "', found '"+ts.at(i)->getFullTypeString()+"'.");
+            return terr;
+          }
+        }
+      }
+    }
+    else
+    {
+      // handle potential types
+      vector<Type*> pTypes=((NameNode*)left)->getPotentialTypes();
+      terr=middle->typeCheck();
+      if (terr) return terr;
+      vector<Type*> ts;
+      ((ArgListNode*)middle)->buildArgTypeList(&ts);
+      for (auto& t : pTypes)
+      {
+        if (ts.size() != ((MethodType*)t)->getArgTypeList().size())
+        {
+          continue;
+        }
+        for (int i=0; i<ts.size(); i++)
+        {
+          if (ts.at(i)->getFullTypeString() !=
+              ((MethodType*)t)->getArgTypeList().at(i))
+          {
+            continue;
+          }
+          if (i==ts.size()-1)
+          {
+            Type* t = new Type();
+            t->withBaseTypeString(left->getString())->
+              withDimension(0);
+            this->setType(t);
+            return nullptr;
+          }
+        }
+        if (ts.size()==0)
+        {
+          Type* t = new Type();
+          t->withBaseTypeString(left->getString())->
+            withDimension(0);
+          this->setType(t);
+          return nullptr;
+        }
+      }
+    }
+  }
+  return terr;
+}
 /* NEWEXP NODE DEFINITIONS */
 NewExpNode::NewExpNode(Node *lf, Node *mi, Node *rt) : Node(lf,rt) {
   middle=mi;
@@ -645,6 +969,70 @@ void NewExpNode::setMiddle(Node *mi)
 Node* NewExpNode::getMiddle()
 {
   return middle;
+}
+TypeError* NewExpNode::typeCheck()
+{
+  this->checked=true;
+  TypeError* terr = nullptr;
+  if (checkType=="id_arglist")
+  {
+    vector<Symbol*> ct = root->lookup(left->getString());
+    if (ct.size()==0)
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: identifier '"+left->getString()+
+          "' does not name a constructable type.");
+        return terr;
+    }
+    // Validate args
+    vector<CtorType*> pTypes=((ClassSymbol*)ct.at(0))->getCtorTypes();
+    terr=middle->typeCheck();
+    if (terr) return terr;
+    vector<Type*> ts;
+    ((ArgListNode*)middle)->buildArgTypeList(&ts);
+    for (auto& t : pTypes)
+    {
+      if (ts.size() != t->getArgTypeList().size())
+      {
+        continue;
+      }
+      for (int i=0; i<ts.size(); i++)
+      {
+        if (ts.at(i)->getFullTypeString() !=
+            t->getArgTypeList().at(i))
+        {
+          continue;
+        }
+        if (i==ts.size()-1)
+        {
+          Type* t = new Type();
+          t->withBaseTypeString(left->getString())->
+            withDimension(0)->
+            withSymbolTable(ct.at(0)->getType()->getSymbolTable());
+          this->setType(t);
+          return nullptr;
+        }
+      }
+      if (ts.size()==0)
+      {
+        Type* t = new Type();
+        t->withBaseTypeString(left->getString())->
+          withDimension(0)->
+          withSymbolTable(ct.at(0)->getType()->getSymbolTable());
+        this->setType(t);
+        return nullptr;
+      }
+    }
+    terr=new TypeError();
+    terr->
+      withColNumber(col)->
+      withLineNumber(line)->
+      withDesc("error: a constructor with matching type does not exist.");
+  }
+  return terr;
 }
 
 /* OPERATION NODE DEFINITIONS */

@@ -51,6 +51,7 @@ int main(int argc, char **argv)
 
   // Still print if there's no tree
   if(!tree) cout << "Parse error at end of input." << endl;
+//  else tree->print();
   cout << endl;
 
   // Print the symbol tables

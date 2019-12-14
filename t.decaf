@@ -1,30 +1,38 @@
 class mainClass {
     int x;
-    int y;
-    int x;
+    int[] y;
     notType oopsie;
 
-    mainClass(int arg1, uhOhNotType[] arg2) {
+    mainClass(int arg1) {
         int inside;
         int constructor;
-        oopsie = 5;
     }
     mainClass() {
         notMain hahaUhOh;
     }
-    mainClass() {
-        int eek;
+    int testFunc(int hey, int[] yo)
+    {
+        int heyo;
     }
 
-    int thisMethod(invalid mArg)
+    int thisMethod(mainClass mArg)
     {
         int isDumb;
+    }
+    int thisMethod(int isOverloaded)
+    {
+        int hahahaha;
     }
 
     int main() {
         int this_is_main;
         int[] haha;
         haha = 3;
+        this_is_main = new notType();
+        this_is_main = new fuckingBullshitMethod();
+        this_is_main = thisMethod();
+        this_is_main = thisMethod(x);
+        //this_is_main = thisMethod(new mainClass(x);
     }
 }
 
@@ -32,18 +40,23 @@ class notMain {
     int a;
     int[] b;
     int[][] c;
-
-    void main() {
-        int uhOh;
-        int twoMains;
-    }
 }
 
 class notType {
     int itsATypeNowHehe;
+    notType(int thisIsCtor)
+    {
+        int hehe;
+    }
+    notType()
+    {
+        int empty;
+    }
     int methodHere(int with, int[] local, notMain vars)
     {
-        int with;
         int second;
+        if (1) {
+            this.itsATypeNowHehe = 3;
+        }
     }
 }

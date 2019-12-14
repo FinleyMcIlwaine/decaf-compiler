@@ -46,9 +46,12 @@ class Node {
     virtual Type* getType();
     void setMySymbolTable(SymbolTable*);
     SymbolTable* getMySymbolTable();
+    string checkType;
+    int line;
+    int col;
+    bool checked;
+
   protected:
-    int yyline;
-    int yycol;
     int ival;
     double dval;
     string sval;
@@ -330,13 +333,17 @@ class NameNode : public Node
   public:
     NameNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
+    virtual TypeError* typeCheck();
+    string identifier;
 };
 
 /** ARGLIST NODE TYPE **/
-class ArgListNode : public Node
+class ArgListNode : public ParameterListNode
 {
   public:
-    ArgListNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
+    ArgListNode(Node *lf=0, Node *rt=0) : ParameterListNode(lf,rt) {}
+    virtual TypeError* typeCheck();
+    void buildArgTypeList(vector<Type*>*);
     void print();
 };
 
@@ -365,6 +372,7 @@ class ExpNode : public Node
 {
   public:
     ExpNode(Node *lf=0, Node *mi=0, Node *rt=0);
+    TypeError* typeCheck();
     void print();
     void setMiddle(Node *mi);
     Node* getMiddle();
@@ -379,6 +387,7 @@ class NewExpNode : public Node
     NewExpNode(Node *lf=0, Node *mi=0, Node *rt=0);
     void print();
     void setMiddle(Node *mi);
+    virtual TypeError* typeCheck();
     Node* getMiddle();
   private:
     Node *middle;

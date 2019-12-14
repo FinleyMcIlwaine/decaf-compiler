@@ -26,6 +26,7 @@ extern SymbolTable* root;
 extern SymbolTable* cur;
 extern TypeTable* types;
 
+
 Error* err=new Error();
 TypeError* terr=new TypeError();
 string mainClass = "";
@@ -37,7 +38,7 @@ void yyerror(const char *);
 %}
 
 %locations
-
+%debug
   /*
    * El Union
    */
@@ -164,7 +165,8 @@ classstart: CLASS ID {
   newSymTab->setClassName($2->getString());
   // Create the type for the class
   Type* newType=new Type();
-  newType->withSymbolTable(newSymTab);
+  newType->withSymbolTable(newSymTab)->
+    withBaseTypeString($2->getString());
 
   // Get the type ptr
   int loc=types->addType(newType);
@@ -614,7 +616,8 @@ vardec: type ID SEMI {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" +
+          $2->getString() + "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
   }
   else if (res==-4)
@@ -673,7 +676,8 @@ vardec: type ID SEMI {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" + 
+          $2->getString() + "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
   }
   else if (res==-4)
@@ -773,10 +777,12 @@ constructorstart: ID LPAREN RPAREN {
   newSymTab->setMethodName($2->getString());
 
   // Create the type for this thing, it has no args!
-  MethodType* t=new MethodType();
+  CtorType* t=new CtorType();
   t->withBaseTypeString("null")->
     withDimension(0)->
     withSymbolTable(newSymTab);
+ 
+  ((ClassSymbol*)cur->getEncapsulatingClassSymbol())->addCtorType(t);
 
   int typePtr=types->addType(t);
 
@@ -795,7 +801,8 @@ constructorstart: ID LPAREN RPAREN {
     terr->
       withColNumber(@1.first_column)->
       withLineNumber(@1.first_line)->
-      withDesc("error: method '" + $1->getString() + "' cannot have 'null' return type.");
+      withDesc("error: method '" + 
+          $1->getString() + "' cannot have 'null' return type.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -808,7 +815,8 @@ constructorstart: ID LPAREN RPAREN {
       terr->
         withColNumber(@1.first_column)->
         withLineNumber(@1.first_line)->
-        withDesc("error: constructor with same type for class '" + $1->getString() + "' has already been defined.");
+        withDesc("error: constructor with same type for class '" + 
+            $1->getString() + "' has already been defined.");
       scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -837,10 +845,12 @@ constructorstart: ID LPAREN RPAREN {
   }
 
   // Make a type for the thing
-  MethodType* t=new MethodType();
-  ((MethodType*)(t->withBaseTypeString("null")))->
+  CtorType* t=new CtorType();
+  ((CtorType*)(t->withBaseTypeString("null")))->
     withArgTypeList(argStrings)->
     withSymbolTable(newSymTab);
+
+  ((ClassSymbol*)cur->getEncapsulatingClassSymbol())->addCtorType(t);
 
   int loc=types->addType(t);
 
@@ -858,7 +868,8 @@ constructorstart: ID LPAREN RPAREN {
     terr->
       withColNumber(@1.first_column)->
       withLineNumber(@1.first_line)->
-      withDesc("error: method '" + $1->getString() + "' cannot have 'null' return type.");
+      withDesc("error: method '" + $1->getString() + 
+          "' cannot have 'null' return type.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -871,7 +882,8 @@ constructorstart: ID LPAREN RPAREN {
       terr->
         withColNumber(@1.first_column)->
         withLineNumber(@1.first_line)->
-        withDesc("error: constructor with same type for class '" + $1->getString() + "' has already been defined.");
+        withDesc("error: constructor with same type for class '" +
+            $1->getString() + "' has already been defined.");
       scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -1641,25 +1653,11 @@ block: LBRACE localvardecs stmts RBRACE {
   $$=new BlockNode($2,$3);
   $$->setVal("lbrace <LocalVarDecs> <Stmts> rbrace");
 }
-| LBRACE error stmts RBRACE {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  $$=new BlockNode($3);
-  $$->setVal("lbrace <Error> <Stmts> rbrace");
-}
 | LBRACE localvardecs error RBRACE {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
   $$=new BlockNode($2);
   $$->setVal("lbrace <LocalVarDecs> <Error> rbrace");
-}
-| LBRACE error error RBRACE {
-  err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
-  scanner.addError(*err);
-  err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
-  scanner.addError(*err);
-  $$=new BlockNode();
-  $$->setVal("lbrace <Error> <Error> rbrace");
 }
 | LBRACE localvardecs RBRACE {
   $$=new BlockNode($2);
@@ -1964,131 +1962,28 @@ name: THIS {
 | ID %prec IF {
   $$=new NameNode($1);
   $$->setVal($1->getString());
-  vector<Symbol*> symbolsWithName = cur->lookup($1->getString());
-  if (symbolsWithName.size()==0)
+  if (!cur->getDeleteOnResolve())
   {
-    terr->
-      withColNumber(@1.first_column)->
-      withLineNumber(@1.first_line)->
-      withDesc("error: identifier '"+$1->getString()+
-          "' does not exist in current scope.");
-    scanner.addTypeError(*terr);
-  } else if (symbolsWithName.size()==1) {
-    $$->setType(symbolsWithName.at(0)->getType());
-  } else {
-    vector<Type*> pts;
-    for (int i=0; i<symbolsWithName.size(); i++)
-    {
-      pts.push_back(symbolsWithName.at(i)->getType());
-    }
-    $$->setPotentialTypes(pts);
+    ((NameNode*)$$)->checkType="identifier";
+    ((NameNode*)$$)->identifier=$1->getString();
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
   }
 }
 | name DOT ID {
   $$=new NameNode($1,$3);
   $$->setVal($1->getString()+"."+$3->getString());
-  // Make sure the name has a reference type, then
-  // look up the ID in its associated symbol table, type is
-  // the type of that member
-  Type* nameType=$1->getType();
-  if (nameType)
+  if (!cur->getDeleteOnResolve())
   {
-    // check if name type is a class type with dim >= 1
-    vector<Symbol*> typeSyms = root->lookup(nameType->getBaseTypeString());
-    if (typeSyms.size()<1)
-    {
-      // Error about type not being a class with members
-      terr->
-        withColNumber(@1.first_column)->
-        withLineNumber(@1.first_line)->
-        withDesc("error: type '"+nameType->getBaseTypeString()+
-            "' does not have accessible members.");
-      scanner.addTypeError(*terr);
-    }
-    else
-    {
-      vector<Symbol*> potSyms = typeSyms.at(0)->
-        getType()->getSymbolTable()->lookup($3->getString());
-      if (potSyms.size()==0)
-      {
-        // Error about not having member
-        terr->
-          withColNumber(@1.first_column)->
-          withLineNumber(@1.first_line)->
-          withDesc("error: member '"+$3->getString()+
-              "' does not exist for type '"+typeSyms.at(0)->getType()->
-              getBaseTypeString()+"'.");
-        scanner.addTypeError(*terr);
-      }
-      else if (potSyms.size()==1)
-      {
-        // The member only has one potential type
-        $$->setType(potSyms.at(0)->getType());
-      }
-      else
-      {
-        // Multiple potential types for this thing
-        vector<Type*> pts;
-        for (int i=0; i<potSyms.size(); i++)
-        {
-          pts.push_back(potSyms.at(i)->getType());
-        }
-        $$->setPotentialTypes(pts);
-      }
-    }
+    ((NameNode*)$$)->checkType="ref_dot";
+    ((NameNode*)$$)->identifier=$1->getString();
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
   }
-  else
-  {
-    vector<Type*> potNameTypes = $1->getPotentialTypes();
-    // Look for ref type with dim >= 1 in pot types,
-    // if exists, make that the name's type, otherwise
-    // error
-    bool typed=false;
-    for (auto& t : potNameTypes)
-    {
-      vector<Symbol*> typeSyms = root->lookup(t->getBaseTypeString());
-      if (typeSyms.size()==1)
-      {
-        vector<Symbol*> potSyms = typeSyms.at(0)->
-          getType()->getSymbolTable()->lookup($3->getString());
-        if (potSyms.size()==0)
-        {
-          // Error about not having member
-          terr->
-            withColNumber(@1.first_column)->
-            withLineNumber(@1.first_line)->
-            withDesc("error: member '"+$3->getString()+
-                "' does not exist for type '"+typeSyms.at(0)->getType()->
-                getBaseTypeString()+"'.");
-          scanner.addTypeError(*terr);
-        }
-        else if (potSyms.size()==1)
-        {
-          // The member only has one potential type
-          $$->setType(potSyms.at(0)->getType());
-        }
-        else
-        {
-          // Multiple potential types for this thing
-          vector<Type*> pts;
-          for (int i=0; i<potSyms.size(); i++)
-          {
-            pts.push_back(potSyms.at(i)->getType());
-          }
-          $$->setPotentialTypes(pts);
-        }
-      }
-    }
-    if (!typed)
-    {
-      terr->
-        withColNumber(@1.first_column)->
-        withLineNumber(@1.first_line)->
-        withDesc("error: identifier '"+$1->getString()+
-            "' does not have accessible members.");
-      scanner.addTypeError(*terr);
-    }
-  } 
 }
 | name DOT error {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
@@ -2100,66 +1995,13 @@ name: THIS {
 | name bracketexp {
   $$=new NameNode($1,$2);
   $$->setVal($1->getString());
-  Type* nameType=$1->getType();
-  if (nameType)
+  if (!cur->getDeleteOnResolve())
   {
-    // check if name type is a ref type with dim >= 1
-    if (nameType->getDimension()<1)
-    {
-      terr->
-        withColNumber(@1.first_column)->
-        withLineNumber(@1.first_line)->
-        withDesc("error: invalid indexing operation on zero-dimension type.");
-      scanner.addTypeError(*terr);
-    }
-    else
-    {
-      Type* newType = new Type();
-      newType->withBaseTypeString(nameType->getBaseTypeString())->
-        withDimension(nameType->getDimension()-1)->
-        withSymbolTable(nameType->getSymbolTable());
-      // check if derived class here    
-      if (nameType->getTypeType()=="method_type")
-      {
-        vector<string> args=((MethodType*)nameType)->getArgTypeList();
-        ((MethodType*) newType)->withArgTypeList(args);
-      }
-      $$->setType(newType);
-    }
-  }
-  else
-  {
-    vector<Type*> potNameTypes = $1->getPotentialTypes();
-    // Look for ref type with dim >= 1 in pot types,
-    // if exists, make that the name's type, otherwise
-    // error
-    bool typed=false;
-    for (auto& t : potNameTypes)
-    {
-      if (t->getDimension()>0)
-      {
-        Type* newType = new Type();
-        newType->withBaseTypeString(nameType->getBaseTypeString())->
-          withDimension(nameType->getDimension()-1)->
-          withSymbolTable(nameType->getSymbolTable());
-        // check if derived class here    
-        if (nameType->getTypeType()=="method_type")
-        {
-          vector<string> args=((MethodType*)nameType)->getArgTypeList();
-          ((MethodType*) newType)->withArgTypeList(args);
-        }
-        $$->setType(newType);
-        typed=true;
-      }
-    }
-    if (!typed)
-    {
-      terr->
-        withColNumber(@1.first_column)->
-        withLineNumber(@1.first_line)->
-        withDesc("error: identifier '"+$1->getString()+"' cannot be indexed.");
-      scanner.addTypeError(*terr);
-    }
+    ((NameNode*)$$)->checkType="bexp";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
   }
 }
 
@@ -2232,15 +2074,13 @@ conditionalstmt: IF LPAREN exp RPAREN stmt %prec IF {
 exp: name {
   $$=new ExpNode($1);
   $$->setVal("<Name>");
-  Type* t=$1->getType();
-  vector<Type*> pts=$1->getPotentialTypes();
-  if (t)
+  if (!cur->getDeleteOnResolve())
   {
-    $$->setType(t);
-  }
-  else if (pts)
-  {
-    $$->setPotentialTypes(pts);
+    $$->checkType="name";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
   }
 }
 | NUMBER {
@@ -2254,12 +2094,24 @@ exp: name {
 | NULLT {
   $$=new ExpNode();
   $$->setVal("null");
+  Type* t=new Type();
+  t->withBaseTypeString("null")->
+    withDimension(0);
+  $$->setType(t);
   // This thing does not have a type
 }
 | name LPAREN arglist RPAREN {
   $$=new ExpNode($1,$3);
   $$->setVal("<Name> lparen <ArgList> rparen");
-  // TODO Gotta make sure the call is valid, cannot be a constructor
+  // Gotta make sure the call is valid, cannot be a constructor
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="name_arglist";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | name LPAREN error RPAREN {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
@@ -2270,7 +2122,11 @@ exp: name {
 | READ LPAREN RPAREN {
   $$=new ExpNode();
   $$->setVal("read lparen rparen");
-  // TODO Just integer type
+  // Just integer type
+  Type* t=new Type();
+  t->withBaseTypeString("int")->
+    withDimension(0);
+  $$->setType(t);
 }
 | READ error RPAREN {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -2472,6 +2328,15 @@ exp: name {
 newexp: NEW ID LPAREN arglist RPAREN {
   $$=new NewExpNode($2,$4);
   $$->setVal("new identifier lparen <ArgList> rparen");
+  // TODO Gotta make sure the call is valid
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="id_arglist";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | NEW error LPAREN arglist RPAREN {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -2491,29 +2356,56 @@ newexp: NEW ID LPAREN arglist RPAREN {
   $$=new NewExpNode($2);
   $$->setVal("new identifier lparen <Error> rparen");
 }
-| NEW simpletype bracketexps multibrackets {
-  $$=new NewExpNode($2,$3,$4);
+| NEW simpletype bracketexps LBRACK RBRACK {
+  $$=new NewExpNode($2,$3);
   $$->setVal("new <SimpleType> <BracketExps> <MultiBrackets>");
+  // TODO
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="st_bexp_bracks";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
-| NEW error bracketexps multibrackets {
+| NEW error bracketexps LBRACK RBRACK {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
-  $$=new NewExpNode($3,$4);
+  $$=new NewExpNode($3);
   $$->setVal("new <Error> <BracketExps> <MultiBrackets>");
 }
-| NEW simpletype error multibrackets {
+| NEW simpletype error LBRACK RBRACK {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
-  $$=new NewExpNode($2,$4);
+  $$=new NewExpNode($2);
   $$->setVal("new <SimpleType> <Error> <MultiBrackets>");
 }
-| NEW ID bracketexps multibrackets {
+| NEW ID bracketexps LBRACK RBRACK {
   $$=new NewExpNode($2,$3,$4);
   $$->setVal("new identifier <BracketExps> <MultiBrackets>");
+  // TODO
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="id_bexp_bracks";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | NEW simpletype bracketexps {
   $$=new NewExpNode($2,$3);
   $$->setVal("new <SimpleType> <BracketExps>");
+  // TODO
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="st_bexp";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | NEW error bracketexps {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
@@ -2524,6 +2416,15 @@ newexp: NEW ID LPAREN arglist RPAREN {
 | NEW ID bracketexps {
   $$=new NewExpNode($2,$3);
   $$->setVal("new identifier <BracketExps>");
+  // TODO
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="id_bexp";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 
 ;

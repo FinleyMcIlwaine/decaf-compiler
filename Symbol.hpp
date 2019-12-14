@@ -12,6 +12,7 @@
 #define SYMBOL_HPP
 class TypeTable;
 class Type;
+class CtorType;
 #include <string>
 #include <vector>
 #include <iostream>
@@ -57,7 +58,7 @@ class Symbol
     int intValue;
     string refValue;
     int typePtr;
-    bool dead;
+    bool dead=false;
 };
 
 // I use this fake block symbol so blocks
@@ -113,6 +114,10 @@ class ClassSymbol : public Symbol
     virtual string getDataType();
     virtual string getSymType();
     virtual void print();
+    void addCtorType(CtorType*);
+    vector<CtorType*> getCtorTypes();
+  private:
+    vector<CtorType*> ctorTypes;
 };
 #endif
 
