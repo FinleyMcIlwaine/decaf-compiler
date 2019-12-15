@@ -794,6 +794,8 @@ constructorstart: ID LPAREN RPAREN {
     withColNumber(@1.first_column)->
     withTypePtr(typePtr);
 
+  newSymTab->setMethodSymbol(sym);
+
   // Put it in the current table
   if ($2->getString()!=cur->getEncapsulatingClassName())
   {
@@ -860,6 +862,8 @@ constructorstart: ID LPAREN RPAREN {
     withLineNumber(@1.first_line)->
     withColNumber(@1.first_column)->
     withTypePtr(loc);
+
+  newSymTab->setMethodSymbol(sym);
 
   // Put it in the current table if its valid
   if ($2->getString()!=cur->getEncapsulatingClassName())
@@ -991,6 +995,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+  newSymTab->setMethodSymbol(sym);
 
   // Put it in the current table
   int res=cur->insert(sym);
@@ -1000,7 +1005,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+      withDesc("error: method '" + $2->getString() +
+          "' must differ by more than just return type.");
      scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1010,7 +1016,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+      withDesc("error: method '" + $2->getString() + 
+          "' with identical signature already exists locally.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1020,7 +1027,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1094,6 +1102,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+  newSymTab->setMethodSymbol(sym);
 
   // Put it in the current table
   int res=cur->insert(sym);
@@ -1103,7 +1112,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+      withDesc("error: method '" + $2->getString() + 
+          "' must differ by more than just return type.");
      scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1113,7 +1123,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+      withDesc("error: method '" + $2->getString() + 
+          "' with identical signature already exists locally.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1123,7 +1134,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1184,6 +1196,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+  newSymTab->setMethodSymbol(sym);
 
   // Put it in the current table
   int res=cur->insert(sym);
@@ -1193,7 +1206,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+      withDesc("error: method '" + $2->getString() + 
+          "' must differ by more than just return type.");
      scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1203,7 +1217,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+      withDesc("error: method '" + $2->getString() + 
+          "' with identical signature already exists locally.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1213,7 +1228,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1281,6 +1297,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+  newSymTab->setMethodSymbol(sym);
 
   // Put it in the current table
   int res=cur->insert(sym);
@@ -1290,7 +1307,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+      withDesc("error: method '" + $2->getString() + 
+          "' must differ by more than just return type.");
      scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1300,7 +1318,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+      withDesc("error: method '" + $2->getString() + 
+          "' with identical signature already exists locally.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1310,7 +1329,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1360,21 +1380,10 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   $$->setVal("<IdBrack> identifier lparen <ParameterList> <Error>");
 }
 | VOID MAIN LPAREN RPAREN {
-  if (mainClass != "") {
-    terr->
-      withColNumber(@2.first_column)->
-      withLineNumber(@2.first_line)->
-      withDesc("error: 'main' method already implemented in class '"+mainClass+"'.");
-    scanner.addTypeError(*terr);
-  }
-  else
-  {
-    mainClass=cur->getEncapsulatingClassName();
-  }
   $$=new MethodStartNode();
 
   // Make a symbol table for it
-  SymbolTable* newSymTab = new MethodTable();
+  MethodTable* newSymTab = new MethodTable();
 
   // Make a type for the thing
   MethodType* t=new MethodType();
@@ -1389,12 +1398,14 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+  newSymTab->setMethodSymbol(sym);
 
   if (mainClass != "") {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: 'main' method already implemented in class '"+mainClass+"'.");
+      withDesc("error: 'main' method already implemented in class '"
+          +mainClass+"'.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1409,7 +1420,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
       terr->
         withColNumber(@2.first_column)->
         withLineNumber(@2.first_line)->
-        withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+        withDesc("error: method '" + $2->getString() + 
+            "' must differ by more than just return type.");
        scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -1419,7 +1431,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
       terr->
         withColNumber(@2.first_column)->
         withLineNumber(@2.first_line)->
-        withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+        withDesc("error: method '" + $2->getString() + 
+            "' with identical signature already exists locally.");
       scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -1429,7 +1442,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
       terr->
         withColNumber(@2.first_column)->
         withLineNumber(@2.first_line)->
-        withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+        withDesc("error: identifier '" + $2->getString() + 
+            "' is a type, expected unqualified-id.");
       scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -1442,7 +1456,7 @@ methodstart: type ID LPAREN parameterlist RPAREN {
   $$=new MethodStartNode();
 
   // Make a symbol table for it
-  SymbolTable* newSymTab = new MethodTable();
+  MethodTable* newSymTab = new MethodTable();
 
   // Make a type for the thing
   MethodType* t=new MethodType();
@@ -1457,12 +1471,14 @@ methodstart: type ID LPAREN parameterlist RPAREN {
     withLineNumber(@2.first_line)->
     withColNumber(@2.first_column)->
     withTypePtr(loc);
+  newSymTab->setMethodSymbol(sym);
 
   if (mainClass != "") {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: 'main' method already implemented in class '"+mainClass+"'.");
+      withDesc("error: 'main' method already implemented in class '"+
+          mainClass+"'.");
     scanner.addTypeError(*terr);
     newSymTab->setDeleteOnResolve(true);
   }
@@ -1477,7 +1493,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
       terr->
         withColNumber(@2.first_column)->
         withLineNumber(@2.first_line)->
-        withDesc("error: method '" + $2->getString() + "' must differ by more than just return type.");
+        withDesc("error: method '" + $2->getString() + 
+            "' must differ by more than just return type.");
        scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -1487,7 +1504,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
       terr->
         withColNumber(@2.first_column)->
         withLineNumber(@2.first_line)->
-        withDesc("error: method '" + $2->getString() + "' with identical signature already exists locally.");
+        withDesc("error: method '" + $2->getString() + 
+            "' with identical signature already exists locally.");
       scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -1497,7 +1515,8 @@ methodstart: type ID LPAREN parameterlist RPAREN {
       terr->
         withColNumber(@2.first_column)->
         withLineNumber(@2.first_line)->
-        withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+        withDesc("error: identifier '" + $2->getString() + 
+            "' is a type, expected unqualified-id.");
       scanner.addTypeError(*terr);
       newSymTab->setDeleteOnResolve(true);
     }
@@ -1726,7 +1745,8 @@ localvardec: type ID SEMI {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
   }
   else if (res==-4)
@@ -1735,7 +1755,8 @@ localvardec: type ID SEMI {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' already exists locally.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' already exists locally.");
     scanner.addTypeError(*terr);
   }
   else if(!cur->getDeleteOnResolve() && t != "int")
@@ -1785,7 +1806,8 @@ localvardec: type ID SEMI {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' is a type, expected unqualified-id.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' is a type, expected unqualified-id.");
     scanner.addTypeError(*terr);
   }
   else if (res==-4)
@@ -1794,7 +1816,8 @@ localvardec: type ID SEMI {
     terr->
       withColNumber(@2.first_column)->
       withLineNumber(@2.first_line)->
-      withDesc("error: identifier '" + $2->getString() + "' already exists locally.");
+      withDesc("error: identifier '" + $2->getString() + 
+          "' already exists locally.");
     scanner.addTypeError(*terr);
   }
   else if(!cur->getDeleteOnResolve())
@@ -1843,6 +1866,14 @@ stmt: SEMI {
 | name ASSIGN exp SEMI {
   $$=new StmtNode($1,$3);
   $$->setVal("<Name> assign <Exp> semi");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="assign";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | error ASSIGN exp SEMI {
   err->withColNumber(@1.first_column)->withLineNumber(@1.first_line);
@@ -1865,6 +1896,14 @@ stmt: SEMI {
 | name LPAREN arglist RPAREN SEMI {
   $$=new StmtNode($1,$3);
   $$->setVal("<Name> lparen <ArgList> rparen semi");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="name_arglist";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | name LPAREN error RPAREN SEMI {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
@@ -1887,6 +1926,14 @@ stmt: SEMI {
   scanner.addError(*err);
   $$=new StmtNode($1);
   $$->setVal("print lparen <Error> rparen semi");
+  if (!cur->getDeleteOnResolve())
+  {
+    $$->checkType="print_arglist";
+    $$->setMySymbolTable(cur);
+    $$->line=@1.first_line;
+    $$->col=@1.first_column;
+    scanner.addTypeCheck($$);
+  }
 }
 | PRINT LPAREN arglist RPAREN error {
   err->withColNumber(@5.first_column)->withLineNumber(@5.first_line);
@@ -1929,6 +1976,17 @@ stmt: SEMI {
 | RETURN exp SEMI {
   $$=new StmtNode($2);
   $$->setVal("return <Exp> semi");
+  Type* t=((MethodTable*)cur)->getMethodSymbol()->getType();
+  if (t->getBaseTypeString()=="void" ||
+      t->getBaseTypeString()=="null")
+  {
+    terr->
+      withColNumber(@2.first_column)->
+      withLineNumber(@2.first_line)->
+      withDesc("error: method of type '"+t->getBaseTypeString()+ 
+          "' cannot include expression in return.");
+    scanner.addTypeError(*terr);
+  }
 }
 | RETURN SEMI {
   $$=new StmtNode();
@@ -2010,10 +2068,14 @@ name: THIS {
 arglist: exp {
   $$=new ArgListNode($1);
   $$->setVal("<Exp>");
+  $$->line=@1.first_line;
+  $$->col=@1.first_column;
 }
 | arglist COMMA exp {
   $$=new ArgListNode($1,$3);
   $$->setVal("<ArgList> comma <Exp>");
+  $$->line=@1.first_line;
+  $$->col=@1.first_column;
 }
 | %empty {
   $$=new ArgListNode();
@@ -2505,7 +2567,6 @@ newexp: NEW ID LPAREN arglist RPAREN {
 | NEW simpletype bracketexps LBRACK RBRACK {
   $$=new NewExpNode($2,$3);
   $$->setVal("new <SimpleType> <BracketExps> <MultiBrackets>");
-  // TODO
   if (!cur->getDeleteOnResolve())
   {
     $$->checkType="st_bexp_bracks";
@@ -2530,7 +2591,6 @@ newexp: NEW ID LPAREN arglist RPAREN {
 | NEW ID bracketexps LBRACK RBRACK {
   $$=new NewExpNode($2,$3,$4);
   $$->setVal("new identifier <BracketExps> <MultiBrackets>");
-  // TODO
   if (!cur->getDeleteOnResolve())
   {
     $$->checkType="id_bexp_bracks";
@@ -2543,7 +2603,6 @@ newexp: NEW ID LPAREN arglist RPAREN {
 | NEW simpletype bracketexps {
   $$=new NewExpNode($2,$3);
   $$->setVal("new <SimpleType> <BracketExps>");
-  // TODO
   if (!cur->getDeleteOnResolve())
   {
     $$->checkType="st_bexp";
@@ -2562,7 +2621,6 @@ newexp: NEW ID LPAREN arglist RPAREN {
 | NEW ID bracketexps {
   $$=new NewExpNode($2,$3);
   $$->setVal("new identifier <BracketExps>");
-  // TODO
   if (!cur->getDeleteOnResolve())
   {
     $$->checkType="id_bexp";
@@ -2578,10 +2636,14 @@ newexp: NEW ID LPAREN arglist RPAREN {
 bracketexps: bracketexp {
   $$=new BracketExpsNode($1);
   $$->setVal("<BracketExp>");
+  $$->line=@1.first_line;
+  $$->col=@1.first_column;
 }
 | bracketexps bracketexp {
   $$=new BracketExpsNode($1,$2);
   $$->setVal("<BracketExps> <BracketExp>");
+  $$->line=@1.first_line;
+  $$->col=@1.first_column;
 }
 
 ;
@@ -2589,18 +2651,24 @@ bracketexps: bracketexp {
 bracketexp: LBRACK exp RBRACK {
   $$=new BracketExpNode($2);
   $$->setVal("lbrack <Exp> rbrack");
+  $$->line=@2.first_line;
+  $$->col=@2.first_column;
 }
 | LBRACK error RBRACK {
   err->withColNumber(@2.first_column)->withLineNumber(@2.first_line);
   scanner.addError(*err);
   $$=new BracketExpNode();
   $$->setVal("lbrack <Error> rbrack");
+  $$->line=@2.first_line;
+  $$->col=@2.first_column;
 }
 | LBRACK exp error {
   err->withColNumber(@3.first_column)->withLineNumber(@3.first_line);
   scanner.addError(*err);
   $$=new BracketExpNode($2);
   $$->setVal("lbrack <Exp> <Error>");
+  $$->line=@1.first_line;
+  $$->col=@1.first_column;
 }
 
 ;

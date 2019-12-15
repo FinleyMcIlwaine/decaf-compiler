@@ -6,6 +6,7 @@ class mainClass {
 
     mainClass() {
         notMain hahaUhOh;
+        return x;
     }
     int testFunc(int hey, int[] yo)
     {
@@ -15,21 +16,17 @@ class mainClass {
     int thisMethod(mainClass mArg)
     {
         int isDumb;
-        array=new int[10][5][4];
+        array=new int[10][5][4][print(x)];
     }
     int thisMethod(int isOverloaded)
     {
         int x;
         int z;
-        x = y == z;
-        x = mainClass + z;
     }
 
     int main() {
         int this_is_main;
         int[] haha;
-        haha = 3;
-        this_is_main = new notType();
         this_is_main = thisMethod(thisMethod(new mainClass()));
         this_is_main = thisMethod(read());
     }

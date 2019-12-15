@@ -307,3 +307,13 @@ string BlockTable::getTableType()
 {
   return "block";
 }
+
+void MethodTable::setMethodSymbol(Symbol* m)
+{
+  mySym=m;
+}
+
+Symbol* MethodTable::getMethodSymbol()
+{
+  return mySym;
+}

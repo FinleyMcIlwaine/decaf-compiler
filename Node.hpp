@@ -323,6 +323,7 @@ class StmtsNode : public Node
 class StmtNode : public Node
 {
   public:
+    virtual TypeError* typeCheck();
     StmtNode(Node *lf=0, Node *rt=0) : Node(lf,rt) {}
     void print();
 };

@@ -1,6 +1,14 @@
 class names {
     int[] x;
+    int[][][][] four;
+    names() {
+        four = new int[3][4][read()][4];
+    }
     int main() {
-        x[5] = 3;
+        int y;
+        names f;
+        y = 3;
+        f = new names();
+        f = names();
     }
 }

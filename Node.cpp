@@ -220,7 +220,8 @@ TypeError* VarDecNode::typeCheck()
     te->
       withColNumber(myVarSym->getColNumber())->
       withLineNumber(myVarSym->getLineNumber())->
-      withDesc("error: identifier '"+myVarSym->getType()->getBaseTypeString()+"' does not name a type.");
+      withDesc("error: identifier '"+myVarSym->
+          getType()->getBaseTypeString()+"' does not name a type.");
     myVarSym->kill();
     return te;
   }
@@ -267,7 +268,7 @@ void SimpleTypeNode::print() {
 }
 int SimpleTypeNode::getDimension()
 {
-  return 0;
+  return -1;
 }
 
 /* CONSTRUCTORDECS NODE DEFINITIONS */
@@ -574,6 +575,180 @@ void StmtNode::print() {
   cout << "<Stmt> --> " + sval << endl;
   if (left) left->print();
   if (right) right->print();
+}
+
+TypeError* StmtNode::typeCheck()
+{
+  this->checked=true;
+  TypeError* terr = nullptr;
+  if (checkType=="assign")
+  {
+    if (!left->checked)
+    {
+      terr=left->typeCheck();
+      if (terr) return terr;
+    }
+    if (!left->getType())
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: invalid assignment to ambiguous type.");
+      return terr;
+    }
+    terr=right->typeCheck();
+    if (terr) return terr;
+    
+    if (left->getType()->getTypeType()!="type")
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: invalid l-value.");
+      return terr;
+    }
+    if (left->getType()->equals(right->getType())!=0)
+    {
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc("error: assignment requires r-value type '"+
+            left->getType()->getFullTypeString()+"', found type '"+
+            right->getType()->getFullTypeString()+"'.");
+      return terr;
+    }
+    Type* nt = new Type();
+    nt->withBaseTypeString("int")->withDimension(0);
+    this->setType(nt);
+    return nullptr;
+  }
+  if (checkType=="name_arglist")
+  {
+    if (left->getType())
+    {
+      MethodType* mType=(MethodType*)(left->getType());
+      if (mType->getTypeType()=="ctor_type" || mType->getTypeType()=="type")
+      {
+        terr=new TypeError();
+        terr->
+          withColNumber(col)->
+          withLineNumber(line)->
+          withDesc("error: type '"+mType->getBaseTypeString()+
+              "' is not of method type.");
+      }
+      else 
+      {
+        // Validate args
+        terr=right->typeCheck();
+        if (terr) return terr;
+        vector<Type*> ts;
+        ((ArgListNode*)right)->buildArgTypeList(&ts);
+        if (ts.size() != mType->getArgTypeList().size())
+        {
+          int numArgs = mType->getArgTypeList().size();
+          string strArgs=std::to_string(numArgs);
+          terr=new TypeError();
+          terr->
+            withColNumber(col)->
+            withLineNumber(line)->
+            withDesc("error: method requires "+strArgs+
+                " arguments.");
+          return terr;
+        }
+        for (int i=0; i<ts.size(); i++)
+        {
+          if (ts.at(i)->getFullTypeString() !=
+              mType->getArgTypeList().at(i))
+          {
+            terr=new TypeError();
+            terr->
+              withColNumber(col)->
+              withLineNumber(line)->
+              withDesc("error: expected type '"+mType->getArgTypeList().at(i)+
+                  "', found '"+ts.at(i)->getFullTypeString()+"'.");
+            return terr;
+          }
+        }
+      }
+    }
+    else
+    {
+      // handle potential types
+      vector<Type*> pTypes=((NameNode*)left)->getPotentialTypes();
+      terr=right->typeCheck();
+      if (terr) return terr;
+      vector<Type*> ts;
+      ((ArgListNode*)right)->buildArgTypeList(&ts);
+      for (auto& t : pTypes)
+      {
+        if (ts.size() != ((MethodType*)t)->getArgTypeList().size())
+        {
+          continue;
+        }
+        for (int i=0; i<ts.size(); i++)
+        {
+          if (ts.at(i)->getFullTypeString() !=
+              ((MethodType*)t)->getArgTypeList().at(i))
+          {
+            continue;
+          }
+          if (i==ts.size()-1)
+          {
+            Type* nt = new Type();
+            nt->withBaseTypeString(t->getBaseTypeString())->
+              withDimension(t->getDimension());
+            this->setType(nt);
+            return nullptr;
+          }
+        }
+        if (ts.size()==0)
+        {
+          Type* nt = new Type();
+          nt->withBaseTypeString(t->getBaseTypeString())->
+            withDimension(t->getDimension());
+          this->setType(nt);
+          return nullptr;
+        }
+      }
+      terr=new TypeError();
+      terr->
+        withColNumber(col)->
+        withLineNumber(line)->
+        withDesc(
+            "error: supplied method arguments do not match existing types.");
+      return terr;
+    }
+  }
+  else if (checkType=="print_arglist")
+  {
+    // Validate args
+    terr=left->typeCheck();
+    if (terr) return terr;
+    vector<Type*> ts;
+    ((ArgListNode*)left)->buildArgTypeList(&ts);
+    for (int i=0; i<ts.size(); i++)
+    {
+      if (ts.at(i)->getBaseTypeString()!="int" || 
+          ts.at(i)->getDimension()!=0)
+      {
+        terr=new TypeError();
+        terr->
+          withColNumber(col)->
+          withLineNumber(line)->
+          withDesc("error: 'print' accepts 0+ args of type 'int', found type '"+
+              ts.at(i)->getFullTypeString()+"'.");
+        return terr;
+      }
+    }
+    Type* nt=new Type();
+    nt->withBaseTypeString("void")->withDimension(0);
+    this->setType(nt);
+    return nullptr;
+  }
+  return terr;
 }
 
 /* NAME NODE DEFINITIONS */
@@ -1296,7 +1471,7 @@ TypeError* BracketExpNode::typeCheck()
       terr->
         withColNumber(col)->
         withLineNumber(line)->
-        withDesc("error: indexing operation requires type 'int', found type"+
+        withDesc("error: indexing operation requires type 'int', found type '"+
             left->getType()->getFullTypeString()+"'.");
       return terr;
     }

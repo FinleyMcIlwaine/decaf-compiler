@@ -70,8 +70,11 @@ class MethodTable : public SymbolTable
     virtual string getTableType();
     string getMethodName();
     void setMethodName(string);
+    void setMethodSymbol(Symbol*);
+    Symbol* getMethodSymbol();
   private:
     string methodName;
+    Symbol* mySym;
 };
 
 class BlockTable : public SymbolTable
