@@ -6,6 +6,7 @@
  *
  * Main file
 */
+#include "Error.hpp"
 #include "Node.hpp"
 #include "program6.tab.hpp"
 #include "MyScanner.hpp"
@@ -25,6 +26,7 @@ Node* tree;
 SymbolTable* root;
 SymbolTable* cur;
 TypeTable* types;
+string mainClass;
 
 int main(int argc, char **argv)
 {
@@ -36,12 +38,24 @@ int main(int argc, char **argv)
   root->withParent(nullptr);
   cur=new SymbolTable();
   cur->withParent(root);
+  mainClass="";
 
   // Parse
   yyparse();
 
   // Print syntax errors
   scanner.printErrors();
+
+  // Main check
+  if (mainClass=="")
+  {
+    TypeError* terr=new TypeError();
+    terr->
+      withColNumber(1)->
+      withLineNumber(1)->
+      withDesc("error: program must include a 'main' method.");
+    scanner.addTypeError(*terr);
+  }
 
   // Type check
   scanner.doTypeChecks();

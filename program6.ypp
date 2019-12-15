@@ -25,11 +25,10 @@ extern MyScanner scanner;
 extern SymbolTable* root;
 extern SymbolTable* cur;
 extern TypeTable* types;
-
+extern string mainClass;
 
 Error* err=new Error();
 TypeError* terr=new TypeError();
-string mainClass = "";
 
 #define yylex() scanner.yylex()
 #define YYERROR_VERBOSE 1
