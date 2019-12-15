@@ -70,8 +70,8 @@ vector<Symbol*> SymbolTable::lookup(string name)
       }
     }
     table[name]=syms;
-
-    return table.at(name);
+    vector<Symbol*> matches = table.at(name);
+    return matches;
   } catch (...) {
     if (getParent())
     {

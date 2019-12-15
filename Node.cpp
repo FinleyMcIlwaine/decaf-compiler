@@ -1103,6 +1103,11 @@ TypeError* ExpNode::typeCheck()
             return terr;
           }
         }
+        Type* nt= new Type();
+        nt->withBaseTypeString(left->getType()->getBaseTypeString())->
+          withDimension(left->getType()->getDimension());
+        this->setType(nt);
+        return nullptr;
       }
     }
     else

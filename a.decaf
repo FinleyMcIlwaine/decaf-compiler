@@ -11,4 +11,15 @@ class names {
         f = new names();
         f = names();
     }
+
+    int outer(int x)
+    {
+        int[] y;
+        names f;
+        {
+            int hahaYo;
+            y = new int[hahaYo];
+            y[3] = outer(four[3][4][5]);
+        }
+    }
 }
