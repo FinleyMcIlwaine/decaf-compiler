@@ -36,8 +36,8 @@ clean: tidy
 tarball:
 	rm -rf tarball
 	mkdir tarball
-	tar -cf ./tarball/program6.tar Makefile Node.hpp Node.cpp MyScanner.hpp\
-			MyScanner.cpp Error.hpp Error.cpp Type.cpp Type.hpp\
+	tar -cf ./tarball/program6.tar Makefile Node.hpp Node.cpp MyScanner.hpp \
+			MyScanner.cpp Error.hpp Error.cpp Type.cpp Type.hpp \
 			TypeTable.cpp TypeTable.hpp Symbol.hpp Symbol.cpp \
 			SymbolTable.hpp SymbolTable.cpp \
 			program6.lpp program6.ypp program6.cpp

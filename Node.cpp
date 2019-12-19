@@ -5,6 +5,8 @@
  * COSC4785, Program 6
  *
  * Definition of all node class member functions
+ * Includes type checking operations for syntax
+ * tree nodes
  */
 #include "Node.hpp"
 
@@ -212,7 +214,6 @@ Node* VarDecNode::getMiddle()
 TypeError* VarDecNode::typeCheck()
 {
   this->checked=true;
-  // How to look this up?
   vector<Symbol*> myTypeSym = root->lookup(myVarSym->getType()->getBaseTypeString());
   if (myTypeSym.size()==0)
   {
@@ -368,7 +369,7 @@ MethodDecNode::MethodDecNode(Node *lf, Node *sec, Node* trd, Node *rt)
   : Node(lf,rt) {
     second=sec;
     third=trd;
-  }
+}
 void MethodDecNode::print() {
   cout << "<MethodDec> --> " + sval << endl;
   if (left) left->print();
